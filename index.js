@@ -8,6 +8,7 @@ function compile(str, path) {
     .use(nib())
 }
 
+var userg = "init"
 
 app.set('views', 'views')
 app.set('view engine', 'jade');
@@ -15,14 +16,9 @@ app.set('view engine', 'jade');
 app.use(express.static('public'))
 
 app.get('/', function (req, res) {
-  res.render('index', { title: "TITLE", headertext: "headertext"});
-  var user = req.query.username;
-  console.log(user + ' 1');
-});
-
-app.get('/?username=:username', function (req,res){
-  var yolo = req.params.username;
-  console.log(yolo + ' 2');
+  userg = req.query.username;
+  res.render('index', { title: "TITLE", headertext: userg});
+  console.log(userg + ' 1');
 });
 
 var server = app.listen(3500, function () {
