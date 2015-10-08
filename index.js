@@ -9,18 +9,30 @@ var connection =  mysql.createConnection({
     password: "",
   }); 
 
-connection.connect();
-connection.query("use healthmessagesexchange4");
-  var strQuery = "select MsgId, Last_Accessed, patientId, GivenName, FamilyName, BirthTime from messages where patientId > 12530;"; 
-  
-  connection.query( strQuery, function(err, rows){
-    if(err) {
-      //throw err;
-      
-    }else{
-      console.log( rows );
-    }
-  });
+// make sure DB is available to connect
+connection.connect(function(err){
+  // unable to connect to DB.. Continue W.o DB  
+  if (err){
+    console.log("DB Error");
+  }
+  // able to connect to DB, start query
+  else {
+    console.log("DB Good to Go");
+    connection.query("use healthmessagesexchange4");
+    var strQuery = "select MsgId, Last_Accessed, patientId, GivenName, FamilyName, BirthTime from messages where patientId > 12530;"; 
+
+    connection.query( strQuery, function(err, rows){
+      if(err) {
+        throw err;
+        
+        
+      }else{
+        console.log( rows );
+      }
+    });
+  }
+});
+
 
 
 app.set('port', (process.env.PORT || 4500));
