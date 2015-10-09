@@ -1,17 +1,28 @@
 doctype html
 html
-  head
-    title= title
-  body
-  script.
-		function clickFunc() {
-			//var div = document.getElementById('testform');
-			//div.innerHTML = div.innerHTML + "Hello World!";
+	head
+	title= title
+	body
+block what
+	h1.
+		showlist
+	h4.
+		     routeid     |      text1      |          text2     |      text3       | text4 | text5 |  num1   |  num2   | num3 | num4 | text6 |        text7        
+	ul
+		each user, i in showlist
+			li
+				a= "Route id: " + user.routeid
+			p
+				a= user.text1
+			p
+				a= user.text2
+			p
+				a= user.text3
+			p
+				a= user.text4
 			
-			move();
-			//var div = document.getElementById('body');
-			//div.innerHTML = div.innerHTML + "HI ";
-			//document.write("fajdlkf\n");
-			//document.write("fja;dkssdfasdf\n");
-		}
-    p welcome to the other page!
+	//p welcome to the other page!
+	
+	//p= fs.loadTable()
+	//a(href='/register') #{fs.loadTable()}
+	
