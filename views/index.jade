@@ -3,8 +3,25 @@ extend template
 h1 head
 
 block mtitle
-  p test
+	script.
+		function clickFunc() {
+			//var div = document.getElementById('testform');
+			//div.innerHTML = div.innerHTML + "Hello World!";
+			
+			move();
+			//var div = document.getElementById('body');
+			//div.innerHTML = div.innerHTML + "HI ";
+			//document.write("fajdlkf\n");
+			//document.write("fja;dkssdfasdf\n");
+		}
+		function move() {
+			window.location.href = '/showList'
+		}
+		console.log("lomohai");
+	p test
 
-  form(name='testform')
-    label Name:
-      input(type='text', name='username', id='user')
+	form(name='testform')
+		label Name:
+			input(type='text', name='username', id='user')
+			input(type='button', value='Search', onclick='clickFunc()')
+	
