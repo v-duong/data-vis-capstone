@@ -34,13 +34,19 @@ var _ = require('underscore');
 // });
 
 var pg = require ('pg');
+//connect to local postgres database
 var connectionString = 'postgres://localhost:5432/planeroutes';
+
+// connect to heroku's database
+//var connectionString = "postgres://aaojwaabmvczuq:aHR5JA0-K0wmk6Q6k6VXXfhChO@ec2-54-197-241-239.compute-1.amazonaws.com:5432/d3so15mog50g7o";
+
 
 var client = new pg.Client(connectionString);
 client.connect(function(err){
   if (err){
     app.locals.dbClient = null;
     console.log("DB ERROR");
+    console.log("Set dbClient to NULL")
   }
   else {
     app.locals.dbClient = client;
@@ -94,6 +100,7 @@ app.get('/showList',function(req, res){
         }
         //rows.rows.find({},{},function(e, docs){
           res.render('showlist', {
+
             "showlist" : rows.rows
           });
         //});
