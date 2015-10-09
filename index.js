@@ -99,9 +99,9 @@ app.get('/showList',function(req, res){
           console.log(currentRow);
         }
         //rows.rows.find({},{},function(e, docs){
-          res.render('showlist', {
+          res.render('showList', {
 
-            "showlist" : rows.rows
+            "showList" : rows.rows
           });
         //});
         

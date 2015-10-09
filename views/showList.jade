@@ -5,11 +5,11 @@ html
 	body
 block what
 	h1.
-		showlist
+		showList
 	h4.
 		     routeid     |      text1      |          text2     |      text3       | text4 | text5 |  num1   |  num2   | num3 | num4 | text6 |        text7        
 	ul
-		each user, i in showlist
+		each user, i in showList
 			li
 				a= "Route id: " + user.routeid
 			p
@@ -20,6 +20,8 @@ block what
 				a= user.text3
 			p
 				a= user.text4
+			p
+				a= user.num3
 			
 	//p welcome to the other page!
 	
