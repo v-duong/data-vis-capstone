@@ -1,7 +1,7 @@
 var express = require('express');
 var request = require('request');
 var app = express();
-var _ = require('underscore');
+//var _ = require('underscore');
 // var mysql =  require('mysql');
 // var connection =  mysql.createConnection({
 //     host : "localhost",
