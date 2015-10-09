@@ -50,6 +50,12 @@ app.get('/', function (req, res) {
   console.log(userg + ' 1');
 });
 
+app.get('/showList', function (req, res) {
+  res.render('showList', {
+    title: 'showing List'
+  });
+});
+
 
 app.listen(app.get('port'), function(){
   console.log('app now running on port', app.get('port'))
