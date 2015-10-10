@@ -4,6 +4,7 @@ h1 head
 
 block mtitle
 	script.
+
 		function clickFunc() {
 			//var div = document.getElementById('testform');
 			//div.innerHTML = div.innerHTML + "Hello World!";
@@ -18,10 +19,29 @@ block mtitle
 			window.location.href = '/showList'
 		}
 		console.log("lomohai");
+
+
 	p test
 
 	form(name='testform')
 		label Name:
 			input(type='text', name='username', id='user')
 			input(type='button', value='Search', onclick='clickFunc()')
+	br
+	//This form take three input and pass them to the node -- Newman
+	form(name='TestJSON', method="POST", action="/")
+		label Value1: 
+			input(type='text', name='text1')
+		label Value2: 
+			input(type='text', name='text2')
+		label Value3: 
+			input(type='text', name='text3')
+		br
+		label After submitting values, values will be passed to node. Node will then combine the values into a single Json object and pass it back to the jade.
+		br
+		input(type='submit', value='GenerateJsonFiles')
+		//Get the Json object from node and render it as string -- Newman
+		label JsonBackFromNode: #{JSON.stringify(Json)}
+
+
 	
