@@ -1,5 +1,6 @@
 var express = require('express');
 var request = require('request');
+var bodyParser = require('body-parser')
 var app = express();
 //var _ = require('underscore');
 // var mysql =  require('mysql');
@@ -65,7 +66,26 @@ var userg = "init"
 app.set('views', 'views')
 app.set('view engine', 'jade');
 
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// app.use(bodyParser.urlencoded({
+//   extended: true
+// }));
+// app.use(bodyParser.json());
+
+//app.use(express.json());     
+//app.use(express.urlencoded());
+
 app.use(express.static('public'))
+
+
+//Get values from Form:'TestJSON' and pass a JsonObject back to jade -- Newman
+app.post('/',function(req,res)
+  {
+    var textInJsonFormat = {"first":req.body.text1, "second":req.body.text2, "third":req.body.text3};
+    res.render("index", {Json:textInJsonFormat});
+    res.end("yes");
+  });
 
 app.get('/', function (req, res) {
   userg = req.query.username;

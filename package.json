@@ -19,7 +19,8 @@
     "express": "^4.13.3",
     "jade": "^1.11.0",
     "request": "^2.64.0",
-    "pg": "^4.4.2"
+    "pg": "^4.4.2",
+    "body-parser": "^1.14.1"
   },
   "scripts": {
     "start": "node index.js"
