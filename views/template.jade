@@ -4,11 +4,12 @@ html
     link(rel='stylesheet', href='/stylesheets/style.css')
     script(type='text/javascript', src='http://code.jquery.com/jquery-latest.min.js')
   body
-    header
-      h1!= headertext
+    .topbar
+      .name
+        a(href='/') PROJECT NAME
     .container
-      .midtitle
-        block mtitle
+      //.side-content
+        //block sidetext
       .main-content
         block maintext
         

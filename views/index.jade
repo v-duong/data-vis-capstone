@@ -2,7 +2,7 @@ extend template
 
 h1 head
 
-block mtitle
+block maintext
 	script.
 
 		function clickFunc() {
@@ -18,30 +18,40 @@ block mtitle
 		function move() {
 			window.location.href = '/showList'
 		}
-		console.log("lomohai");
 
 
-	p test
+	p
 
 	form(name='testform')
-		label Name:
+		label Data Search
+			br
 			input(type='text', name='username', id='user')
+			br
 			input(type='button', value='Search', onclick='clickFunc()')
 	br
+	br
 	//This form take three input and pass them to the node -- Newman
+	//1label After submitting values, values will be passed to node. Node will then combine the values into a single Json object and pass it back to the jade.
+
 	form(name='TestJSON', method="POST", action="/")
-		label Value1: 
+		label Value1
+			br 
 			input(type='text', name='text1')
-		label Value2: 
-			input(type='text', name='text2')
-		label Value3: 
-			input(type='text', name='text3')
 		br
-		label After submitting values, values will be passed to node. Node will then combine the values into a single Json object and pass it back to the jade.
+		br
+		label Value2
+			br 
+			input(type='text', name='text2')
+		br
+		br
+		label Value3
+			br 
+			input(type='text', name='text3')
 		br
 		input(type='submit', value='GenerateJsonFiles')
 		//Get the Json object from node and render it as string -- Newman
+		br
+		br
 		label JsonBackFromNode: #{JSON.stringify(Json)}
-
 
 	

@@ -2,17 +2,19 @@ var express = require('express');
 var request = require('request');
 var bodyParser = require('body-parser')
 var app = express();
+
+
 //var _ = require('underscore');
 // var mysql =  require('mysql');
 // var connection =  mysql.createConnection({
 //     host : "localhost",
 //     user : "root",
 //     password: "",
-//   }); 
+//   });
 
 // // make sure DB is available to connect
 // connection.connect(function(err){
-//   // unable to connect to DB.. Continue W.o DB  
+//   // unable to connect to DB.. Continue W.o DB
 //   if (err){
 //     console.log("DB Error");
 //   }
@@ -20,13 +22,13 @@ var app = express();
 //   else {
 //     console.log("DB Good to Go");
 //     connection.query("use healthmessagesexchange4");
-//     var strQuery = "select MsgId, Last_Accessed, patientId, GivenName, FamilyName, BirthTime from messages where patientId > 12530;"; 
+//     var strQuery = "select MsgId, Last_Accessed, patientId, GivenName, FamilyName, BirthTime from messages where patientId > 12530;";
 
 //     connection.query( strQuery, function(err, rows){
 //       if(err) {
 //         throw err;
-        
-        
+
+
 //       }else{
 //         console.log( rows );
 //       }
@@ -73,7 +75,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // }));
 // app.use(bodyParser.json());
 
-//app.use(express.json());     
+//app.use(express.json());
 //app.use(express.urlencoded());
 
 app.use(express.static('public'))
@@ -88,17 +90,15 @@ app.post('/',function(req,res)
   });
 
 app.get('/', function (req, res) {
-  userg = req.query.username;
-  res.render('index', { title: "TITLE", headertext: userg});
-  console.log(userg + ' 1');
+  res.render('index', { title: "TITLE"});
 });
 
-app.get('/showList',function(req, res){  
-    
+app.get('/showList',function(req, res){
+
   if (client == null)
     console.log("Why!??!");
   else {
-    
+
   //  var query = client.query("SELECT * FROM firstTable");
    // query.on('row', function(row) {
   //    console.log(row);
@@ -106,14 +106,14 @@ app.get('/showList',function(req, res){
    // query.on('end', client.end.bind(client)); //disconnect client manually
 
 
-    
+
 
     client.query("SELECT * FROM firstTable", function(err, rows){
       if (err){
         console.log("DB FAILED");
       }
       else{
-        var currentRow;  
+        var currentRow;
         for (var i in rows.rows){
           currentRow = rows.rows[i];
           console.log(currentRow);
@@ -124,20 +124,20 @@ app.get('/showList',function(req, res){
             "showList" : rows.rows
           });
         //});
-        
+
       }
     });
-  
+
   }
   //res.end();
 
- 
-  
-    
+
+
+
 });
 
-// app.get('/showList',function(req, res){  
-//     res.render('showList', { 
+// app.get('/showList',function(req, res){
+//     res.render('showList', {
 //         title: 'showing list'
 //         , fs: { loadTable : function(){
 //             if (client == null)
@@ -145,7 +145,7 @@ app.get('/showList',function(req, res){
 //             var query = client.query("SELECT * FROM firstTable");
 //             query.on("row", function (row, result) {
 //             //result.addRow(row);
-            
+
 //           });
 //         }}
 //     });

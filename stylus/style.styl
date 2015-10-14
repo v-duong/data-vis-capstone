@@ -1,0 +1,82 @@
+@import 'nib'
+
+@import url('http://roboto-webfont.googlecode.com/svn/trunk/roboto.all.css');
+
+global-reset()
+
+
+color1 = #616161
+color2 = #313d4d
+backcolor = #4ab1d1
+backcolor2 = #a46262
+textcolor1 = #ffffff
+textcolor2 = #ffffff
+formcolor = #99c3d0
+
+
+body
+  font-family 'Roboto Light'
+  background-color backcolor
+  color textcolor2
+
+.topbar
+  background-color color2
+  color textcolor1
+  position relative
+  height 80px
+  overflow hidden
+
+form
+  label
+    font-size 25px
+  input[type = text]
+    outline 0
+    border 0
+    padding 10px 15px 10px 15px
+    color textcolor1
+    background-color rgba(255,255,255,.25)
+    width 400px
+    font-size 20px
+  input[type = submit], input[type = button]
+    border-color #ffffff
+    border-style solid
+    border-width 0px
+    font-size 20px
+    width 400px
+    height 50px
+    background-color rgba(255,255,255,0.1)
+    text-transform uppercase
+    color textcolor1
+textarea
+  width 300px
+
+.name
+  font-family 'Roboto Thin'
+  text-align left
+  font-size 60px
+  float left
+  padding 10px
+  a
+    text-decoration none
+    color textcolor1
+
+.navigation
+  font-family 'Roboto Light'
+  height 50px
+  font-size 30px
+  text-align right
+
+.container
+  margin 50px auto
+
+
+.main-content
+  text-align center
+  font-size 18px
+
+.side-content
+  float left
+  width 200px
+  background-color backcolor2
+  font-size 13px
+  height 200px
