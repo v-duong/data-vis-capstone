@@ -71,7 +71,8 @@ app.get('/showList',function(req, res){
     console.log("Why!??!");
   else {
 
-    client.query("SELECT * FROM planeinfo", function(err, rows){
+    //client.query("SELECT * FROM planeinfo", function(err, rows){
+    client.query("select * from planeinfo where max_speed IS NOT NULL AND msrp IS NOT NULL" , function(err, rows){
       if (err){
         console.log("DB FAILED");
       }
