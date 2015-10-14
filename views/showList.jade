@@ -9,12 +9,13 @@ block what
 	        
 	ul
 		each user, i in showList
-			li
-				a= "Plane " + user.manufacturer_model
-			p
-				a= user.max_speed
-			p
-				a= user.msrp
+			if (i < 6)
+				li
+					a= "Plane " + user.manufacturer_model
+				p
+					a= user.max_speed
+				p
+					a= user.msrp
 			
 			
 	//p welcome to the other page!
