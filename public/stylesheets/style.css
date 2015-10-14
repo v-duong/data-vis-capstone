@@ -1,0 +1,121 @@
+@import url("http://roboto-webfont.googlecode.com/svn/trunk/roboto.all.css");
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  font-weight: inherit;
+  font-style: inherit;
+  font-family: inherit;
+  font-size: 100%;
+  vertical-align: baseline;
+}
+body {
+  line-height: 1;
+  color: #000;
+  background: #fff;
+}
+ol,
+ul {
+  list-style: none;
+}
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+  vertical-align: middle;
+}
+caption,
+th,
+td {
+  text-align: left;
+  font-weight: normal;
+  vertical-align: middle;
+}
+a img {
+  border: none;
+}
+body {
+  font-family: 'Roboto';
+  background-color: #aafaf2;
+  color: #555;
+}
+header {
+  font-family: 'Roboto Thin';
+  padding: 50px 10px;
+  background-color: #3a3a0a;
+  font-size: 60px;
+  text-align: center;
+  color: #fff;
+}
+.container {
+  width: 95%;
+  margin: 50px auto;
+}
+.main-content {
+  float: left;
+  font-size: 21px;
+}
+.main-content p {
+  margin-bottom: 20px;
+}
+.midtitle {
+  font-size: 30px;
+  font-family: 'Roboto Light';
+  margin: 20px auto;
+}
