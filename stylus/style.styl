@@ -5,37 +5,46 @@
 global-reset()
 
 
-color1 = #3a3a0a
-backcolor = #aafaf2
+color1 = #616161
+backcolor = #ffffff
 backcolor2 = #aaaaa2
 
 body
-  font-family 'Roboto'
+  font-family 'Consolas'
   background-color backcolor
   color #555
 
 header
-  font-family 'Roboto Thin'
-  padding 50px 10px
+  font-family 'Roboto Light'
+  padding 40px 10px
   background-color color1
   font-size 60px
   text-align center
   color #ffffff
 
+form
+  input[type = text]
+    padding 10px 15px 10px 20px
+    color #17823d
+    background-color #7accc8
+    width 400px
+    font-size 20px
+textarea
+  width 300px
 
 .container
-  width 95%
   margin 50px auto
 
 
 .main-content
-  float left
-  font-size 21px
-
+  text-align center
+  font-size 14px
   p
     margin-bottom 20px
 
-.midtitle
-  font-size 30px
-  font-family 'Roboto Light'
-  margin 20px auto
+.side-content
+  float left
+  width 200px
+  background-color #aaaaaa
+  font-size 13px
+  height 200px

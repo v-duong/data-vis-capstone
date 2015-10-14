@@ -90,9 +90,7 @@ app.post('/',function(req,res)
   });
 
 app.get('/', function (req, res) {
-  userg = req.query.username;
-  res.render('index', { title: "TITLE", headertext: userg});
-  console.log(userg + ' 1');
+  res.render('index', { title: "TITLE"});
 });
 
 app.get('/showList',function(req, res){
