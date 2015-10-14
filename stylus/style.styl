@@ -6,31 +6,65 @@ global-reset()
 
 
 color1 = #616161
-backcolor = #ffffff
-backcolor2 = #aaaaa2
+color2 = #313d4d
+backcolor = #4ab1d1
+backcolor2 = #a46262
+textcolor1 = #ffffff
+textcolor2 = #ffffff
+formcolor = #99c3d0
+
 
 body
-  font-family 'Consolas'
-  background-color backcolor
-  color #555
-
-header
   font-family 'Roboto Light'
-  padding 40px 10px
-  background-color color1
-  font-size 60px
-  text-align center
-  color #ffffff
+  background-color backcolor
+  color textcolor2
+
+.topbar
+  background-color color2
+  color textcolor1
+  position relative
+  height 80px
+  overflow hidden
 
 form
+  label
+    font-size 25px
   input[type = text]
-    padding 10px 15px 10px 20px
-    color #17823d
-    background-color #7accc8
+    outline 0
+    border 0
+    padding 10px 15px 10px 15px
+    color textcolor1
+    background-color rgba(255,255,255,.25)
     width 400px
     font-size 20px
+  input[type = submit], input[type = button]
+    border-color #ffffff
+    border-style solid
+    border-width 0px
+    font-size 20px
+    width 400px
+    height 50px
+    background-color rgba(255,255,255,0.1)
+    text-transform uppercase
+    color textcolor1
 textarea
   width 300px
+
+.name
+  font-family 'Roboto Thin'
+  text-align left
+  font-size 60px
+  float left
+  padding 10px
+  a
+    text-decoration none
+    color textcolor1
+
+.navigation
+  font-family 'Roboto Light'
+  height 50px
+  font-size 30px
+  text-align right
 
 .container
   margin 50px auto
@@ -38,13 +72,11 @@ textarea
 
 .main-content
   text-align center
-  font-size 14px
-  p
-    margin-bottom 20px
+  font-size 18px
 
 .side-content
   float left
   width 200px
-  background-color #aaaaaa
+  background-color backcolor2
   font-size 13px
   height 200px

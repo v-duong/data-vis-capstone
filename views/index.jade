@@ -23,7 +23,7 @@ block maintext
 	p
 
 	form(name='testform')
-		label Name
+		label Data Search
 			br
 			input(type='text', name='username', id='user')
 			br
@@ -38,9 +38,11 @@ block maintext
 			br 
 			input(type='text', name='text1')
 		br
+		br
 		label Value2
 			br 
 			input(type='text', name='text2')
+		br
 		br
 		label Value3
 			br 
@@ -49,10 +51,7 @@ block maintext
 		input(type='submit', value='GenerateJsonFiles')
 		//Get the Json object from node and render it as string -- Newman
 		br
+		br
 		label JsonBackFromNode: #{JSON.stringify(Json)}
-
-
-block sidetext
-	p SIDEBAR
 
 	
