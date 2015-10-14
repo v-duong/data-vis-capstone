@@ -93,6 +93,10 @@ app.get('/', function (req, res) {
   res.render('index', { title: "TITLE"});
 });
 
+app.get('/threetest', function (req, res) {
+  res.render('threetest', { title: "TITLE"});
+});
+
 app.get('/showList',function(req, res){
 
   if (client == null)
