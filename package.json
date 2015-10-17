@@ -2,6 +2,9 @@
   "name": "data-vis-capstone",
   "version": "0.0.0",
   "description": "WE'RE STARTING NOW",
+  "engines": {
+    "node": "4.1.1"
+  },
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
