@@ -1,8 +1,10 @@
 var express = require('express');
 var request = require('request');
 var bodyParser = require('body-parser')
+var busboy = require('connect-busboy');
 var app = express();
-
+var path = require('path');
+var fs = require('fs');
 
 
 
@@ -100,6 +102,9 @@ app.get('/showList',function(req, res){
 
 });
 
+
+
+
 app.get('/uploadPage', function(req, res){
 
   console.log("hi");
@@ -107,6 +112,29 @@ app.get('/uploadPage', function(req, res){
   //res.end();
 });
 
+//app.use(bodyParser);
+//app.use(bodyParser.urlencoded());
+//app.use(bodyParser.json());
+app.use(busboy());
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.post('/file-upload', function(req, res) {
+    //console.log(req.body);
+    //console.log(req.files);
+    var fstream;
+        req.pipe(req.busboy);
+        req.busboy.on('file', function (fieldname, file, filename) {
+            console.log("Uploading: " + filename);
+
+            //Path where image will be uploaded
+            fstream = fs.createWriteStream(__dirname + '/public_files/' + filename);
+            file.pipe(fstream);
+            fstream.on('close', function () {    
+                console.log("Upload Finished of " + filename);              
+                res.redirect('back');           //where to go next
+            });
+        });
+});
 
 
 
