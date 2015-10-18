@@ -65,6 +65,11 @@ app.get('/', function (req, res) {
   res.render('index', { title: "TITLE"});
 });
 
+app.get('/three_test',function(req,res){
+  res.render('three_test', { title: "three_test"});
+})
+
+
 app.get('/showList',function(req, res){
 
   if (client == null)
