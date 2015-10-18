@@ -19,6 +19,9 @@ block maintext
 			window.location.href = '/showList'
 		}
 
+		function goThree(){
+			window.location.href = '/three_test'
+		}
 
 	p
 
@@ -53,5 +56,9 @@ block maintext
 		br
 		br
 		label JsonBackFromNode: #{JSON.stringify(Json)}
+
+	form(name = 'three')
+		label goToThree
+			input(type = 'button', value = 'Go', onclick = 'goThree()')
 
 	
