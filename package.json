@@ -20,10 +20,11 @@
   },
   "dependencies": {
     "body-parser": "^1.14.1",
+    "connect-busboy": "0.0.2",
     "express": "^4.13.3",
     "jade": "^1.11.0",
+    "multer": "^1.0.6",
     "pg": "^4.4.2",
-    "request": "^2.64.0",
-    "connect-busboy": "0.0.2"
+    "request": "^2.64.0"
   }
 }

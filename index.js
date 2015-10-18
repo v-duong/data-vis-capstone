@@ -5,6 +5,7 @@ var busboy = require('connect-busboy');
 var app = express();
 var path = require('path');
 var fs = require('fs');
+var multer = require('multer');
 
 
 
@@ -12,10 +13,10 @@ var fs = require('fs');
 
 var pg = require ('pg');
 //connect to local postgres database
-//var connectionString = 'postgres://localhost:5432/capstone_data';
+var connectionString = 'postgres://localhost:5432/capstone_data';
 
 // connect to heroku's database
-var connectionString = "postgres://aaojwaabmvczuq:aHR5JA0-K0wmk6Q6k6VXXfhChO@ec2-54-197-241-239.compute-1.amazonaws.com:5432/d3so15mog50g7o";
+//var connectionString = "postgres://aaojwaabmvczuq:aHR5JA0-K0wmk6Q6k6VXXfhChO@ec2-54-197-241-239.compute-1.amazonaws.com:5432/d3so15mog50g7o";
 
 
 var client = new pg.Client(connectionString);
@@ -112,9 +113,50 @@ app.get('/uploadPage', function(req, res){
   //res.end();
 });
 
-//app.use(bodyParser);
-//app.use(bodyParser.urlencoded());
-//app.use(bodyParser.json());
+
+
+var file_uploaded = multer({ dest: 'public_files/' })
+var uploadtype = file_uploaded.single('displayImage');
+app.post('/file-upload', uploadtype, function(req, res, next){
+  var tmp_path = req.file.path;
+
+  /** The original name of the uploaded file
+      stored in the variable "originalname". **/
+  var target_path = 'public_files/' + req.file.originalname;
+  
+  /** Uploading the file. **/
+ 
+  var src = fs.createReadStream(tmp_path);
+  var dest = fs.createWriteStream(target_path);
+  var textBuff;
+  src.on('open', function () {
+    // This just pipes the read stream to the response object (which goes to the client)
+    //src.pipe(res);
+    //console.log(textBuff);
+    //console.log(res.file);
+  });
+
+  src.on('data', function(fileData){
+    textBuff = fileData.toString();
+
+  });
+
+  src.pipe(dest);
+ 
+  // uploaded successfully
+  src.on('end', function() { 
+    console.log("File Loading Complete!");
+    res.render('uploadPage', {
+        "fileData" : textBuff
+      });
+  });
+
+
+  // failed to upload 
+  src.on('error', function(err) { res.render('back'); });
+});
+
+/*
 app.use(busboy());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -127,14 +169,21 @@ app.post('/file-upload', function(req, res) {
             console.log("Uploading: " + filename);
 
             //Path where image will be uploaded
-            fstream = fs.createWriteStream(__dirname + '/public_files/' + filename);
-            file.pipe(fstream);
+            fstream = fs.createWriteStream(__dirname + '/public_files/' + filename);  
+            file.pipe(fstream); // POST data to the file
             fstream.on('close', function () {    
                 console.log("Upload Finished of " + filename);              
-                res.redirect('back');           //where to go next
+                
+                  
+                console.log(req.files.thumbnail.size);
+                //res.redirect('back');           //where to go next
             });
         });
-});
+
+        req.busboy.on('field', function(fieldname, val, fieldnameTruncated, valTruncated) {
+          console.log('Field [' + fieldname + ']: value: ' + inspect(val));
+        });
+}); */
 
 
 
