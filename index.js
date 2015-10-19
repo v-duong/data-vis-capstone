@@ -42,14 +42,6 @@ app.set('view engine', 'jade');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// app.use(bodyParser.urlencoded({
-//   extended: true
-// }));
-// app.use(bodyParser.json());
-
-//app.use(express.json());
-//app.use(express.urlencoded());
-
 app.use(express.static('public'))
 
 
@@ -65,19 +57,17 @@ app.get('/', function (req, res) {
   res.render('index', { title: "TITLE"});
 });
 
-app.get('/three_test',function(req,res){
-  res.render('three_test', { title: "three_test"});
+app.get('/scatter',function(req,res){
+  res.render('scatter', { title: "scatter"});
 })
 
-
-app.get('/showList',function(req, res){
-
+app.get('/bars',function(req, res){
   if (client == null)
     console.log("Why!??!");
   else {
 
     //client.query("SELECT * FROM planeinfo", function(err, rows){
-    client.query("select * from planeinfo where max_speed IS NOT NULL AND msrp IS NOT NULL" , function(err, rows){
+    client.query("select * from randnum" , function(err, rows){
       if (err){
         console.log("DB FAILED");
       }
@@ -85,41 +75,15 @@ app.get('/showList',function(req, res){
         var currentRow;
         for (var i in rows.rows){
           currentRow = rows.rows[i];
-          //console.log(currentRow);
         }
-        //rows.rows.find({},{},function(e, docs){
-          res.render('showList', {
-
-            "showList" : rows.rows
+          res.render('bars', {
+            _data : rows.rows
           });
-        //});
-
       }
     });
-
   }
-  //res.end();
-
-
-
-
 });
 
-// app.get('/showList',function(req, res){
-//     res.render('showList', {
-//         title: 'showing list'
-//         , fs: { loadTable : function(){
-//             if (client == null)
-//               console.log("Why!??!");
-//             var query = client.query("SELECT * FROM firstTable");
-//             query.on("row", function (row, result) {
-//             //result.addRow(row);
-
-//           });
-//         }}
-//     });
-
-// });
 
 
 app.listen(app.get('port'), function(){

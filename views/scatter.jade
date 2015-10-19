@@ -1,21 +1,15 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<meta charset=utf-8>
-		<title>My first Three.js app</title>
-		<style>
-			body { margin: 0; }
-			canvas { width: 100%; height: 100% }
-		</style>
-	</head>
-	<body>
-		<script src="js/three.min.js"></script>
-		<script src="js/three.js"></script>
-		<script src="js/TextGeometry.js"></script>
-		<script src="js/FontUtils.js"></script>
-		<script src="js/helvetiker_regular.typeface.js"></script>
-		<script>
-			var render = function () {
+head yo
+
+block three
+	style
+		body { margin: 0; }
+		canvas { width: 100%; height: 100% }
+	script(src='js/three.min.js')
+	script(src='js/TextGeometry.js')
+	script(src='js/FontUtils.js')
+	script(src='js/helvetiker_regular.typeface.js')
+	script.
+		var render = function () {
 				requestAnimationFrame( render );
 				renderer.render(scene, camera);
 			};
@@ -63,14 +57,13 @@
 				for(i = 0; i < times-1; i++)
 				{
 					var TextGeo = new THREE.TextGeometry( i, {
-        		font:  'helvetiker'// Must be lowercase!
-        		// ,textWidth:0.01
-        		,height:0
-        		,size:0.2
-    });
+					font:  'helvetiker'
+					,height:0
+					,size:0.2
+					});
 			var textMaterial = new THREE.MeshPhongMaterial({
-        color: 0xdddddd
-    });
+				color: 0xdddddd
+			});
 			var tempNumber = new THREE.Mesh(TextGeo,textMaterial);
 			changePosition(tempNumber, startPoint.x, startPoint.y, startPoint.z);
 					tempNumber.translateOnAxis(movingDirection,movingDistance*i);
@@ -131,13 +124,13 @@
 
 
 			var TextGeo = new THREE.TextGeometry( '13', {
-        		font:  'helvetiker'
-        		,height:0
-        		,size:1.0
-    });
+				font:  'helvetiker'
+				,height:0
+				,size:1.0
+			});
 			var textMaterial = new THREE.MeshPhongMaterial({
-        color: 0xdddddd
-    });
+			color: 0xdddddd
+			});
 			var text = new THREE.Mesh(TextGeo,textMaterial);
 			changePosition(text, 3,0,2);
 			drawNumbers(new THREE.Vector3(0,5.1, 0), new THREE.Vector3(1,0,0), 1, 7);
@@ -149,7 +142,3 @@
 
 
 			render();
-
-		</script>
-	</body>
-</html>
