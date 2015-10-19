@@ -42,14 +42,6 @@ app.set('view engine', 'jade');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// app.use(bodyParser.urlencoded({
-//   extended: true
-// }));
-// app.use(bodyParser.json());
-
-//app.use(express.json());
-//app.use(express.urlencoded());
-
 app.use(express.static('public'))
 
 
@@ -65,9 +57,13 @@ app.get('/', function (req, res) {
   res.render('index', { title: "TITLE"});
 });
 
-app.get('/tt', function (req, res) {
-  res.render('threetest', { });
+app.get('/bars', function (req, res) {
+  res.render('bars', { });
 });
+
+app.get('/three_test',function(req,res){
+  res.render('three_test', { title: "three_test"});
+})
 
 app.get('/threetest',function(req, res){
   if (client == null)
@@ -83,41 +79,19 @@ app.get('/threetest',function(req, res){
         var currentRow;
         for (var i in rows.rows){
           currentRow = rows.rows[i];
-          //console.log(currentRow);
         }
-        //rows.rows.find({},{},function(e, docs){
-          res.render('threetest', {
+          res.render('bars', {
             "showL" : rows.rows
           });
 
-        //});
 
       }
     });
 
   }
-  //res.end();
-
-
-
 
 });
 
-// app.get('/showList',function(req, res){
-//     res.render('showList', {
-//         title: 'showing list'
-//         , fs: { loadTable : function(){
-//             if (client == null)
-//               console.log("Why!??!");
-//             var query = client.query("SELECT * FROM firstTable");
-//             query.on("row", function (row, result) {
-//             //result.addRow(row);
-
-//           });
-//         }}
-//     });
-
-// });
 
 
 app.listen(app.get('port'), function(){
