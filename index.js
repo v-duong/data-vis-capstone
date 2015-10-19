@@ -57,15 +57,11 @@ app.get('/', function (req, res) {
   res.render('index', { title: "TITLE"});
 });
 
-app.get('/bars', function (req, res) {
-  res.render('bars', { });
-});
-
-app.get('/three_test',function(req,res){
-  res.render('three_test', { title: "three_test"});
+app.get('/scatter',function(req,res){
+  res.render('scatter', { title: "scatter"});
 })
 
-app.get('/threetest',function(req, res){
+app.get('/bars',function(req, res){
   if (client == null)
     console.log("Why!??!");
   else {
@@ -81,15 +77,11 @@ app.get('/threetest',function(req, res){
           currentRow = rows.rows[i];
         }
           res.render('bars', {
-            "showL" : rows.rows
+            _data : rows.rows
           });
-
-
       }
     });
-
   }
-
 });
 
 
