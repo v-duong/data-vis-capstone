@@ -22,9 +22,6 @@ var camera, scene, renderer,
         mesh3 = new THREE.Mesh( geometry3, material3 );
 
 
-        mesh3.castShadow = true;
-        mesh3.receiveShadow = true;
-
         light = new THREE.DirectionalLight (0xffffff, 0.4 )
         light.position.set (0,1200,0);
         light.castShadow = true;
@@ -65,12 +62,14 @@ var camera, scene, renderer,
 
     function addBar(x,y,z){
       geometry = new THREE.BoxGeometry( 50, y, 50 );
-      material = new THREE.MeshBasicMaterial( { color: 0x101f1f} );
+      for ( var i = 0; i < geometry.faces.length; i ++ ) {
+          geometry.faces[ i ].color.setHex( Math.random() * 0xffffff );
+      }
+      material = new THREE.MeshBasicMaterial( { shading: THREE.FlatShading, vertexColors: THREE.FaceColors} );
+      geometry.colorsNeedUpdate = true;
       mesh = new THREE.Mesh( geometry, material );
-      mesh.castShadow = true;
-      mesh.receiveShadow = true;
-      mesh.position.y = 10
-      mesh.position.x = x;
+      mesh.position.y = 10 + y/2;
+      mesh.position.x = x - 500;
       mesh.position.z = z;
         scene.add( mesh );
     }
