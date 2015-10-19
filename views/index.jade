@@ -26,6 +26,9 @@ block maintext
 			var windowObjectReference = window.open('/uploadPage', 'Import', 'resizable=0, width=400, height=300,scrollbars=yes,status=yes');
 			
 		}
+		function LoadDataClick(){
+			window.location.href = '/Uploaded_Files'
+		}
 
 	p
 
@@ -39,6 +42,9 @@ block maintext
 	br
 	form(name='importData')
 		input(type='button', value='Import', onclick='uploadClick()')
+	br
+	form(name='viewUploadedFiles')
+		input(type='button', value='Data Sets', onclick='LoadDataClick()')
 	br
 	br
 	br
