@@ -4,10 +4,52 @@ html
 	title= title
 	body
 block what
+	script.
+		var fileListings = [];
+
+		function openFunc(btnID) {
+			var myDB = require('./public/js/database.js');
+
+			console.log('open!');
+			console.log(btnID);
+			var index = btnID.substring(10); 
+			console.log(fileListings[parseInt(index)]);
+			
+
+
+			// call delete function for fileListings[parseInt(index)] file. 
+			// Enter Code here
+			myDB.deleteTable('hi');
+			
+		}
+		function deleteFunc(btnID){
+			//var myDB = require('./public/js/database.js');
+
+			console.log('open!');
+			console.log(btnID);
+			var index = btnID.substring(10); 
+			console.log(fileListings[parseInt(index)]);
+			//$(btnID).click(function(){
+			//	$.post('/deleteFile');
+			//});
+
+			// call delete function for fileListings[parseInt(index)] file. 
+			// Enter Code here
+			//myDB.deleteTable('hi');
+		}
 	h1.
-	showFiles
+	List of Uploaded Files
 
 	ul
+		script.
+			fileListings="#{showFiles}".split(",");
+			//for (var s in "#{showFiles}")
+			//	fileListings.push(s);
+			
+
+			
 		each files, i in showFiles
 			li
-				a= files
+				a= files 
+				input(type='button', id='openbutton'+i, value='open', onclick='openFunc(this.id)')
+				input(type='button', id='deletebutton'+i, value='delete', onclick='deleteFunc(this.id)')

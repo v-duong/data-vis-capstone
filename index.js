@@ -9,7 +9,7 @@ var multer = require('multer');
 
 
 
-
+/*
 
 var pg = require ('pg');
 //connect to local postgres database
@@ -30,7 +30,7 @@ client.connect(function(err){
     app.locals.dbClient = client;
   }
 
-});
+});*/
 
 
 
@@ -61,9 +61,10 @@ app.post('/',function(req,res)
 app.get('/', function (req, res) {
   res.render('index', { title: "TITLE"});
 });
-
+/*
 app.get('/showList',function(req, res){
-
+  //var myDB = require('./public/js/database.js');
+  //var client = myDB.client;
   if (client == null)
     console.log("Why!??!");
   else {
@@ -90,6 +91,32 @@ app.get('/showList',function(req, res){
     });
   }
 });
+*/
+
+
+app.get('/showList',function(req, res){
+  var myDB = require('./public/js/database.js');
+  var myQuery = "select * from planeinfo where max_speed IS NOT NULL AND msrp IS NOT NULL";
+  //var myRows = myDB.queryDB();
+  //var myRows ;
+  myDB.queryDB(myQuery, function(myRows){
+    if (myRows == null){
+     console.log("Couldnt access database");
+    }
+
+    else{
+      console.log("Rendering");
+      //console.log(myRows);
+      res.render('showList', {
+        "showList" : myRows
+      });
+    }
+
+  });
+ 
+});
+
+
 
 app.get('/Uploaded_Files', function(req, res){
   var fileList = fs.readdirSync('public_files');
@@ -132,12 +159,25 @@ app.post('/file-upload', file_uploaded.single('displayImage'), function(req, res
     // uploaded successfully
   src.on('end', function() { 
     // remove src??
-
-
     console.log("File Loading Complete!");
+  
+    // add textBuff into DB
+    var myDB = require('./public/js/database.js');
+    myDB.insertTable(req.file.originalname, textBuff, function(myRows){
+    
+      if (myRows == true){
+        console.log("insert success");
+      }
+
+      else{
+        console.log("insert fail");  
+      }
+
+    });
     res.render('uploadPage', {
         "fileData" : textBuff
-      });
+    });
+    
   });
 
 
