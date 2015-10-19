@@ -4,3 +4,6 @@ h1 asdfsa
 block maintext
   script(src='/js/usercontrol.js')
   script(src='/js/test.js')
+  each user in showList
+    script.
+      addBar(55+55*user.x, user.y, 55+55*user.z);

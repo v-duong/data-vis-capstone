@@ -16,28 +16,12 @@ var camera, scene, renderer,
         camera.position.x = 600;
         camera.lookAt(new THREE.Vector3(0,0,0));
 
-        geometry = new THREE.BoxGeometry( 50, 50, 50 );
-        material = new THREE.MeshBasicMaterial( { vertexColors: THREE.FaceColors} );
-        geometry2 = new THREE.BoxGeometry( 50, 50, 50 );
-        material2 = new THREE.MeshBasicMaterial( { vertexColors: THREE.FaceColors} );
         geometry3 = new THREE.BoxGeometry( 2400, 10, 2000 );
         material3 = new THREE.MeshBasicMaterial( { color: 0xa0afaf} );
 
-        for ( var i = 0; i < geometry.faces.length; i ++ ) {
-          geometry.faces[ i ].color.setHex( Math.random() * 0xffffff );
-          geometry2.faces[ i ].color.setHex( Math.random() * 0xffffff );
-          geometry3.faces[ i ].color.setHex( Math.random() * 0xffffff );
-        }
-
-
-        mesh = new THREE.Mesh( geometry, material );
-        mesh2 = new THREE.Mesh( geometry2, material2 );
         mesh3 = new THREE.Mesh( geometry3, material3 );
 
-        mesh.castShadow = true;
-        mesh.receiveShadow = true;
-        mesh2.castShadow = true;
-        mesh2.receiveShadow = true;
+
         mesh3.castShadow = true;
         mesh3.receiveShadow = true;
 
@@ -53,15 +37,11 @@ var camera, scene, renderer,
         light.shadowCameraTop      =  window.innerHeight / 2;
         light.shadowCameraBottom   = window.innerHeight / - 2;
 
-        scene.add( mesh );
-        scene.add( mesh2 );
         scene.add( mesh3 );
         scene.add( light );
 
 
-        mesh.position.y = 10
-        mesh2.position.y = 10
-        mesh2.position.x = 420
+
         mesh3.position.y = -100
 
         renderer = new THREE.WebGLRenderer( { alpha: true } );
@@ -80,4 +60,17 @@ var camera, scene, renderer,
 
     function render() {
         renderer.render( scene, camera );
+    }
+
+
+    function addBar(x,y,z){
+      geometry = new THREE.BoxGeometry( 50, y, 50 );
+      material = new THREE.MeshBasicMaterial( { color: 0x101f1f} );
+      mesh = new THREE.Mesh( geometry, material );
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      mesh.position.y = 10
+      mesh.position.x = x;
+      mesh.position.z = z;
+        scene.add( mesh );
     }
