@@ -24,7 +24,8 @@ block what
 			var index = btnID.substring(12); 
 			var fileName = fileListings[parseInt(index)];
 
-			var socket = io.connect("http://localhost:4501");
+			//var socket = io.connect("http://localhost:4501");
+			var socket = io.connect("thawing-temple-7343.herokuapp.com:4501");
 			socket.on('connect', function () {
 				console.log("Connected!");
 				socket.emit('deleteFile', fileName);
