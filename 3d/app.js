@@ -14,10 +14,14 @@ app.get("/hello.html", function(req, res) {
 	res.send("<!DOCTYPE html><html>Hello World!</html>");
 });
 
-app.get('/', function(req, res) {
-	res.render('index', {'title': 'Hey', 'message': 'Hello there!'})
+app.get("/", function(req, res) {
+	res.render('3d', {'pic1': input1, 'pic2': input2 })
+
 });
 
+// app.get('/', function(req, res) {
+// 	res.render('index', {'title': 'Hey', 'message': 'Hello there!'})
+// });
 
 // function render() {
 // 	background.render();
