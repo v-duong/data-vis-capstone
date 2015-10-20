@@ -1,0 +1,162 @@
+@import url("https://roboto-webfont.googlecode.com/svn/trunk/roboto.all.css");
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  font-weight: inherit;
+  font-style: inherit;
+  font-family: inherit;
+  font-size: 100%;
+  vertical-align: baseline;
+}
+body {
+  line-height: 1;
+  color: #000;
+  background: #fff;
+}
+ol,
+ul {
+  list-style: none;
+}
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+  vertical-align: middle;
+}
+caption,
+th,
+td {
+  text-align: left;
+  font-weight: normal;
+  vertical-align: middle;
+}
+a img {
+  border: none;
+}
+body {
+  font-family: 'Roboto Light';
+  background-color: #4ab1d1;
+  color: #fff;
+}
+.topbar {
+  background-color: #313d4d;
+  color: #fff;
+  position: relative;
+  height: 80px;
+  overflow: hidden;
+}
+form label {
+  font-size: 25px;
+}
+form input[type = text] {
+  outline: 0;
+  border: 0;
+  padding: 10px 15px 10px 15px;
+  color: #fff;
+  background-color: rgba(255,255,255,0.25);
+  width: 400px;
+  font-size: 20px;
+}
+form input[type = submit],
+form input[type = button] {
+  border-color: #fff;
+  border-style: solid;
+  border-width: 0px;
+  font-size: 20px;
+  width: 400px;
+  height: 50px;
+  background-color: rgba(255,255,255,0.1);
+  text-transform: uppercase;
+  color: #fff;
+}
+textarea {
+  width: 300px;
+}
+.name {
+  font-family: 'Roboto Thin';
+  text-align: left;
+  font-size: 60px;
+  float: left;
+  padding: 10px;
+}
+.name a {
+  text-decoration: none;
+  color: #fff;
+}
+.navigation {
+  font-family: 'Roboto Light';
+  height: 50px;
+  font-size: 30px;
+  text-align: right;
+}
+.container {
+  margin: 50px auto;
+}
+.main-content {
+  text-align: center;
+  font-size: 18px;
+}
+.side-content {
+  float: left;
+  width: 200px;
+  background-color: #a46262;
+  font-size: 13px;
+  height: 200px;
+}
