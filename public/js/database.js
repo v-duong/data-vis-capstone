@@ -35,7 +35,7 @@ exports.queryDB = function(queryStr, callback){
 
 exports.deleteTable = function(tableName, callback){
 	//drop table firsttest
-	var dropQuery = concat("drop table ", tableName);
+	var dropQuery = "drop table ".concat(tableName);
 	client.query(dropQuery, function(err, rows){
 		if (err){
 			console.log("Could not drop table");

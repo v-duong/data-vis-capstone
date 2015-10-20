@@ -8,34 +8,6 @@ var fs = require('fs');
 var multer = require('multer');
 
 
-
-/*
-
-var pg = require ('pg');
-//connect to local postgres database
-var connectionString = 'postgres://localhost:5432/capstone_data';
-
-// connect to heroku's database
-//var connectionString = "postgres://aaojwaabmvczuq:aHR5JA0-K0wmk6Q6k6VXXfhChO@ec2-54-197-241-239.compute-1.amazonaws.com:5432/d3so15mog50g7o";
-
-
-var client = new pg.Client(connectionString);
-client.connect(function(err){
-  if (err){
-    app.locals.dbClient = null;
-    console.log("DB ERROR");
-    //console.log("Set dbClient to NULL")
-  }
-  else {
-    app.locals.dbClient = client;
-  }
-
-});*/
-
-
-
-
-
 app.set('port', (process.env.PORT || 4500));
 
 var userg = "init"
@@ -61,37 +33,7 @@ app.post('/',function(req,res)
 app.get('/', function (req, res) {
   res.render('index', { title: "TITLE"});
 });
-/*
-app.get('/showList',function(req, res){
-  //var myDB = require('./public/js/database.js');
-  //var client = myDB.client;
-  if (client == null)
-    console.log("Why!??!");
-  else {
 
-    //client.query("SELECT * FROM planeinfo", function(err, rows){
-    client.query("select * from planeinfo where max_speed IS NOT NULL AND msrp IS NOT NULL" , function(err, rows){
-      if (err){
-        console.log("DB FAILED");
-      }
-      else{
-        var currentRow;
-        for (var i in rows.rows){
-          currentRow = rows.rows[i];
-          //console.log(currentRow);
-        }
-        //rows.rows.find({},{},function(e, docs){
-          res.render('showList', {
-
-            "showList" : rows.rows
-          });
-        //});
-
-      }
-    });
-  }
-});
-*/
 
 
 app.get('/showList',function(req, res){
@@ -126,6 +68,8 @@ app.get('/Uploaded_Files', function(req, res){
     "showFiles" : fileList
   });
 });
+
+
 
 
 app.get('/uploadPage', function(req, res){
@@ -179,15 +123,35 @@ app.post('/file-upload', file_uploaded.single('displayImage'), function(req, res
     });
     
   });
-
-
   // failed to upload 
   src.on('error', function(err) { res.render('back'); });
 });
 
 
 
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
+server.listen(4501);
+io.on('connection', function(socket){
 
+  socket.on('deleteFile', function(fileName){
+    //console.log("fileName: ");
+    //console.log(fileName);
+    var tableName = fileName.replace(/ /g, "_");
+    tableName = tableName.substr(0, tableName.length-4);
+    var myDB = require('./public/js/database.js');
+    console.log(tableName);
+    var dropSuccess;
+    myDB.deleteTable(tableName, function(dropErr){
+      dropSuccess = dropErr
+    });
+
+   
+    fs.unlinkSync('public_files/'.concat(fileName));
+    socket.emit('doneDelete', dropSuccess);
+    
+  });
+});
 
 app.listen(app.get('port'), function(){
   console.log('app now running on port', app.get('port'))
