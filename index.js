@@ -19,6 +19,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 
+
+
 app.use(express.static('public'))
 
 
@@ -33,6 +35,7 @@ app.post('/',function(req,res)
 app.get('/', function (req, res) {
   res.render('index', { title: "TITLE"});
 });
+
 
 
 
@@ -134,6 +137,33 @@ var io = require('socket.io').listen(server);
 server.listen((process.env.PORT || app.get('port')), function(){
 //server.listen(4501, function(){ 
   console.log("Express server listening on port %d ", server.address().port);
+});
+
+app.get('/scatter',function(req,res){
+  res.render('scatter', { title: "scatter"});
+})
+
+app.get('/bars',function(req, res){
+  if (client == null)
+    console.log("Why!??!");
+  else {
+
+    //client.query("SELECT * FROM planeinfo", function(err, rows){
+    client.query("select * from randnum" , function(err, rows){
+      if (err){
+        console.log("DB FAILED");
+      }
+      else{
+        var currentRow;
+        for (var i in rows.rows){
+          currentRow = rows.rows[i];
+        }
+          res.render('bars', {
+            _data : rows.rows
+          });
+      }
+    });
+  }
 });
 
 

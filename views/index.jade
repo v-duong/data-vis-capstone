@@ -16,7 +16,7 @@ block maintext
 			//document.write("fja;dkssdfasdf\n");
 		}
 		function move() {
-			window.location.href = '/showList'
+			window.location.href = '/bars'
 		}
 
 		function uploadClick(){
@@ -28,6 +28,10 @@ block maintext
 		}
 		function LoadDataClick(){
 			window.location.href = '/Uploaded_Files'
+
+		function goThree(){
+			window.location.href = '/scatter'
+
 		}
 
 	p
@@ -45,12 +49,6 @@ block maintext
 	br
 	form(name='viewUploadedFiles')
 		input(type='button', value='Data Sets', onclick='LoadDataClick()')
-	br
-	br
-	br
-	br
-	br
-	br
 	br
 	br
 	br
@@ -81,5 +79,9 @@ block maintext
 		br
 		br
 		label JsonBackFromNode: #{JSON.stringify(Json)}
+
+	form(name = 'three')
+		label goToThree
+			input(type = 'button', value = 'Go', onclick = 'goThree()')
 
 	
