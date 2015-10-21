@@ -3,7 +3,7 @@ extend template
 h1 asdfsa
 block maintext
   script(src='/js/usercontrol.js')
-  script(src='/js/test.js')
+  script(src='/js/bars.js')
   script(type='text/javascript'). 
     var _querydata = !{JSON.stringify(_data)};
     console.log(_querydata);
@@ -12,5 +12,5 @@ block maintext
       bx = _querydata[i].x;
       by = _querydata[i].y;
       bz = _querydata[i].z;
-      addBar(bx * 50, by, bz * 50);
+      addBar(bx * 50, by * 2, bz * 50);
     }

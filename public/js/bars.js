@@ -71,5 +71,5 @@ var camera, scene, renderer,
       mesh.position.y = 10 + y/2;
       mesh.position.x = x - 500;
       mesh.position.z = z;
-        scene.add( mesh );
+      scene.add( mesh );
     }
