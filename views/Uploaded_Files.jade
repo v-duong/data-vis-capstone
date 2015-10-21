@@ -24,18 +24,25 @@ block what
 			var index = btnID.substring(12); 
 			var fileName = fileListings[parseInt(index)];
 
-			//var socket = io.connect("http://localhost:4501");
-			var socket = io.connect("https://thawing-temple-7343.herokuapp.com:4501");
-			socket.on('connect', function () {
-				console.log("Connected!");
-				socket.emit('deleteFile', fileName);
+			var socket = io.connect("http://localhost:4501");
+			//var socket = io.connect("http://localhost");
+			//var socket = io.connect("https://thawing-temple-7343.herokuapp.com:4501");
+			
+			//if (socket.connected == false){
+			//	console.log("Connection to socket failed");
+			//}
+			//else {
+				socket.on('connect', function () {
+					console.log("Connected!");
+					socket.emit('deleteFile', fileName);
 				
-			});
+				});
 
-			socket.on('doneDelete', function(deleteResult){
-				socket.disconnect();
-				location.reload();
-			});
+				socket.on('doneDelete', function(deleteResult){
+					socket.disconnect();
+					location.reload();
+				});
+			//}
 		}
 
 	h1.
