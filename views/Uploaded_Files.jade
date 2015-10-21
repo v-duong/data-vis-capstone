@@ -12,11 +12,7 @@ block what
 			var index = btnID.substring(10); 
 			console.log(fileListings[parseInt(index)]);
 			
-
-
-			// call delete function for fileListings[parseInt(index)] file. 
 			// Enter Code here
-			//myDB.deleteTable('hi');
 			
 		}
 		function deleteFunc(btnID){
@@ -24,29 +20,21 @@ block what
 			var index = btnID.substring(12); 
 			var fileName = fileListings[parseInt(index)];
 
-			//var socket = io.connect("http://localhost:4501");
-			//var socket = io.connect("http://localhost");
-			//var socket = io.connect("https://thawing-temple-7343.herokuapp.com:4501");
+			//var socket = io.connect("http://localhost:4500");
+			
 			var socket = io.connect("https://thawing-temple-7343.herokuapp.com");
-		
-			//console.log('lomohai');
-			//socket = io.connect("http://localhost:4500");
-			//if (socket.connected == false){
-			//console.log("Connection to socket failed");
-			//console.log(socket);
-			//}
-			//else {
-				socket.on('connect', function () {
-					console.log("Connected!");
-					socket.emit('deleteFile', fileName);
-				
-				});
 
-				socket.on('doneDelete', function(deleteResult){
-					socket.disconnect();
-					location.reload();
-				});
-			//}
+			socket.on('connect', function () {
+				console.log("Connected!");
+				socket.emit('deleteFile', fileName);
+				
+			});
+
+			socket.on('doneDelete', function(deleteResult){
+				socket.disconnect();
+				location.reload();
+			});
+			
 		}
 
 	h1.
@@ -54,11 +42,7 @@ block what
 
 	ul
 		script.
-			fileListings="#{showFiles}".split(",");
-			//for (var s in "#{showFiles}")
-			//	fileListings.push(s);
-			
-
+			fileListings="#{showFiles}".split(",");			
 			
 		each files, i in showFiles
 			li
