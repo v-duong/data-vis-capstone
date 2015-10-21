@@ -129,20 +129,21 @@ app.post('/file-upload', file_uploaded.single('displayImage'), function(req, res
 
 
 
+
 //var server = require('http').Server(app);
 var server = require('http').createServer(app);
 //var io = require('socket.io')(server);
+//var io = require('socket.io').listen(server);
 var io = require('socket.io').listen(server);
 
-/*
-io.configure(function () {  
-  io.set("transports", ["xhr-polling"]); 
-  io.set("polling duration", 10); 
-});
-*/
-server.listen((process.env.PORT || 4501), function(){
+
+
+
+server.listen((process.env.PORT || app.get('port')), function(){
+//server.listen(4501, function(){ 
   console.log("Express server listening on poart %d ", server.address().port);
 });
+
 
 io.sockets.on('connection', function(socket){
   console.log("inside connection");
@@ -186,7 +187,7 @@ io.on('connection', function(socket){
     
   });
 });*/
-
+/*
 app.listen(app.get('port'), function(){
   console.log('app now running on port', app.get('port'))
-});
+});*/
