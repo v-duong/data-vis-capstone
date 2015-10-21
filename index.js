@@ -144,22 +144,24 @@ app.get('/scatter',function(req,res){
 })
 
 app.get('/bars',function(req, res){
+  var client = require('./public/js/database.js');
+  
   if (client == null)
     console.log("Why!??!");
   else {
 
     //client.query("SELECT * FROM planeinfo", function(err, rows){
-    client.query("select * from randnum" , function(err, rows){
-      if (err){
-        console.log("DB FAILED");
+    client.queryDB("select * from randnum" , function(myRows){
+      if (myRows == null){
+        console.log("Couldnt access database");
       }
       else{
         var currentRow;
-        for (var i in rows.rows){
-          currentRow = rows.rows[i];
+        for (var i in myRows){
+          currentRow = myRows[i];
         }
           res.render('bars', {
-            _data : rows.rows
+            _data : myRows
           });
       }
     });
