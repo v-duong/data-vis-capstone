@@ -19,8 +19,19 @@ block maintext
 			window.location.href = '/bars'
 		}
 
+		function uploadClick(){
+
+			//var strWindowFeatures = 'scrollbars=yes,status=yes';
+			//var windowObjectReference = window.open('/showList', 'Import', strWindowFeatures);
+			var windowObjectReference = window.open('/uploadPage', 'Import', 'resizable=0, width=400, height=300,scrollbars=yes,status=yes');
+			
+		}
+		function LoadDataClick(){
+			window.location.href = '/Uploaded_Files'
+
 		function goThree(){
 			window.location.href = '/scatter'
+
 		}
 
 	p
@@ -33,6 +44,18 @@ block maintext
 			input(type='button', value='Search', onclick='clickFunc()')
 	br
 	br
+	form(name='importData')
+		input(type='button', value='Import', onclick='uploadClick()')
+	br
+	form(name='viewUploadedFiles')
+		input(type='button', value='Data Sets', onclick='LoadDataClick()')
+	br
+	br
+	br
+	br
+	br
+	br
+
 	//This form take three input and pass them to the node -- Newman
 	//1label After submitting values, values will be passed to node. Node will then combine the values into a single Json object and pass it back to the jade.
 

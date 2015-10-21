@@ -1,36 +1,11 @@
 var express = require('express');
 var request = require('request');
 var bodyParser = require('body-parser')
+var busboy = require('connect-busboy');
 var app = express();
-
-
-
-
-
-
-var pg = require ('pg');
-//connect to local postgres database
-//var connectionString = 'postgres://localhost:5432/capstone_data';
-
-// connect to heroku's database
-var connectionString = "postgres://aaojwaabmvczuq:aHR5JA0-K0wmk6Q6k6VXXfhChO@ec2-54-197-241-239.compute-1.amazonaws.com:5432/d3so15mog50g7o";
-
-
-var client = new pg.Client(connectionString);
-client.connect(function(err){
-  if (err){
-    app.locals.dbClient = null;
-    console.log("DB ERROR");
-    //console.log("Set dbClient to NULL")
-  }
-  else {
-    app.locals.dbClient = client;
-  }
-
-});
-
-
-
+var path = require('path');
+var fs = require('fs');
+var multer = require('multer');
 
 
 app.set('port', (process.env.PORT || 4500));
@@ -41,6 +16,10 @@ app.set('views', 'views')
 app.set('view engine', 'jade');
 
 app.use(bodyParser.urlencoded({ extended: true }));
+
+
+
+
 
 app.use(express.static('public'))
 
@@ -55,6 +34,109 @@ app.post('/',function(req,res)
 
 app.get('/', function (req, res) {
   res.render('index', { title: "TITLE"});
+});
+
+
+
+
+app.get('/showList',function(req, res){
+  var myDB = require('./public/js/database.js');
+  var myQuery = "select * from planeinfo where max_speed IS NOT NULL AND msrp IS NOT NULL";
+  //var myRows = myDB.queryDB();
+  //var myRows ;
+  myDB.queryDB(myQuery, function(myRows){
+    if (myRows == null){
+     console.log("Couldnt access database");
+    }
+
+    else{
+      console.log("Rendering");
+      //console.log(myRows);
+      res.render('showList', {
+        "showList" : myRows
+      });
+    }
+
+  });
+ 
+});
+
+
+
+app.get('/Uploaded_Files', function(req, res){
+  var fileList = fs.readdirSync('public_files');
+ fileList.splice(0,1);
+
+  res.render('Uploaded_Files', {
+    "showFiles" : fileList
+  });
+});
+
+
+
+
+app.get('/uploadPage', function(req, res){
+
+  res.render('uploadPage.jade');
+  //res.end();
+});
+
+
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public_files/')
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname );
+  }
+})
+
+
+var file_uploaded = multer({ storage: storage });
+
+app.post('/file-upload', file_uploaded.single('displayImage'), function(req, res){
+  var tmp_path = req.file.path;
+  var target_path = 'public_files/' + req.file.originalname;
+  var src = fs.createReadStream(tmp_path);
+  src.on('data', function(fileData){
+    // do the parsing and upload to DB here.. 
+
+    textBuff = fileData.toString();
+  });
+    // uploaded successfully
+  src.on('end', function() { 
+    // remove src??
+    console.log("File Loading Complete!");
+  
+    // add textBuff into DB
+    var myDB = require('./public/js/database.js');
+    myDB.insertTable(req.file.originalname, textBuff, function(myRows){
+    
+      if (myRows == true){
+        console.log("insert success");
+      }
+
+      else{
+        console.log("insert fail");  
+      }
+
+    });
+    res.render('uploadPage', {
+        "fileData" : textBuff
+    });
+    
+  });
+  // failed to upload 
+  src.on('error', function(err) { res.render('back'); });
+});
+
+
+var server = require('http').createServer(app);
+var io = require('socket.io').listen(server);
+
+server.listen((process.env.PORT || app.get('port')), function(){
+//server.listen(4501, function(){ 
+  console.log("Express server listening on port %d ", server.address().port);
 });
 
 app.get('/scatter',function(req,res){
@@ -85,7 +167,28 @@ app.get('/bars',function(req, res){
 });
 
 
+io.sockets.on('connection', function(socket){
+  console.log("inside connection");
+  socket.on('deleteFile', function(fileName){
+  
+    var tableName = fileName.replace(/ /g, "_");
+    tableName = tableName.substr(0, tableName.length-4);
+    var myDB = require('./public/js/database.js');
+    console.log(tableName);
+    var dropSuccess;
+    myDB.deleteTable(tableName, function(dropErr){
+      dropSuccess = dropErr
+    });
 
+    // delete the physical file
+    fs.unlinkSync('public_files/'.concat(fileName));
+    socket.emit('doneDelete', dropSuccess);
+    
+  });
+});
+
+
+/*
 app.listen(app.get('port'), function(){
   console.log('app now running on port', app.get('port'))
-});
+});*/
