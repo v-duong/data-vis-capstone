@@ -129,9 +129,41 @@ app.post('/file-upload', file_uploaded.single('displayImage'), function(req, res
 
 
 
-var server = require('http').Server(app);
-var io = require('socket.io')(server);
+//var server = require('http').Server(app);
+var server = require('http').createServer(app);
+//var io = require('socket.io')(server);
+var io = require('socket.io').listen(server);
+
+/*
+io.configure(function () {  
+  io.set("transports", ["xhr-polling"]); 
+  io.set("polling duration", 10); 
+});
+*/
 server.listen(4501);
+
+io.sockets.on('connection', function(socket){
+  console.log("inside connection");
+  socket.on('deleteFile', function(fileName){
+    //console.log("fileName: ");
+    //console.log(fileName);
+    var tableName = fileName.replace(/ /g, "_");
+    tableName = tableName.substr(0, tableName.length-4);
+    var myDB = require('./public/js/database.js');
+    console.log(tableName);
+    var dropSuccess;
+    myDB.deleteTable(tableName, function(dropErr){
+      dropSuccess = dropErr
+    });
+
+   
+    fs.unlinkSync('public_files/'.concat(fileName));
+    socket.emit('doneDelete', dropSuccess);
+    
+  });
+});
+
+/*
 io.on('connection', function(socket){
 
   socket.on('deleteFile', function(fileName){
@@ -151,7 +183,7 @@ io.on('connection', function(socket){
     socket.emit('doneDelete', dropSuccess);
     
   });
-});
+});*/
 
 app.listen(app.get('port'), function(){
   console.log('app now running on port', app.get('port'))
