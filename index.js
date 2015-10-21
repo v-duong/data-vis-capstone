@@ -140,7 +140,9 @@ io.configure(function () {
   io.set("polling duration", 10); 
 });
 */
-server.listen(4501);
+server.listen((process.env.PORT || 4501), function(){
+  console.log("Express server listening on poart %d ", server.address().port);
+});
 
 io.sockets.on('connection', function(socket){
   console.log("inside connection");

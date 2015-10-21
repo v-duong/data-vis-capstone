@@ -26,10 +26,11 @@ block what
 
 			//var socket = io.connect("http://localhost:4501");
 			//var socket = io.connect("http://localhost");
-			var socket = io.connect("https://thawing-temple-7343.herokuapp.com:4501");
-			
+			//var socket = io.connect("https://thawing-temple-7343.herokuapp.com:4501");
+			var socket = io.connect("https://thawing-temple-7343.herokuapp.com");
 			//if (socket.connected == false){
-			//	console.log("Connection to socket failed");
+				console.log("Connection to socket failed");
+			console.log(socket);
 			//}
 			//else {
 				socket.on('connect', function () {
