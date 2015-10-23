@@ -21,6 +21,7 @@ app.get('/', function (req, res) {
   res.render('index', { title: "TITLE"});
 });
 
+
 app.get('/Uploaded_Files', function(req, res){
   var fileList = fs.readdirSync('public_files');
  fileList.splice(0,1);
@@ -47,7 +48,7 @@ var storage = multer.diskStorage({
 
 var file_uploaded = multer({ storage: storage });
 
-app.post('/file-upload', file_uploaded.single('displayImage'), function(req, res){
+app.post('/file-upload', file_uploaded.single('datafile'), function(req, res){
   var tmp_path = req.file.path;
   var target_path = 'public_files/' + req.file.originalname;
   var src = fs.createReadStream(tmp_path);
@@ -115,10 +116,32 @@ app.get('/bars',function(req, res){
 });
 
 
-io.sockets.on('connection', function(socket){
-  console.log("inside connection");
-  socket.on('deleteFile', function(fileName){
 
+app.get('/displayData',function(req, res){
+  var myDB = require('./public/js/database.js');
+  var CurrentTableToDisplay = app.locals.context;
+  console.log(CurrentTableToDisplay);
+  var myQuery = "select * from ";
+  myQuery = myQuery.concat(CurrentTableToDisplay);
+  //var myRows = myDB.queryDB();
+  //var myRows ;
+  console.log(myQuery);
+  myDB.queryDB(myQuery, function(myRows){
+    if (myRows == null){
+     console.log("Couldnt access database");
+    }
+
+    else{
+      console.log("Rendering");
+      //console.log(myRows);
+      res.end()
+
+    }
+  });
+});
+
+app.post('/deleteData', function(req, res){
+    var fileName = req.body.filters;
     var tableName = fileName.replace(/ /g, "_");
     tableName = tableName.substr(0, tableName.length-4);
     var myDB = require('./public/js/database.js');
@@ -130,9 +153,7 @@ io.sockets.on('connection', function(socket){
 
     // delete the physical file
     fs.unlinkSync('public_files/'.concat(fileName));
-    socket.emit('doneDelete', dropSuccess);
-
-  });
+    res.send(JSON.stringify(true));
 });
 
 

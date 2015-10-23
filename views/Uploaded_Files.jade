@@ -5,35 +5,33 @@ html
 	body
 block what
 	script(type='text/javascript', src='/js/socket.io.js')
+	script(type='text/javascript', src='https://code.jquery.com/jquery-latest.min.js')
 	script.
 		var fileListings = [];
+		
 		function openFunc(btnID) {
-			console.log(btnID);
+			console.log("clicked open!");
 			var index = btnID.substring(10); 
-			console.log(fileListings[parseInt(index)]);
-			
+			var fileName = fileListings[parseInt(index)];
 			// Enter Code here
-			
 		}
 		function deleteFunc(btnID){
 
 			var index = btnID.substring(12); 
 			var fileName = fileListings[parseInt(index)];
 
-			//var socket = io.connect("http://localhost:4500");
+			$.post('/deleteData', {
+				filters: fileName
+			}, function(data){
+				console.log(data);
+				if (data == true){
+					location.reload();
+				}
+				else {
+					console.log("It died");
+				}
+			}, 'json');
 			
-			var socket = io.connect("https://limitless-taiga-3899.herokuapp.com");
-
-			socket.on('connect', function () {
-				console.log("Connected!");
-				socket.emit('deleteFile', fileName);
-				
-			});
-
-			socket.on('doneDelete', function(deleteResult){
-				socket.disconnect();
-				location.reload();
-			});
 			
 		}
 
