@@ -61,7 +61,7 @@ var camera, scene, renderer,
 
     function addBar(x,y,z){
       var frequency = 0.4;
-      geometry = new THREE.BoxGeometry( 50, y, 50 );
+      geometry = new THREE.BoxGeometry( 49, y, 49 );
       geometry.computeFaceNormals();
       geometry.computeVertexNormals();
       var gcolor = new THREE.Color(Math.sin(x*frequency), Math.sin(x*frequency + 2), Math.sin(x*frequency + 4));
@@ -72,7 +72,7 @@ var camera, scene, renderer,
       mesh.position.x = x - 500;
       mesh.position.z = z;
       scene.add( mesh );
-      var edges = new THREE.EdgesHelper( mesh, 0xffffff);
+      var edges = new THREE.EdgesHelper( mesh, 0x000000);
       edges.material.linewidth = 2;
 
       scene.add(edges);
