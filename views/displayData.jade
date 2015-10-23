@@ -1,0 +1,16 @@
+doctype html
+html
+	head
+	title= title
+	body
+block what
+	h1.
+		_tableName
+	ul
+		script.
+			//"#{Data}"="#{Data}".rows;//split(",");	
+			//var _querydata = !{JSON.stringify("#{Data}")};
+
+		each row, i in Data
+			li
+				a= row.height 
