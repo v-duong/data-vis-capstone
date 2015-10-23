@@ -22,8 +22,8 @@ var camera, scene, renderer,
         mesh3 = new THREE.Mesh( geometry3, material3 );
 
 
-        light = new THREE.DirectionalLight (0xffffff, 0.4 )
-        light.position.set (0,1200,0);
+        light = new THREE.DirectionalLight (0xffffff, 0.9 )
+        light.position.set (0,700,0);
         light.castShadow = true;
         light.shadowCameraNear = 1;
         light.shadowCameraFar = 100000;
@@ -37,9 +37,7 @@ var camera, scene, renderer,
         scene.add( mesh3 );
         scene.add( light );
 
-
-
-        mesh3.position.y = -100
+        mesh3.position.y = -50
 
         renderer = new THREE.WebGLRenderer( { alpha: true } );
         renderer.shadowMap.enabled = true;
@@ -61,15 +59,25 @@ var camera, scene, renderer,
 
 
     function addBar(x,y,z){
+      var frequency = 0.4;
       geometry = new THREE.BoxGeometry( 50, y, 50 );
-      for ( var i = 0; i < geometry.faces.length; i ++ ) {
-          geometry.faces[ i ].color.setHex( Math.random() * 0xffffff );
-      }
-      material = new THREE.MeshBasicMaterial( { shading: THREE.FlatShading, vertexColors: THREE.FaceColors} );
+      geometry.computeFaceNormals();
+      geometry.computeVertexNormals();
+      var gcolor = new THREE.Color(Math.sin(x*frequency), Math.sin(x*frequency + 2), Math.sin(x*frequency + 4));
+      material = new THREE.MeshLambertMaterial({color: gcolor});
       geometry.colorsNeedUpdate = true;
       mesh = new THREE.Mesh( geometry, material );
       mesh.position.y = 10 + y/2;
       mesh.position.x = x - 500;
       mesh.position.z = z;
       scene.add( mesh );
+    }
+
+    function createDictionary(_json){
+      if (typeof _json.x[0] == 'string')
+        var newx = _.uniq(_json.x);
+      if (typeof _json.y[0] == 'string')
+        var newx = _.uniq(_json.y);
+      if (typeof _json.z[0] == 'string')
+        var newx = _.uniq(_json.z);
     }
