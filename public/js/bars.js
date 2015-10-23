@@ -5,6 +5,7 @@ var camera, scene, renderer,
     animate();
 
     function init() {
+
         document.addEventListener( 'mousedown', onDocumentMouseDown_Ortho, false );
         scene = new THREE.Scene();
 
@@ -64,20 +65,26 @@ var camera, scene, renderer,
       geometry.computeFaceNormals();
       geometry.computeVertexNormals();
       var gcolor = new THREE.Color(Math.sin(x*frequency), Math.sin(x*frequency + 2), Math.sin(x*frequency + 4));
-      material = new THREE.MeshLambertMaterial({color: gcolor});
+      material = new THREE.MeshBasicMaterial({color: gcolor});
       geometry.colorsNeedUpdate = true;
       mesh = new THREE.Mesh( geometry, material );
       mesh.position.y = 10 + y/2;
       mesh.position.x = x - 500;
       mesh.position.z = z;
       scene.add( mesh );
+      var edges = new THREE.EdgesHelper( mesh, 0xffffff);
+      edges.material.linewidth = 2;
+
+      scene.add(edges);
     }
 
     function createDictionary(_json){
       if (typeof _json.x[0] == 'string')
-        var newx = _.uniq(_json.x);
+        var uniqx = _.uniq(_json.x);
       if (typeof _json.y[0] == 'string')
-        var newx = _.uniq(_json.y);
+        var uniqy = _.uniq(_json.y);
       if (typeof _json.z[0] == 'string')
-        var newx = _.uniq(_json.z);
+        var uniqz = _.uniq(_json.z);
+
+
     }
