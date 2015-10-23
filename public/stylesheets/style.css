@@ -1,4 +1,4 @@
-@import url("https://roboto-webfont.googlecode.com/svn/trunk/roboto.all.css");
+@import 'https://fonts.googleapis.com/css?family=Roboto:400,300,100,500';
 html,
 body,
 div,
@@ -91,7 +91,8 @@ a img {
   border: none;
 }
 body {
-  font-family: 'Roboto Light';
+  font-family: 'Roboto';
+  font-weight: 400;
   background-color: #4ab1d1;
   color: #fff;
 }
@@ -122,6 +123,9 @@ form input[type = button] {
   font-size: 20px;
   width: 400px;
   height: 50px;
+  font-size: 20px;
+  width: 400px;
+  height: 50px;
   background-color: rgba(255,255,255,0.1);
   text-transform: uppercase;
   color: #fff;
@@ -130,7 +134,8 @@ textarea {
   width: 300px;
 }
 .name {
-  font-family: 'Roboto Thin';
+  font-family: 'Roboto';
+  font-weight: 100;
   text-align: left;
   font-size: 60px;
   float: left;
@@ -141,7 +146,8 @@ textarea {
   color: #fff;
 }
 .navigation {
-  font-family: 'Roboto Light';
+  font-family: 'Roboto';
+  font-weight: 300;
   height: 50px;
   font-size: 30px;
   text-align: right;
