@@ -10,19 +10,24 @@ block maintext
 	script(type='text/javascript', src='https://code.jquery.com/jquery-latest.min.js')
 	script.
 		var tableName = location.search.split('filename=')[1];
-		var j = 0;
-		$.getJSON('/retrieveData', {
-				filters: tableName
 
-			}, function(data){
-				document.write(data);
+		$.getJSON('/retrieveData', { filters: tableName }, function(data){
+				//document.write(data);
+				var columnNames[];
+				for (key in data) {
+					columnName.push(key);
+ 
+				}
+				
+//_.keys(_querydata[0]]);
+				$("thread").appent("<tr><th>"+  + "</th><th>" +  + "</th></tr>")
+
 				$.each(data, function(i, f) {
-					j = j + 1;
+					//document.write(f.weight);
+					$("tbody").append("<tr><td>" + f.weight + "</td><td>" + f.height +"</td></tr>" );
 				});
-			});
-		console.log('fuckME');
-		console.log(j);
-	
+			}
+		);
 
 	p
 		table(id="entrydata")
@@ -33,10 +38,8 @@ block maintext
 					th(class='dataColumn') Bitch
 					th
 			tbody
-				tr 
-				td whatfasdafd 
-				td theasdfasdfasd 
-				td magic
+				
+
 
 				
 						
