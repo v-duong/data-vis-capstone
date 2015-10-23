@@ -1,16 +1,43 @@
+extend template
+
 doctype html
 html
 	head
 	title= title
 	body
-block what
-	h1.
-		_tableName
-	ul
-		script.
-			//"#{Data}"="#{Data}".rows;//split(",");	
-			//var _querydata = !{JSON.stringify("#{Data}")};
+block maintext
+	h1 Title
+	script(type='text/javascript', src='https://code.jquery.com/jquery-latest.min.js')
+	script.
+		var tableName = location.search.split('filename=')[1];
+		var j = 0;
+		$.getJSON('/retrieveData', {
+				filters: tableName
 
-		each row, i in Data
-			li
-				a= row.height 
+			}, function(data){
+				document.write(data);
+				$.each(data, function(i, f) {
+					j = j + 1;
+				});
+			});
+		console.log('fuckME');
+		console.log(j);
+	
+
+	p
+		table(id="entrydata")
+			thread
+				tr
+					th(class='dataColumn') Fuck
+					th(class='dataColumn') You
+					th(class='dataColumn') Bitch
+					th
+			tbody
+				tr 
+				td whatfasdafd 
+				td theasdfasdfasd 
+				td magic
+
+				
+						
+		

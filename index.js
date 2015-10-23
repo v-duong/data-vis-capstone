@@ -118,26 +118,28 @@ app.get('/bars',function(req, res){
 
 
 app.get('/displayData',function(req, res){
-  var myDB = require('./public/js/database.js');
-  var CurrentTableToDisplay = app.locals.context;
-  console.log(CurrentTableToDisplay);
-  var myQuery = "select * from ";
-  myQuery = myQuery.concat(CurrentTableToDisplay);
-  //var myRows = myDB.queryDB();
-  //var myRows ;
-  console.log(myQuery);
-  myDB.queryDB(myQuery, function(myRows){
-    if (myRows == null){
-     console.log("Couldnt access database");
-    }
+  
+  res.render('displayData.jade');
+});
 
-    else{
-      console.log("Rendering");
-      //console.log(myRows);
-      res.end()
 
-    }
-  });
+app.get('/retrieveData', function(req, res){
+    var tableName = req.query.filters;
+    var myDB = require('./public/js/database.js');
+    console.log(tableName);
+    var myQuery = "select * from ";
+    myQuery = myQuery.concat(tableName);
+    myDB.queryDB(myQuery, function(myRows){
+      if (myRows == null){
+        console.log("Couldnt access database");
+      }
+      else{
+        console.log(JSON.stringify(myRows));
+       res.send(JSON.stringify(myRows)); 
+      }
+
+    });
+    
 });
 
 app.post('/deleteData', function(req, res){
