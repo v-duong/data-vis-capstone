@@ -55,12 +55,12 @@ var stats;
         document.body.appendChild( renderer.domElement );
 
         //
-        stats = new Stats();
-        stats.domElement.style.position = 'absolute';
-        stats.domElement.style.top = '0px';
-        stats.domElement.style.zIndex = 100;
-        document.body.appendChild( stats.domElement );
-        animate();
+        // stats = new Stats();
+        // stats.domElement.style.position = 'absolute';
+        // stats.domElement.style.top = '0px';
+        // stats.domElement.style.zIndex = 100;
+        // document.body.appendChild( stats.domElement );
+        // animate();
         //
 
     }
