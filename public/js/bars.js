@@ -5,7 +5,7 @@ var stats;
 
     init();
     render();
-    // animate();
+    animate();
 
     function init() {
 
