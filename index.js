@@ -2,6 +2,8 @@ var express = require('express');
 var app = express();
 var fs = require('fs');
 var multer = require('multer');
+var os = require('os');
+
 
 app.set('port', (process.env.PORT || 4500));
 
@@ -18,7 +20,17 @@ app.post('/',function(req,res)
   });
 
 app.get('/', function (req, res) {
-  res.render('index', { title: "TITLE"});
+  var tlist;
+  if(os.hostname().indexOf("local")){
+    tlist = [];
+    res.render('index', { title: "TITLE", tables : tlist});
+  } else {
+    var client = require('./public/js/database.js');
+    client.queryDB("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';" , function(tlist){
+      console.log(tlist);
+      res.render('index', { title: "TITLE", tables : tlist});
+    });
+  }
 });
 
 
