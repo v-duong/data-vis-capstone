@@ -9,18 +9,6 @@ app.set('views', 'views');
 app.set('view engine', 'jade');
 app.use(express.static('public'));
 
-app.get('/VR', function(req, res){
-  var name = __dirname + '/views/VR.html';
-  res.sendFile(name);
-  console.log(name);
-});
-
-app.get('/VR2', function(req, res){
-  var name = __dirname + '/views/VR2.html';
-  res.sendFile(name);
-  console.log(name);
-});
-
 
 //Get values from Form:'TestJSON' and pass a JsonObject back to jade -- Newman
 app.post('/',function(req,res)
