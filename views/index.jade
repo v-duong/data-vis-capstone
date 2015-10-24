@@ -5,31 +5,20 @@ h1 head
 block maintext
 	script.
 
-		function clickFunc() {
-			//var div = document.getElementById('testform');
-			//div.innerHTML = div.innerHTML + "Hello World!";
-			
-			move();
-			//var div = document.getElementById('body');
-			//div.innerHTML = div.innerHTML + "HI ";
-			//document.write("fajdlkf\n");
-			//document.write("fja;dkssdfasdf\n");
-		}
-		function move() {
+		function clickFunc() {	
 			window.location.href = '/bars'
 		}
 
 		function uploadClick(){
 			var windowObjectReference = window.open('/uploadPage', 'Import', 'resizable=0, width=400, height=300,scrollbars=yes,status=yes');
-			
 		}
 		function LoadDataClick(){
 			window.location.href = '/Uploaded_Files'
 		}
 		function goThree(){
 			window.location.href = '/scatter'
-
 		}
+
 
 	p
 
@@ -47,6 +36,12 @@ block maintext
 	form(name='viewUploadedFiles')
 		input(type='button', value='Data Sets', onclick='LoadDataClick()')
 	br
+	select(id='listUploaded')
+		each item in tables
+			option(selected=item.table_name) #{item.table_name}
+	br
+	br
+	input(type='button', value='Get Selected', onclick='clickFunc()')
 	br
 	br
 	br
@@ -76,9 +71,11 @@ block maintext
 		br
 		br
 		label JsonBackFromNode: #{JSON.stringify(Json)}
-
+	br
+	br
 	form(name = 'three')
 		label goToThree
+			br
 			input(type = 'button', value = 'Go', onclick = 'goThree()')
 
 	
