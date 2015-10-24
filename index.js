@@ -15,6 +15,12 @@ app.get('/VR', function(req, res){
   console.log(name);
 });
 
+app.get('/VR2', function(req, res){
+  var name = __dirname + '/views/VR2.html';
+  res.sendFile(name);
+  console.log(name);
+});
+
 //Get values from Form:'TestJSON' and pass a JsonObject back to jade -- Newman
 app.post('/',function(req,res)
   {
