@@ -2,9 +2,10 @@ extend template
 
 h1 asdfsa
 block maintext
+  script(src='/js/OrbitControls.js')
   script(src='/js/usercontrol.js')
   script(src='/js/bars.js')
-  script(type='text/javascript'). 
+  script(type='text/javascript').
     var _querydata = !{JSON.stringify(_data)};
     for (var i in _querydata){
       var bx, by, bz;
