@@ -5,9 +5,15 @@ var multer = require('multer');
 
 app.set('port', (process.env.PORT || 4500));
 
-app.set('views', 'views')
+app.set('views', 'views');
 app.set('view engine', 'jade');
-app.use(express.static('public'))
+app.use(express.static('public'));
+
+app.get('/VR', function(req, res){
+  var name = __dirname + '/views/VR.html';
+  res.sendFile(name);
+  console.log(name);
+});
 
 //Get values from Form:'TestJSON' and pass a JsonObject back to jade -- Newman
 app.post('/',function(req,res)
@@ -38,12 +44,12 @@ app.get('/uploadPage', function(req, res){
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'public_files/')
+    cb(null, 'public_files/');
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname );
   }
-})
+});
 
 
 var file_uploaded = multer({ storage: storage });
@@ -91,7 +97,7 @@ var io = require('socket.io').listen(server);
 
 app.get('/scatter',function(req,res){
   res.render('scatter', { title: "scatter"});
-})
+});
 
 app.get('/bars',function(req, res){
   var client = require('./public/js/database.js');
@@ -134,7 +140,7 @@ app.get('/displayData',function(req, res){
     else{
       console.log("Rendering");
       //console.log(myRows);
-      res.end()
+      res.end();
 
     }
   });
@@ -148,7 +154,7 @@ app.post('/deleteData', function(req, res){
     console.log(tableName);
     var dropSuccess;
     myDB.deleteTable(tableName, function(dropErr){
-      dropSuccess = dropErr
+      dropSuccess = dropErr;
     });
 
     // delete the physical file
