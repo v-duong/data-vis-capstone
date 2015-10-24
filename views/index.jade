@@ -7,6 +7,10 @@ block maintext
 
 		function clickFunc() {	
 			window.location.href = '/bars'
+		}		
+		
+		function SelectFunc() {	
+			window.location.href = '/displayData?filename=' + $("#listUploaded option:selected").text();
 		}
 
 		function uploadClick(){
@@ -41,7 +45,7 @@ block maintext
 			option(selected=item.table_name) #{item.table_name}
 	br
 	br
-	input(type='button', value='Get Selected', onclick='clickFunc()')
+	input(type='button', value='Get Selected', onclick='SelectFunc()')
 	br
 	br
 	br

@@ -21,7 +21,6 @@ app.get('/', function (req, res) {
   var client = require('./public/js/database.js');
   var tlist;
   client.queryDB("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';" , function(tlist){
-    console.log(tlist);
     res.render('index', { title: "TITLE", tables : tlist});
   });
 });
@@ -123,38 +122,30 @@ app.get('/bars',function(req, res){
 
 
 app.get('/displayData',function(req, res){
-  
-  res.render('displayData.jade');
+
+  res.render('displayData');
 });
 
 
 
 
 app.get('/retrieveData', function(req, res){
-    //var tableName = req.query.tableName;
-
     var myQuery = req.query.myQuery;
     console.log(myQuery);
     var myDB = require('./public/js/database.js');
-    //console.log(tableName);
-    //var myQuery = "select * from ";
-    //myQuery = myQuery.concat(tableName);
     myDB.queryDB(myQuery, function(myRows){
       if (myRows == null){
         console.log("Couldnt access database");
       }
       else{
         console.log(JSON.stringify(myRows));
-       res.send(JSON.stringify(myRows)); 
+       res.send(JSON.stringify(myRows));
       }
 
     });
-    
+
 
 });
-
- //select * from planeinfo ORDER BY (substring(manufacturer_model, '^[0-9]+'))::int, substring(manufacturer_model, '[^0-9_].*$');
-
 
 app.post('/deleteData', function(req, res){
     var fileName = req.body.filters;
