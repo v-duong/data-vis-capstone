@@ -124,12 +124,16 @@ app.get('/displayData',function(req, res){
 
 
 
+
 app.get('/retrieveData', function(req, res){
-    var tableName = req.query.filters;
+    //var tableName = req.query.tableName;
+
+    var myQuery = req.query.myQuery;
+    console.log(myQuery);
     var myDB = require('./public/js/database.js');
-    console.log(tableName);
-    var myQuery = "select * from ";
-    myQuery = myQuery.concat(tableName);
+    //console.log(tableName);
+    //var myQuery = "select * from ";
+    //myQuery = myQuery.concat(tableName);
     myDB.queryDB(myQuery, function(myRows){
       if (myRows == null){
         console.log("Couldnt access database");
@@ -143,6 +147,9 @@ app.get('/retrieveData', function(req, res){
     
 
 });
+
+ //select * from planeinfo ORDER BY (substring(manufacturer_model, '^[0-9]+'))::int, substring(manufacturer_model, '[^0-9_].*$');
+
 
 app.post('/deleteData', function(req, res){
     var fileName = req.body.filters;
