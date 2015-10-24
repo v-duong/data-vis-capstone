@@ -4,7 +4,7 @@ var camera, scene, renderer,
 var stats;
 
     init();
-    render();
+    // render();
     animate();
 
     function init() {
