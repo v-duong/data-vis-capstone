@@ -1,8 +1,11 @@
 var camera, scene, renderer,
     geometry, material, mesh;
 
+var stats;
+
     init();
-    animate();
+    render();
+    // animate();
 
     function init() {
 
@@ -17,7 +20,11 @@ var camera, scene, renderer,
         camera.position.x = 600;
         camera.lookAt(new THREE.Vector3(0,0,0));
 
-        geometry3 = new THREE.BoxGeometry( 2400, 10, 2000 );
+        //
+        controls = new THREE.OrbitControls(camera);
+        controls.addEventListener('change', render)
+        //
+
         material3 = new THREE.MeshBasicMaterial( { color: 0xa0afaf} );
 
         mesh3 = new THREE.Mesh( geometry3, material3 );
@@ -46,16 +53,30 @@ var camera, scene, renderer,
         renderer.setSize( window.innerWidth, window.innerHeight );
 
         document.body.appendChild( renderer.domElement );
+
+        //
+        stats = new Stats();
+        stats.domElement.style.position = 'absolute';
+        stats.domElement.style.top = '0px';
+        stats.domElement.style.zIndex = 100;
+        document.body.appendChild( stats.domElement );
+        animate();
+        //
+
     }
+
+
 
     function animate() {
 
         requestAnimationFrame( animate );
+        controls.update();//
         render();
     }
 
     function render() {
         renderer.render( scene, camera );
+        stats.update();
     }
 
 
