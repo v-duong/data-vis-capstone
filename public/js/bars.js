@@ -17,6 +17,11 @@ var camera, scene, renderer,
         camera.position.x = 600;
         camera.lookAt(new THREE.Vector3(0,0,0));
 
+        controls = new THREE.OrbitControls( camera );
+//        controls.damping = 0.2;
+        controls.addEventListener( 'change', render );
+ 
+
         geometry3 = new THREE.BoxGeometry( 2400, 10, 2000 );
         material3 = new THREE.MeshBasicMaterial( { color: 0xa0afaf} );
 
