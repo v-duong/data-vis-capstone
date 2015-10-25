@@ -5,7 +5,7 @@ var exports = module.exports = {};
 var pg = require('pg');
 
 //connect to local postgres database
-//var connectionString = 'postgres://localhost:5432/capstone_data';
+// var connectionString = 'postgres://localhost:5432/mydb';
 
 // connect to heroku's database
 var connectionString = "postgres://aaojwaabmvczuq:aHR5JA0-K0wmk6Q6k6VXXfhChO@ec2-54-197-241-239.compute-1.amazonaws.com:5432/d3so15mog50g7o";
@@ -55,7 +55,7 @@ exports.insertTable = function(tableName, dataSet, callback){
 	if (dataSet.length == 0)
 		callback(false);
 	
-	//console.log(tableName);
+	// console.log(dataSet);
 	tableName = tableName.substr(0, tableName.length-4);
 	tableName = tableName.replace(/ /g, "_");  // table name can't have spaces
 	//console.log(tableName);
@@ -83,7 +83,7 @@ exports.insertTable = function(tableName, dataSet, callback){
 			insertBaseQuery = insertBaseQuery.concat(columnNames[i] + ",");
 		}
 	}
-	//console.log(createTableQuery);
+	// console.log(createTableQuery);
 	client.query(createTableQuery, function(err, rows){
 		if (err){
 			console.log("Could not CREATE table");
