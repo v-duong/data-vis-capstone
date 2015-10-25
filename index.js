@@ -1,20 +1,27 @@
+var exports = module.exports = {};
 var express = require('express');
 var app = express();
 var fs = require('fs');
 var multer = require('multer');
+var bodyParser = require('body-parser')
 
 app.set('port', (process.env.PORT || 4500));
 
 app.set('views', 'views');
 app.set('view engine', 'jade');
-app.use(express.static('public'));
-
+app.use(express.static('public'))
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }))
 
 //Get values from Form:'TestJSON' and pass a JsonObject back to jade -- Newman
+var x = 0;
+var y = 0;
+var z = 0;
+
 app.post('/',function(req,res)
   {
-    var textInJsonFormat = {"first":req.body.text1, "second":req.body.text2, "third":req.body.text3};
-    res.render("index", {Json:textInJsonFormat});
+    x = req.body.X; y = req.body.Y; z = req.body.Z;
+    res.redirect("/scatter");
     res.end("yes");
   });
 
@@ -65,6 +72,7 @@ app.post('/file-upload', file_uploaded.single('datafile'), function(req, res){
 
     // add textBuff into DB
     var myDB = require('./public/js/database.js');
+    console.log(textBuff);
     myDB.insertTable(req.file.originalname, textBuff, function(myRows){
 
       if (myRows == true){
@@ -90,9 +98,11 @@ var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
 
 
+
 app.get('/scatter',function(req,res){
-  res.render('scatter', { title: "scatter"});
-});
+  res.render('scatter', {title: 'scatter', data1:x, data2:y, data3:z});
+})
+
 
 app.get('/bars',function(req, res){
   var client = require('./public/js/database.js');
