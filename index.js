@@ -185,8 +185,7 @@ app.post('/delData', function(req, res){
     console.log(tableName);
     var dropSuccess = false;
     myDB.deleteTable(tableName, function(dropErr){
-      dropSuccess = dropErr;
-
+      res.send(JSON.stringify(dropErr));
     });
     
 });
