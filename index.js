@@ -7,7 +7,7 @@ var bodyParser = require('body-parser')
 
 app.set('port', (process.env.PORT || 4500));
 
-app.set('views', 'views')
+app.set('views', 'views');
 app.set('view engine', 'jade');
 app.use(express.static('public'))
 app.use(bodyParser.json());
@@ -46,12 +46,12 @@ app.get('/uploadPage', function(req, res){
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'public_files/')
+    cb(null, 'public_files/');
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname );
   }
-})
+});
 
 
 var file_uploaded = multer({ storage: storage });
@@ -104,7 +104,6 @@ app.get('/scatter',function(req,res){
 })
 
 
-
 app.get('/bars',function(req, res){
   var client = require('./public/js/database.js');
   if (client == null)
@@ -146,7 +145,7 @@ app.get('/displayData',function(req, res){
     else{
       console.log("Rendering");
       //console.log(myRows);
-      res.end()
+      res.end();
 
     }
   });
@@ -160,7 +159,7 @@ app.post('/deleteData', function(req, res){
     console.log(tableName);
     var dropSuccess;
     myDB.deleteTable(tableName, function(dropErr){
-      dropSuccess = dropErr
+      dropSuccess = dropErr;
     });
 
     // delete the physical file
