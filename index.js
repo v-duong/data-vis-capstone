@@ -7,13 +7,18 @@ var bodyParser = require('body-parser');
 
 app.set('port', (process.env.PORT || 4500));
 
-app.set('views', 'views')
+app.set('views', 'views');
 app.set('view engine', 'jade');
+
 app.use(express.static('public'))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 })); 
+
+
+
+
 
 //Get values from Form:'TestJSON' and pass a JsonObject back to jade -- Newman
 app.post('/',function(req,res)
@@ -55,12 +60,12 @@ app.get('/uploadPage', function(req, res){
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'public_files/')
+    cb(null, 'public_files/');
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname );
   }
-})
+});
 
 
 var file_uploaded = multer({ storage: storage });
@@ -113,7 +118,7 @@ server.listen((process.env.PORT || app.get('port')), function(){
 
 app.get('/scatter',function(req,res){
   res.render('scatter', { title: "scatter"});
-})
+});
 
 app.get('/bars',function(req, res){
   var client = require('./public/js/database.js');
@@ -143,6 +148,7 @@ app.get('/displayData',function(req, res){
   
   res.render('displayData.jade');
 });
+
 
 
 
@@ -179,7 +185,8 @@ app.post('/delData', function(req, res){
     console.log(tableName);
     var dropSuccess = false;
     myDB.deleteTable(tableName, function(dropErr){
-      res.send(JSON.stringify(dropErr));
+      dropSuccess = dropErr;
+
     });
     
 });

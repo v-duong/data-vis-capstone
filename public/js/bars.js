@@ -17,13 +17,18 @@ var camera, scene, renderer,
         camera.position.x = 600;
         camera.lookAt(new THREE.Vector3(0,0,0));
 
+        controls = new THREE.OrbitControls( camera );
+//        controls.damping = 0.2;
+        controls.addEventListener( 'change', render );
+
+
         geometry3 = new THREE.BoxGeometry( 2400, 10, 2000 );
         material3 = new THREE.MeshBasicMaterial( { color: 0xa0afaf} );
 
         mesh3 = new THREE.Mesh( geometry3, material3 );
 
 
-        light = new THREE.DirectionalLight (0xffffff, 0.9 )
+        light = new THREE.DirectionalLight (0xffffff, 0.9 );
         light.position.set (0,700,0);
         light.castShadow = true;
         light.shadowCameraNear = 1;
@@ -38,7 +43,7 @@ var camera, scene, renderer,
         scene.add( mesh3 );
         scene.add( light );
 
-        mesh3.position.y = -50
+        mesh3.position.y = -50;
 
         renderer = new THREE.WebGLRenderer( { alpha: true } );
         renderer.shadowMap.enabled = true;
