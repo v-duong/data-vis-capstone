@@ -83,38 +83,47 @@ var storage = multer.diskStorage({
 var file_uploaded = multer({ storage: storage });
 
 app.post('/file-upload', file_uploaded.single('datafile'), function(req, res){
+  if (req.file == null){
+     res.render('uploadPage', {
+          "fileData" : "Please select a File"
+      });
+     return;
+  }
+
   var tmp_path = req.file.path;
   var target_path = 'public_files/' + req.file.originalname;
   var src = fs.createReadStream(tmp_path);
+ 
   src.on('data', function(fileData){
-    // do the parsing and upload to DB here..
-
     textBuff = fileData.toString();
   });
     // uploaded successfully
   src.on('end', function() {
-    // remove src??
-    console.log("File Loading Complete!");
-
     // add textBuff into DB
     var myDB = require('./public/js/database.js');
-    console.log(textBuff);
+   
     myDB.insertTable(req.file.originalname, textBuff, function(myRows){
-
+      
       if (myRows == true){
         console.log("insert success");
+        // delete the physical file
+        fs.unlinkSync(target_path);
+        res.render('uploadPage', {
+          "fileData" : textBuff
+        });
+        return;
       }
-
       else{
         console.log("insert fail");
+        textBuff = "Upload Failed";
+        res.render('uploadPage', {
+          "fileData" : textBuff
+        });
+        return;
       }
-      // delete the physical file
-      fs.unlinkSync(target_path);
-
+      
     });
-    res.render('uploadPage', {
-        "fileData" : textBuff
-    });
+    
 
   });
   // failed to upload

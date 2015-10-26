@@ -28,9 +28,11 @@ exports.queryDB = function(queryStr, callback){
         console.log("DB FAILED");
         //return null;
         callback(null);
+        return;
       }
       else{
       	callback(rows.rows);
+      	return;
 
       }
     });
@@ -44,9 +46,11 @@ exports.deleteTable = function(tableName, callback){
 		if (err){
 			console.log("Could not drop table");
 			callback(false);
+			return;
 		}
 		else{
 			callback(true);
+			return;
 		}
 	});
 
@@ -56,8 +60,10 @@ exports.deleteTable = function(tableName, callback){
 
 exports.insertTable = function(tableName, dataSet, callback){
 	// make sure dataSet is not empty
-	if (dataSet.length == 0)
+	if (dataSet.length == 0){
 		callback(false);
+		return;
+	}
 
 	tableName = tableName.substr(0, tableName.length-4);
 	tableName = tableName.replace(/ /g, "_");  // table name can't have spaces
@@ -89,46 +95,49 @@ exports.insertTable = function(tableName, dataSet, callback){
 		if (err){
 			console.log("Could not CREATE table");
 			callback(false);
+			return;
+		}
+
+		else {
+			// should have "insert into firsttest (x,y,z) values (" already done in insertTableQuery
+			var insertQuery;
+			for (i = 1; i < dataSet.length; i++){
+				insertQuery = "";
+				var tempRow = dataSet[i].split(",");
+				insertQuery = insertQuery.concat(insertBaseQuery);
+				for (j = 0; j < columnNames.length; j++){
+					if (j == (columnNames.length-1)){
+						if (j >= tempRow.length)
+							insertQuery = insertQuery.concat('null)');
+						else
+							insertQuery = insertQuery.concat(tempRow[j] + ')');
+					}
+					else {
+						if (j >= tempRow.length){
+							insertQuery = insertQuery.concat('null,');
+						}
+						else{
+							insertQuery = insertQuery.concat(tempRow[j] + ',');
+						}
+					}
+
+				}
+
+				client.query(insertQuery, function(err, rows){
+					if (err){
+						console.log("Could not insert data");
+					}
+
+				});
+			}
+			callback(true);
+			return;
 		}
 
 	});
 
-	// should have "insert into firsttest (x,y,z) values (" already done in insertTableQuery
-	var insertQuery;
-	for (i = 1; i < dataSet.length; i++){
-		insertQuery = "";
-		var tempRow = dataSet[i].split(",");
-		insertQuery = insertQuery.concat(insertBaseQuery);
-		for (j = 0; j < columnNames.length; j++){
-			if (j == (columnNames.length-1)){
-				if (j >= tempRow.length)
-					insertQuery = insertQuery.concat('null)');
-				else
-					insertQuery = insertQuery.concat(tempRow[j] + ')');
-			}
-			else {
-				if (j >= tempRow.length){
-					insertQuery = insertQuery.concat('null,');
-				}
-				else{
-					insertQuery = insertQuery.concat(tempRow[j] + ',');
-				}
-			}
-
-		}
-
-		client.query(insertQuery, function(err, rows){
-			if (err){
-				console.log("Could not insert data");
-			}
-
-		});
-	}
-
-
-
-	//client.query("")
-	callback(true);
+	
+	
 
 }
 

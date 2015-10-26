@@ -28,8 +28,6 @@ block what
 			var index = btnID.substring(12); 
 			var fileName = fileListings[parseInt(index)];
 			
-			console.log("lomo");
-			console.log(fileName);
 			$.post('/delData', { tName: fileName }, function(data){
 				console.log(data);
 				if (data == true){
