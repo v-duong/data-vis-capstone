@@ -1,4 +1,4 @@
-@import url("https://roboto-webfont.googlecode.com/svn/trunk/roboto.all.css");
+@import 'https://fonts.googleapis.com/css?family=Roboto:400,300,100,500';
 html,
 body,
 div,
@@ -91,7 +91,8 @@ a img {
   border: none;
 }
 body {
-  font-family: 'Roboto Light';
+  font-family: 'Roboto';
+  font-weight: 400;
   background-color: #4ab1d1;
   color: #fff;
 }
@@ -114,11 +115,17 @@ form input[type = text] {
   width: 400px;
   font-size: 20px;
 }
-form input[type = submit],
-form input[type = button] {
+textarea {
+  width: 300px;
+}
+input[type = submit],
+input[type = button] {
   border-color: #fff;
   border-style: solid;
   border-width: 0px;
+  font-size: 20px;
+  width: 400px;
+  height: 50px;
   font-size: 20px;
   width: 400px;
   height: 50px;
@@ -126,11 +133,22 @@ form input[type = button] {
   text-transform: uppercase;
   color: #fff;
 }
-textarea {
+select {
   width: 300px;
+  background-color: rgba(255,255,255,0.25);
+  font-family: 'Roboto';
+  font-weight: 400;
+  font-size: 20px;
+  color: #fff;
+  height: 50px;
+  border-color: #fff;
+  border-style: solid;
+  border-width: 0px;
+  -webkit-appearance: none;
 }
 .name {
-  font-family: 'Roboto Thin';
+  font-family: 'Roboto';
+  font-weight: 100;
   text-align: left;
   font-size: 60px;
   float: left;
@@ -141,7 +159,8 @@ textarea {
   color: #fff;
 }
 .navigation {
-  font-family: 'Roboto Light';
+  font-family: 'Roboto';
+  font-weight: 300;
   height: 50px;
   font-size: 30px;
   text-align: right;

@@ -1,0 +1,22 @@
+doctype html
+html
+	head
+	title= title
+	body
+block what
+	h2.
+		Please upload your CSV File
+
+	p
+
+	form(action="/file-upload", method="post", enctype="multipart/form-data")
+		input(type="file" accept=".csv", name="datafile")
+		input(type="submit", value="Upload")
+
+	br
+	br
+	
+	ul
+		li
+			a= fileData
+			

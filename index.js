@@ -1,83 +1,129 @@
+var exports = module.exports = {};
 var express = require('express');
-var request = require('request');
-var bodyParser = require('body-parser')
 var app = express();
-
-
-
-
-
-
-var pg = require ('pg');
-//connect to local postgres database
-//var connectionString = 'postgres://localhost:5432/capstone_data';
-
-// connect to heroku's database
-var connectionString = "postgres://aaojwaabmvczuq:aHR5JA0-K0wmk6Q6k6VXXfhChO@ec2-54-197-241-239.compute-1.amazonaws.com:5432/d3so15mog50g7o";
-
-
-var client = new pg.Client(connectionString);
-client.connect(function(err){
-  if (err){
-    app.locals.dbClient = null;
-    console.log("DB ERROR");
-    //console.log("Set dbClient to NULL")
-  }
-  else {
-    app.locals.dbClient = client;
-  }
-
-});
-
-
-
-
+var fs = require('fs');
+var multer = require('multer');
+var bodyParser = require('body-parser')
 
 app.set('port', (process.env.PORT || 4500));
 
-var userg = "init"
-
-app.set('views', 'views')
+app.set('views', 'views');
 app.set('view engine', 'jade');
-
-app.use(bodyParser.urlencoded({ extended: true }));
-
 app.use(express.static('public'))
-
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }))
 
 //Get values from Form:'TestJSON' and pass a JsonObject back to jade -- Newman
+var x = 0;
+var y = 0;
+var z = 0;
+
 app.post('/',function(req,res)
   {
-    var textInJsonFormat = {"first":req.body.text1, "second":req.body.text2, "third":req.body.text3};
-    res.render("index", {Json:textInJsonFormat});
+    x = req.body.X; y = req.body.Y; z = req.body.Z;
+    res.redirect("/scatter");
     res.end("yes");
   });
 
 app.get('/', function (req, res) {
-  res.render('index', { title: "TITLE"});
+  var client = require('./public/js/database.js');
+  var tlist;
+  client.queryDB("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';" , function(tlist){
+    res.render('index', { title: "TITLE", tables : tlist});
+  });
 });
 
+
+app.get('/Uploaded_Files', function(req, res){
+  var fileList = fs.readdirSync('public_files');
+ fileList.splice(0,1);
+
+  res.render('Uploaded_Files', {
+    "showFiles" : fileList
+  });
+});
+
+app.get('/uploadPage', function(req, res){
+  res.render('uploadPage.jade');
+});
+
+
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public_files/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname );
+  }
+});
+
+
+var file_uploaded = multer({ storage: storage });
+
+app.post('/file-upload', file_uploaded.single('datafile'), function(req, res){
+  var tmp_path = req.file.path;
+  var target_path = 'public_files/' + req.file.originalname;
+  var src = fs.createReadStream(tmp_path);
+  src.on('data', function(fileData){
+    // do the parsing and upload to DB here..
+
+    textBuff = fileData.toString();
+  });
+    // uploaded successfully
+  src.on('end', function() {
+    // remove src??
+    console.log("File Loading Complete!");
+
+    // add textBuff into DB
+    var myDB = require('./public/js/database.js');
+    console.log(textBuff);
+    myDB.insertTable(req.file.originalname, textBuff, function(myRows){
+
+      if (myRows == true){
+        console.log("insert success");
+      }
+
+      else{
+        console.log("insert fail");
+      }
+
+    });
+    res.render('uploadPage', {
+        "fileData" : textBuff
+    });
+
+  });
+  // failed to upload
+  src.on('error', function(err) { res.render('back'); });
+});
+
+
+var server = require('http').createServer(app);
+var io = require('socket.io').listen(server);
+
+
+
 app.get('/scatter',function(req,res){
-  res.render('scatter', { title: "scatter"});
+  res.render('scatter', {title: 'scatter', data1:x, data2:y, data3:z});
 })
 
-app.get('/bars',function(req, res){
-  if (client == null)
-    console.log("Why!??!");
-  else {
 
-    //client.query("SELECT * FROM planeinfo", function(err, rows){
-    client.query("select * from randnum" , function(err, rows){
-      if (err){
-        console.log("DB FAILED");
+app.get('/bars',function(req, res){
+  var client = require('./public/js/database.js');
+  if (client == null)
+    console.log("Where is Client?");
+  else {
+    client.queryDB("select * from randnum" , function(myRows){
+      if (myRows == null){
+        console.log("Couldnt access database");
       }
       else{
         var currentRow;
-        for (var i in rows.rows){
-          currentRow = rows.rows[i];
+        for (var i in myRows){
+          currentRow = myRows[i];
         }
           res.render('bars', {
-            _data : rows.rows
+            _data : myRows
           });
       }
     });
@@ -86,6 +132,46 @@ app.get('/bars',function(req, res){
 
 
 
-app.listen(app.get('port'), function(){
-  console.log('app now running on port', app.get('port'))
+app.get('/displayData',function(req, res){
+  res.render('displayData');
+});
+
+
+
+
+app.get('/retrieveData', function(req, res){
+    var myQuery = req.query.myQuery;
+    console.log(myQuery);
+    var myDB = require('./public/js/database.js');
+    myDB.queryDB(myQuery, function(myRows){
+      if (myRows == null){
+        console.log("Couldnt access database");
+      }
+      else{
+        console.log(JSON.stringify(myRows));
+       res.send(JSON.stringify(myRows));
+      }
+    });
+});
+
+app.post('/deleteData', function(req, res){
+    var fileName = req.body.filters;
+    var tableName = fileName.replace(/ /g, "_");
+    tableName = tableName.substr(0, tableName.length-4);
+    var myDB = require('./public/js/database.js');
+    console.log(tableName);
+    var dropSuccess;
+    myDB.deleteTable(tableName, function(dropErr){
+      dropSuccess = dropErr;
+    });
+
+    // delete the physical file
+    fs.unlinkSync('public_files/'.concat(fileName));
+    res.send(JSON.stringify(true));
+});
+
+
+
+server.listen((process.env.PORT || app.get('port')), function(){
+  console.log("Express server listening on port %d ", server.address().port);
 });
