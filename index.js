@@ -26,7 +26,11 @@ app.post('/',function(req,res)
   });
 
 app.get('/', function (req, res) {
-  res.render('index', { title: "TITLE"});
+  var client = require('./public/js/database.js');
+  var tlist;
+  client.queryDB("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';" , function(tlist){
+    res.render('index', { title: "TITLE", tables : tlist});
+  });
 });
 
 
@@ -129,26 +133,25 @@ app.get('/bars',function(req, res){
 
 
 app.get('/displayData',function(req, res){
-  var myDB = require('./public/js/database.js');
-  var CurrentTableToDisplay = app.locals.context;
-  console.log(CurrentTableToDisplay);
-  var myQuery = "select * from ";
-  myQuery = myQuery.concat(CurrentTableToDisplay);
-  //var myRows = myDB.queryDB();
-  //var myRows ;
-  console.log(myQuery);
-  myDB.queryDB(myQuery, function(myRows){
-    if (myRows == null){
-     console.log("Couldnt access database");
-    }
+  res.render('displayData');
+});
 
-    else{
-      console.log("Rendering");
-      //console.log(myRows);
-      res.end();
 
-    }
-  });
+
+
+app.get('/retrieveData', function(req, res){
+    var myQuery = req.query.myQuery;
+    console.log(myQuery);
+    var myDB = require('./public/js/database.js');
+    myDB.queryDB(myQuery, function(myRows){
+      if (myRows == null){
+        console.log("Couldnt access database");
+      }
+      else{
+        console.log(JSON.stringify(myRows));
+       res.send(JSON.stringify(myRows));
+      }
+    });
 });
 
 app.post('/deleteData', function(req, res){

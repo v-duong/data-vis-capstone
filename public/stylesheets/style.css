@@ -115,8 +115,11 @@ form input[type = text] {
   width: 400px;
   font-size: 20px;
 }
-form input[type = submit],
-form input[type = button] {
+textarea {
+  width: 300px;
+}
+input[type = submit],
+input[type = button] {
   border-color: #fff;
   border-style: solid;
   border-width: 0px;
@@ -130,8 +133,18 @@ form input[type = button] {
   text-transform: uppercase;
   color: #fff;
 }
-textarea {
+select {
   width: 300px;
+  background-color: rgba(255,255,255,0.25);
+  font-family: 'Roboto';
+  font-weight: 400;
+  font-size: 20px;
+  color: #fff;
+  height: 50px;
+  border-color: #fff;
+  border-style: solid;
+  border-width: 0px;
+  -webkit-appearance: none;
 }
 .name {
   font-family: 'Roboto';

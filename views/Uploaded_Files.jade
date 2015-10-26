@@ -13,6 +13,14 @@ block what
 			console.log("clicked open!");
 			var index = btnID.substring(10); 
 			var fileName = fileListings[parseInt(index)];
+			var tableName = fileName.substr(0, fileName.length-4);
+			tableName = tableName.replace(/ /g, "_"); 
+
+			var loc = '/displayData?filename=';
+			loc = loc.concat(tableName);
+			console.log(loc);
+			window.location.href = loc;
+
 			// Enter Code here
 		}
 		function deleteFunc(btnID){
