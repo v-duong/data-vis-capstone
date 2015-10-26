@@ -27,10 +27,10 @@ exports.queryDB = function(queryStr, callback){
       }
       else{
       	callback(rows.rows);
-        
+
       }
     });
-   
+
 }
 
 exports.deleteTable = function(tableName, callback){
@@ -44,35 +44,32 @@ exports.deleteTable = function(tableName, callback){
 		else{
 			callback(true);
 		}
-	});	
-	
+	});
+
 }
-	
+
 
 
 exports.insertTable = function(tableName, dataSet, callback){
 	// make sure dataSet is not empty
 	if (dataSet.length == 0)
 		callback(false);
-	
-	// console.log(dataSet);
+
 	tableName = tableName.substr(0, tableName.length-4);
 	tableName = tableName.replace(/ /g, "_");  // table name can't have spaces
-	//console.log(tableName);
 	dataSet = dataSet.split("\r");
 	var columnNames = dataSet[0].split(",");
-	//console.log(dataSet);
 
 
 	//CREATE table firsttest (x TEXT, y TEXT, z TEXT);
 	var createTableQuery = "CREATE TABLE ";
 	createTableQuery = createTableQuery.concat(tableName + " (");
-	
+
 	//insert into firsttest (x,y,z) values (1,3,4);
 	var insertBaseQuery = "INSERT INTO ";
 
 	insertBaseQuery = insertBaseQuery.concat(tableName + " (");
-		
+
 	for (i = 0; i < columnNames.length; i++){
 		if (i == (columnNames.length - 1)){
 			createTableQuery = createTableQuery.concat(columnNames[i] + " TEXT)");
@@ -89,9 +86,9 @@ exports.insertTable = function(tableName, dataSet, callback){
 			console.log("Could not CREATE table");
 			callback(false);
 		}
-		
-	});	
-	
+
+	});
+
 	// should have "insert into firsttest (x,y,z) values (" already done in insertTableQuery
 	var insertQuery;
 	for (i = 1; i < dataSet.length; i++){
@@ -102,7 +99,7 @@ exports.insertTable = function(tableName, dataSet, callback){
 			if (j == (columnNames.length-1)){
 				if (j >= tempRow.length)
 					insertQuery = insertQuery.concat('null)');
-				else  
+				else
 					insertQuery = insertQuery.concat(tempRow[j] + ')');
 			}
 			else {
@@ -115,13 +112,13 @@ exports.insertTable = function(tableName, dataSet, callback){
 			}
 
 		}
-		
+
 		client.query(insertQuery, function(err, rows){
 			if (err){
 				console.log("Could not insert data");
 			}
-		
-		});	
+
+		});
 	}
 
 
