@@ -3,7 +3,6 @@ var express = require('express');
 var app = express();
 var fs = require('fs');
 var multer = require('multer');
-
 var bodyParser = require('body-parser');
 
 
@@ -18,7 +17,7 @@ app.use(express.static('public'))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
-})); 
+}));
 
 
 
@@ -93,7 +92,7 @@ app.post('/file-upload', file_uploaded.single('datafile'), function(req, res){
   var tmp_path = req.file.path;
   var target_path = 'public_files/' + req.file.originalname;
   var src = fs.createReadStream(tmp_path);
- 
+
   src.on('data', function(fileData){
     textBuff = fileData.toString();
   });
@@ -101,9 +100,9 @@ app.post('/file-upload', file_uploaded.single('datafile'), function(req, res){
   src.on('end', function() {
     // add textBuff into DB
     var myDB = require('./public/js/database.js');
-   
+
     myDB.insertTable(req.file.originalname, textBuff, function(myRows){
-      
+
       if (myRows == true){
         console.log("insert success");
         // delete the physical file
@@ -121,9 +120,9 @@ app.post('/file-upload', file_uploaded.single('datafile'), function(req, res){
         });
         return;
       }
-      
+
     });
-    
+
 
   });
   // failed to upload
@@ -169,8 +168,6 @@ app.get('/bars',function(req, res){
 
 
 app.get('/displayData',function(req, res){
-
- //res.render('displayData.jade');
   res.render('displayData');
 });
 
@@ -178,25 +175,19 @@ app.get('/displayData',function(req, res){
 
 
 app.get('/retrieveData', function(req, res){
-
-
     var myQuery = req.query.myQuery;
     console.log(myQuery);
     var myDB = require('./public/js/database.js');
-    //console.log(tableName);
-    //var myQuery = "select * from ";
-    //myQuery = myQuery.concat(tableName);
-
     myDB.queryDB(myQuery, function(myRows){
       if (myRows == null){
         console.log("Couldnt access database");
       }
       else{
         console.log(JSON.stringify(myRows));
-       res.send(JSON.stringify(myRows)); 
+       res.send(JSON.stringify(myRows));
       }
     });
-    
+
 
 });
 
@@ -213,8 +204,5 @@ app.post('/delData', function(req, res){
     myDB.deleteTable(tableName, function(dropErr){
       res.send(JSON.stringify(dropErr));
     });
-    
+
 });
-
-
-

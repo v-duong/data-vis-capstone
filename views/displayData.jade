@@ -6,15 +6,12 @@ html
 	title= title
 	body
 block maintext
-
-	h1 Title
-
 	script(type='text/javascript', src='https://code.jquery.com/jquery-latest.min.js')
 	script(type='text/javascript', src='js/lodash.min.js')
 	script.
 		var tableName = location.search.split('filename=')[1];
 		var query = "select * from " + tableName;
-		
+
 		$.getJSON('/retrieveData', { myQuery : query }, function(data){
 				var columnNames;
 				columnNames = _.keys(data[0]);
@@ -35,7 +32,7 @@ block maintext
 
 			$.getJSON('/retrieveData', { myQuery : getColumnQuery }, function(data){
 				var columnNames = [];
-				
+
 				$.each(data, function(i, f) {
 					columnNames.push(f.column_name);
 				});
@@ -58,7 +55,7 @@ block maintext
 			}
 		);
 
-			
+
 		}
 
 
@@ -69,5 +66,3 @@ block maintext
 
 		table(id="entrydata")
 			tbody
-				
-
