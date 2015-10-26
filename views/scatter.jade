@@ -8,6 +8,8 @@ block three
 	script(src='js/TextGeometry.js')
 	script(src='js/FontUtils.js')
 	script(src='js/helvetiker_regular.typeface.js')
+	script(src='/js/OrbitControls.js')
+	script(src='/js/usercontrol.js')
 	script.
 		var render = function () {
 				requestAnimationFrame( render );
@@ -84,6 +86,8 @@ block three
 			var scene = new THREE.Scene();
 			var camFactor = 130;
 			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+			controls = new THREE.OrbitControls( camera );
+			controls.addEventListener( 'change', render );
 
 			var renderer = new THREE.WebGLRenderer({alpha:true});
 			renderer.setClearColor( 0xffffff, 1);
@@ -135,10 +139,19 @@ block three
 			changePosition(text, 3,0,2);
 			drawNumbers(new THREE.Vector3(0,5.1, 0), new THREE.Vector3(1,0,0), 1, 7);
 
+			var x = #{data1}
+			var y = #{data2}
+			var z = #{data1}
+
+			var geometry = new THREE.SphereGeometry( 0.25, 32, 32 );
+			var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+			var sphere = new THREE.Mesh( geometry, material );
+			sphere.position.set(x, y, z);
+			scene.add( sphere );
+
 			cameraPosition(6, 5, 8);
 			text.lookAt(camera.position);
 			camera.up = new THREE.Vector3(0,0,1);
 			camera.lookAt(new THREE.Vector3(0,0,0));
-
 
 			render();
