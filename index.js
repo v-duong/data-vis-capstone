@@ -1,4 +1,3 @@
-ar exports = module.exports = {};
 var express = require('express');
 var app = express();
 var fs = require('fs');
