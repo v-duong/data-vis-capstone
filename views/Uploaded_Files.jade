@@ -8,13 +8,13 @@ block what
 	script(type='text/javascript', src='https://code.jquery.com/jquery-latest.min.js')
 	script.
 		var fileListings = [];
-		
+
 		function openFunc(btnID) {
 			console.log("clicked open!");
-			var index = btnID.substring(10); 
-			var fileName = fileListings[parseInt(index)];
-			var tableName = fileName.substr(0, fileName.length-4);
-			tableName = tableName.replace(/ /g, "_"); 
+			var index = btnID.substring(10);
+
+			var tableName = fileListings[parseInt(index)];
+
 
 			var loc = '/displayData?filename=';
 			loc = loc.concat(tableName);
@@ -25,12 +25,10 @@ block what
 		}
 		function deleteFunc(btnID){
 
-			var index = btnID.substring(12); 
+			var index = btnID.substring(12);
 			var fileName = fileListings[parseInt(index)];
 
-			$.post('/deleteData', {
-				filters: fileName
-			}, function(data){
+			$.post('/delData', { tName: fileName }, function(data){
 				console.log(data);
 				if (data == true){
 					location.reload();
@@ -39,8 +37,8 @@ block what
 					console.log("It died");
 				}
 			}, 'json');
-			
-			
+
+
 		}
 
 	h1.
@@ -48,10 +46,18 @@ block what
 
 	ul
 		script.
-			fileListings="#{showFiles}".split(",");			
-			
+			var fileListings = [];
+			var json = !{JSON.stringify(showFiles)};
+			for(var i = 0; i < json.length; i++) {
+				//console.log(json[i].table_name);
+				fileListings.push(json[i].table_name);
+			}
+
+
+
+
 		each files, i in showFiles
 			li
-				a= files 
+				a= files.table_name
 				input(type='button', id='openbutton'+i, value='open', onclick='openFunc(this.id)')
 				input(type='button', id='deletebutton'+i, value='delete', onclick='deleteFunc(this.id)')

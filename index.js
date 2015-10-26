@@ -3,15 +3,25 @@ var express = require('express');
 var app = express();
 var fs = require('fs');
 var multer = require('multer');
-var bodyParser = require('body-parser')
+var bodyParser = require('body-parser');
+
+
 
 app.set('port', (process.env.PORT || 4500));
 
 app.set('views', 'views');
 app.set('view engine', 'jade');
+
+
 app.use(express.static('public'))
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+  extended: true
+}));
+
+
+
+
 
 //Get values from Form:'TestJSON' and pass a JsonObject back to jade -- Newman
 var x = 0;
@@ -35,12 +45,23 @@ app.get('/', function (req, res) {
 
 
 app.get('/Uploaded_Files', function(req, res){
-  var fileList = fs.readdirSync('public_files');
- fileList.splice(0,1);
+  //var fileList = fs.readdirSync('public_files');
+  var getTableQuery = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'";
+  var myDB = require('./public/js/database.js');
+  myDB.queryDB(getTableQuery, function(myTables){
+    if (myTables == null){
+      console.log("uh oh");
+    }
+    else{
 
-  res.render('Uploaded_Files', {
-    "showFiles" : fileList
+       res.render('Uploaded_Files', {
+        "showFiles" : myTables
+        });
+    }
+
   });
+  //fileList.splice(0,1);
+
 });
 
 app.get('/uploadPage', function(req, res){
@@ -61,36 +82,47 @@ var storage = multer.diskStorage({
 var file_uploaded = multer({ storage: storage });
 
 app.post('/file-upload', file_uploaded.single('datafile'), function(req, res){
+  if (req.file == null){
+     res.render('uploadPage', {
+          "fileData" : "Please select a File"
+      });
+     return;
+  }
+
   var tmp_path = req.file.path;
   var target_path = 'public_files/' + req.file.originalname;
   var src = fs.createReadStream(tmp_path);
-  src.on('data', function(fileData){
-    // do the parsing and upload to DB here..
 
+  src.on('data', function(fileData){
     textBuff = fileData.toString();
   });
     // uploaded successfully
   src.on('end', function() {
-    // remove src??
-    console.log("File Loading Complete!");
-
     // add textBuff into DB
     var myDB = require('./public/js/database.js');
-    console.log(textBuff);
+
     myDB.insertTable(req.file.originalname, textBuff, function(myRows){
 
       if (myRows == true){
         console.log("insert success");
+        // delete the physical file
+        fs.unlinkSync(target_path);
+        res.render('uploadPage', {
+          "fileData" : textBuff
+        });
+        return;
       }
-
       else{
         console.log("insert fail");
+        textBuff = "Upload Failed";
+        res.render('uploadPage', {
+          "fileData" : textBuff
+        });
+        return;
       }
 
     });
-    res.render('uploadPage', {
-        "fileData" : textBuff
-    });
+
 
   });
   // failed to upload
@@ -100,6 +132,9 @@ app.post('/file-upload', file_uploaded.single('datafile'), function(req, res){
 
 var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
+server.listen((process.env.PORT || app.get('port')), function(){
+  console.log("Express server listening on port %d ", server.address().port);
+});
 
 
 
@@ -152,26 +187,22 @@ app.get('/retrieveData', function(req, res){
        res.send(JSON.stringify(myRows));
       }
     });
+
+
 });
 
-app.post('/deleteData', function(req, res){
-    var fileName = req.body.filters;
-    var tableName = fileName.replace(/ /g, "_");
-    tableName = tableName.substr(0, tableName.length-4);
+
+
+app.post('/delData', function(req, res){
+    //console.log(req);
+    console.log(req.body);
+    var tableName = req.body.tName;
+    //tableName = tableName.substr(0, tableName.length-4);
     var myDB = require('./public/js/database.js');
     console.log(tableName);
-    var dropSuccess;
+    var dropSuccess = false;
     myDB.deleteTable(tableName, function(dropErr){
-      dropSuccess = dropErr;
+      res.send(JSON.stringify(dropErr));
     });
 
-    // delete the physical file
-    fs.unlinkSync('public_files/'.concat(fileName));
-    res.send(JSON.stringify(true));
-});
-
-
-
-server.listen((process.env.PORT || app.get('port')), function(){
-  console.log("Express server listening on port %d ", server.address().port);
 });

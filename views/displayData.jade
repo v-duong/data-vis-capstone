@@ -11,7 +11,7 @@ block maintext
 	script.
 		var tableName = location.search.split('filename=')[1];
 		var query = "select * from " + tableName;
-		
+
 		$.getJSON('/retrieveData', { myQuery : query }, function(data){
 				var columnNames;
 				columnNames = _.keys(data[0]);
@@ -32,7 +32,7 @@ block maintext
 
 			$.getJSON('/retrieveData', { myQuery : getColumnQuery }, function(data){
 				var columnNames = [];
-				
+
 				$.each(data, function(i, f) {
 					columnNames.push(f.column_name);
 				});
@@ -55,7 +55,7 @@ block maintext
 			}
 		);
 
-			
+
 		}
 
 
@@ -66,9 +66,3 @@ block maintext
 
 		table(id="entrydata")
 			tbody
-				
-
-
-				
-						
-		
