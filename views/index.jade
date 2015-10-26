@@ -5,31 +5,24 @@ h1 head
 block maintext
 	script.
 
-		function clickFunc() {
-			//var div = document.getElementById('testform');
-			//div.innerHTML = div.innerHTML + "Hello World!";
-			
-			move();
-			//var div = document.getElementById('body');
-			//div.innerHTML = div.innerHTML + "HI ";
-			//document.write("fajdlkf\n");
-			//document.write("fja;dkssdfasdf\n");
-		}
-		function move() {
+		function clickFunc() {	
 			window.location.href = '/bars'
+		}		
+		
+		function SelectFunc() {	
+			window.location.href = '/displayData?filename=' + $("#listUploaded option:selected").text();
 		}
 
 		function uploadClick(){
 			var windowObjectReference = window.open('/uploadPage', 'Import', 'resizable=0, width=400, height=300,scrollbars=yes,status=yes');
-			
 		}
 		function LoadDataClick(){
 			window.location.href = '/Uploaded_Files'
 		}
 		function goThree(){
 			window.location.href = '/scatter'
-
 		}
+
 
 	p
 
@@ -47,6 +40,12 @@ block maintext
 	form(name='viewUploadedFiles')
 		input(type='button', value='Data Sets', onclick='LoadDataClick()')
 	br
+	select(id='listUploaded')
+		each item in tables
+			option(selected=item.table_name) #{item.table_name}
+	br
+	br
+	input(type='button', value='Get Selected', onclick='SelectFunc()')
 	br
 	br
 	br
@@ -57,28 +56,21 @@ block maintext
 	//1label After submitting values, values will be passed to node. Node will then combine the values into a single Json object and pass it back to the jade.
 
 	form(name='TestJSON', method="POST", action="/")
-		label Value1
+		label X
 			br 
-			input(type='text', name='text1')
+			input(type='text', name='X')
 		br
 		br
-		label Value2
+		label Y
 			br 
-			input(type='text', name='text2')
+			input(type='text', name='Y')
 		br
 		br
-		label Value3
+		label Z
 			br 
-			input(type='text', name='text3')
+			input(type='text', name='Z')
 		br
-		input(type='submit', value='GenerateJsonFiles')
-		//Get the Json object from node and render it as string -- Newman
-		br
-		br
-		label JsonBackFromNode: #{JSON.stringify(Json)}
-
-	form(name = 'three')
-		label goToThree
-			input(type = 'button', value = 'Go', onclick = 'goThree()')
+		label Generate a yellow dot on scatter plot based on given xyz
+		input(type = 'submit', value = 'Go')
 
 	

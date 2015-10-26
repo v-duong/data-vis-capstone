@@ -5,7 +5,11 @@ var exports = module.exports = {};
 var pg = require('pg');
 
 //connect to local postgres database
+
 var connectionString = 'postgres://localhost:5432/capstone_data';
+
+// var connectionString = 'postgres://localhost:5432/mydb';
+
 
 // connect to heroku's database
 //var connectionString = "postgres://aaojwaabmvczuq:aHR5JA0-K0wmk6Q6k6VXXfhChO@ec2-54-197-241-239.compute-1.amazonaws.com:5432/d3so15mog50g7o";
@@ -27,10 +31,10 @@ exports.queryDB = function(queryStr, callback){
       }
       else{
       	callback(rows.rows);
-        
+
       }
     });
-   
+
 }
 
 exports.deleteTable = function(tableName, callback){
@@ -44,35 +48,32 @@ exports.deleteTable = function(tableName, callback){
 		else{
 			callback(true);
 		}
-	});	
-	
+	});
+
 }
-	
+
 
 
 exports.insertTable = function(tableName, dataSet, callback){
 	// make sure dataSet is not empty
 	if (dataSet.length == 0)
 		callback(false);
-	
-	//console.log(tableName);
+
 	tableName = tableName.substr(0, tableName.length-4);
 	tableName = tableName.replace(/ /g, "_");  // table name can't have spaces
-	//console.log(tableName);
 	dataSet = dataSet.split("\r");
 	var columnNames = dataSet[0].split(",");
-	//console.log(dataSet);
 
 
 	//CREATE table firsttest (x TEXT, y TEXT, z TEXT);
 	var createTableQuery = "CREATE TABLE ";
 	createTableQuery = createTableQuery.concat(tableName + " (");
-	
+
 	//insert into firsttest (x,y,z) values (1,3,4);
 	var insertBaseQuery = "INSERT INTO ";
 
 	insertBaseQuery = insertBaseQuery.concat(tableName + " (");
-		
+
 	for (i = 0; i < columnNames.length; i++){
 		if (i == (columnNames.length - 1)){
 			createTableQuery = createTableQuery.concat(columnNames[i] + " TEXT)");
@@ -83,15 +84,15 @@ exports.insertTable = function(tableName, dataSet, callback){
 			insertBaseQuery = insertBaseQuery.concat(columnNames[i] + ",");
 		}
 	}
-	//console.log(createTableQuery);
+	// console.log(createTableQuery);
 	client.query(createTableQuery, function(err, rows){
 		if (err){
 			console.log("Could not CREATE table");
 			callback(false);
 		}
-		
-	});	
-	
+
+	});
+
 	// should have "insert into firsttest (x,y,z) values (" already done in insertTableQuery
 	var insertQuery;
 	for (i = 1; i < dataSet.length; i++){
@@ -102,7 +103,7 @@ exports.insertTable = function(tableName, dataSet, callback){
 			if (j == (columnNames.length-1)){
 				if (j >= tempRow.length)
 					insertQuery = insertQuery.concat('null)');
-				else  
+				else
 					insertQuery = insertQuery.concat(tempRow[j] + ')');
 			}
 			else {
@@ -115,13 +116,13 @@ exports.insertTable = function(tableName, dataSet, callback){
 			}
 
 		}
-		
+
 		client.query(insertQuery, function(err, rows){
 			if (err){
 				console.log("Could not insert data");
 			}
-		
-		});	
+
+		});
 	}
 
 

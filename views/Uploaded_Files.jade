@@ -12,7 +12,9 @@ block what
 		function openFunc(btnID) {
 			console.log("clicked open!");
 			var index = btnID.substring(10); 
+
 			var tableName = fileListings[parseInt(index)];
+
 
 			var loc = '/displayData?filename=';
 			loc = loc.concat(tableName);
