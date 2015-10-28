@@ -21,6 +21,8 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 
 
 
+// Database mapping
+// csv validation
 
 //Get values from Form:'TestJSON' and pass a JsonObject back to jade -- Newman
 var x = 0;
