@@ -58,9 +58,7 @@ exports.deleteTable = function(tableName, callback){
 
 // returns 0 for text, 1 for int, 2 for float(real)
 function findType(dataSet, colNum){
-	//console.log(dataSet);
-	//console.log(colNum);
-	//return 0;
+
 	var retVal = 1; // default for int
 	var curRow;
 	for (var i = 1; i < dataSet.length; i++){
@@ -100,7 +98,6 @@ exports.insertTable = function(tableName, dataSet, callback){
 	for (i = 0; i < columnNames.length - 1; i++){
 		colTypes.push(findType(dataSet, i));
 		switch(colTypes[i]){
-		//switch(findType(dataSet[i])){
 			case 0:
 				createTableQuery = createTableQuery.concat(columnNames[i] + " TEXT,");
 				break;
@@ -164,7 +161,6 @@ exports.insertTable = function(tableName, dataSet, callback){
 							case 1:
 							case 2:
 								insertQuery = insertQuery.concat(tempRow[j] + ',');
-								//insertQuery = insertQuery.concat((tempRow[j].substring(1, tempRow[j].length-1)) + ',');
 								break;
 							default:
 								break;
@@ -185,7 +181,6 @@ exports.insertTable = function(tableName, dataSet, callback){
 							case 1:
 							case 2:
 								insertQuery = insertQuery.concat(tempRow[j] + ')');
-								//insertQuery = insertQuery.concat((tempRow[j].substring(1, tempRow[j].length-1)) + ')');
 								break;
 							default:
 								break;
