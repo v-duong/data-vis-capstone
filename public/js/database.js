@@ -56,10 +56,26 @@ exports.deleteTable = function(tableName, callback){
 
 }
 
-
+// returns 0 for text, 1 for int, 2 for float(real)
+function findType(dataSet, colNum){
+	//console.log(dataSet);
+	//console.log(colNum);
+	//return 0;
+	var retVal = 1; // default for int
+	var curRow;
+	for (var i = 1; i < dataSet.length; i++){
+		curRow = dataSet[i].split(",");
+		if (isNaN(curRow[colNum]))  // found a non numerical number. Column will be text
+			return 0;
+		if (curRow[colNum] != Math.floor(curRow[colNum]))  //Col will be float, unless text is found. 
+			retVal = 2;
+	}
+	return retVal;
+}
 
 exports.insertTable = function(tableName, dataSet, callback){
 	// make sure dataSet is not empty
+
 	if (dataSet.length == 0){
 		callback(false);
 		return;
@@ -68,9 +84,10 @@ exports.insertTable = function(tableName, dataSet, callback){
 	tableName = tableName.substr(0, tableName.length-4);
 	tableName = tableName.replace(/ /g, "_");  // table name can't have spaces
 	dataSet = dataSet.split("\r");
+	
 	var columnNames = dataSet[0].split(",");
-
-
+	
+	var colTypes = [];
 	//CREATE table firsttest (x TEXT, y TEXT, z TEXT);
 	var createTableQuery = "CREATE TABLE ";
 	createTableQuery = createTableQuery.concat(tableName + " (");
@@ -80,17 +97,46 @@ exports.insertTable = function(tableName, dataSet, callback){
 
 	insertBaseQuery = insertBaseQuery.concat(tableName + " (");
 
-	for (i = 0; i < columnNames.length; i++){
-		if (i == (columnNames.length - 1)){
-			createTableQuery = createTableQuery.concat(columnNames[i] + " TEXT)");
-			insertBaseQuery = insertBaseQuery.concat(columnNames[i] + ") values (");
+	for (i = 0; i < columnNames.length - 1; i++){
+		colTypes.push(findType(dataSet, i));
+		switch(colTypes[i]){
+		//switch(findType(dataSet[i])){
+			case 0:
+				createTableQuery = createTableQuery.concat(columnNames[i] + " TEXT,");
+				break;
+			case 1: 
+				createTableQuery = createTableQuery.concat(columnNames[i] + " INTEGER,");
+				break;
+			case 2:
+				createTableQuery = createTableQuery.concat(columnNames[i] + " REAL,");
+				break;
+			default:
+				break;
 		}
-		else {
-			createTableQuery = createTableQuery.concat(columnNames[i] + " TEXT,");
-			insertBaseQuery = insertBaseQuery.concat(columnNames[i] + ",");
-		}
+		
+		insertBaseQuery = insertBaseQuery.concat(columnNames[i] + ",");
+		
 	}
-	// console.log(createTableQuery);
+
+	// adding last column name
+	colTypes.push(findType(dataSet, i));
+	switch(colTypes[i]) {
+		case 0:
+				createTableQuery = createTableQuery.concat(columnNames[i] + " TEXT)");
+				break;
+			case 1: 
+				createTableQuery = createTableQuery.concat(columnNames[i] + " INTEGER)");
+				break;
+			case 2:
+				createTableQuery = createTableQuery.concat(columnNames[i] + " REAL)");
+				break;
+			default:
+				break;
+	}
+	
+	insertBaseQuery = insertBaseQuery.concat(columnNames[i] + ") values (");
+
+
 	client.query(createTableQuery, function(err, rows){
 		if (err){
 			console.log("Could not CREATE table");
@@ -105,24 +151,48 @@ exports.insertTable = function(tableName, dataSet, callback){
 				insertQuery = "";
 				var tempRow = dataSet[i].split(",");
 				insertQuery = insertQuery.concat(insertBaseQuery);
-				for (j = 0; j < columnNames.length; j++){
-					if (j == (columnNames.length-1)){
-						if (j >= tempRow.length)
-							insertQuery = insertQuery.concat('null)');
-						else
-							insertQuery = insertQuery.concat(tempRow[j] + ')');
+				for (j = 0; j < columnNames.length-1; j++){
+					
+					if (j >= tempRow.length){
+						insertQuery = insertQuery.concat('null,');
 					}
-					else {
-						if (j >= tempRow.length){
-							insertQuery = insertQuery.concat('null,');
+					else{
+						switch (colTypes[j]){
+							case 0:
+								insertQuery = insertQuery.concat("'" + tempRow[j] + "'" + ',');
+								break;
+							case 1:
+							case 2:
+								insertQuery = insertQuery.concat(tempRow[j] + ',');
+								//insertQuery = insertQuery.concat((tempRow[j].substring(1, tempRow[j].length-1)) + ',');
+								break;
+							default:
+								break;
 						}
-						else{
-							insertQuery = insertQuery.concat(tempRow[j] + ',');
-						}
+						
 					}
+					
 
 				}
 
+				if (j >= tempRow.length)
+					insertQuery = insertQuery.concat('null)');
+				else{
+					switch (colTypes[j]){
+							case 0:
+								insertQuery = insertQuery.concat("'" + tempRow[j] + "'" + ')');
+								break;
+							case 1:
+							case 2:
+								insertQuery = insertQuery.concat(tempRow[j] + ')');
+								//insertQuery = insertQuery.concat((tempRow[j].substring(1, tempRow[j].length-1)) + ')');
+								break;
+							default:
+								break;
+						}
+				}
+
+				console.log(insertQuery);
 				client.query(insertQuery, function(err, rows){
 					if (err){
 						console.log("Could not insert data");
@@ -130,6 +200,10 @@ exports.insertTable = function(tableName, dataSet, callback){
 
 				});
 			}
+
+
+
+
 			callback(true);
 			return;
 		}
