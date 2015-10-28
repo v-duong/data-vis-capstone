@@ -12,24 +12,60 @@
 		<script src="js/three.min.js"></script>
 		<script>
 			// Our Javascript will go here.
-			var renderer = new THREE.webGLRenderer();
-			renderer.setSize(window.innerWidth, window.innerHeight);
-			document.body.appendChild(renderer.domElement);
-			renderer.shadowMapEnabled = true;
-
-			var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
-			camera.position.y = -450;
-			camera.position.x = 400;
-			camera.rotation.x = .75;
-
 			var scene = new THREE.Scene();
-			var plane new THREE.Mesh(new THREE.planeGeometry(300, 300), new THREE.MeshNormalMaterial());
+			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+
+			var renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+
+
+			var plane = new THREE.Mesh(new THREE.PlaneGeometry(300, 300), new THREE.MeshNormalMaterial({ color: 0x00ff00 }));
 			scene.add(plane);
 
-			function render() {
+			camera.position.y = -450;
+			camera.position.z = 400;
+			camera.rotation.x = 0.75;
+
+			var render = function () {
 				requestAnimationFrame( render );
-				renderer.render( scene, camera );
-			}
+
+				plane.rotation.x += 0.1;
+				//plane.rotation.y += 0.1;
+
+				renderer.render(scene, camera);
+			};
+
+			render();
+		</script>
+		<script>
+			// Our Javascript will go here.
+			var scene = new THREE.Scene();
+			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+
+			var renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+
+
+			var plane = new THREE.Mesh(new THREE.PlaneGeometry(300, 300), new THREE.MeshNormalMaterial({ color: 0x00ff00 }));
+			var plane2 = new THREE.Mesh(new THREE.PlaneGeometry(300, 300), new THREE.MeshNormalMaterial({ color: 0x00ffff }));
+			scene.add(plane);
+			scene.add(plane2);
+
+			camera.position.y = -450;
+			camera.position.z = 400;
+			camera.rotation.x = 0.75;
+
+			var render = function () {
+				requestAnimationFrame( render );
+
+				plane.rotation.x += 0.1;
+				//plane.rotation.y += 0.1;
+
+				renderer.render(scene, camera);
+			};
+
 			render();
 		</script>
 	</body>
