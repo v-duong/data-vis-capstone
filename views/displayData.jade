@@ -83,7 +83,7 @@ block maintext
 			}
 
 			else {
-				
+
 			}
 
 
@@ -105,7 +105,7 @@ block maintext
 				});
 				// requesting sort
 				//var sortQuery = "select * from " + tableName + " ORDER BY (substring(" + columnNames[2] + ", '^[0-9]+'))::int, substring(" + columnNames[2] + ", '[^0-9_].*$')";
-				sortQuery = "select * from test_4y order by ";
+				sortQuery = "select * from ".concat(tableName + " order by ");
 				sortQuery = sortQuery.concat(selectedCol);
 				$.getJSON('/retrieveData', { myQuery : filterQuery }, function(data){
 					var colNames;
@@ -148,8 +148,11 @@ block maintext
 				});
 				// requesting sort
 				//var sortQuery = "select * from " + tableName + " ORDER BY (substring(" + columnNames[2] + ", '^[0-9]+'))::int, substring(" + columnNames[2] + ", '[^0-9_].*$')";
-				sortQuery = "select * from test_4y order by ";
+				
+				sortQuery = "select * from ".concat(tableName + " order by ");
+
 				sortQuery = sortQuery.concat(selectedCol);
+				console.log(sortQuery);
 				$.getJSON('/retrieveData', { myQuery : sortQuery }, function(data){
 					var colNames;
 					colNames = _.keys(data[0]);
