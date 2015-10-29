@@ -1,0 +1,60 @@
+extend template
+block maintext
+	.off-canvas-wrap(data-offcanvas='')
+		.inner-wrap
+			nav.tab-bar
+				section.left-small
+					a.left-off-canvas-toggle.menu-icon(href='#')
+						span
+			aside.left-off-canvas-menu
+				ul.off-canvas-list
+					li
+						label Visualization
+					li
+						a(href='#') Option 1
+					li
+						a.off-canvas-submenu-call(href='#')
+							| Option 2 
+							span.right + 
+					ul.off-canvas-submenu
+						li
+							a(href='#') Sub menu 1
+						li
+							a(href='#') Sub menu 2
+						li
+							a(href='#') Sub menu 3
+					li
+						label Data Filters
+					li
+						a(href='#') Option 3
+					li
+						a.off-canvas-submenu-call(href='#')
+							| Option 4 
+							span.right + 
+					ul.off-canvas-submenu
+						li
+							a(href='#') Sub menu 1
+						li
+							a(href='#') Sub menu 2
+						li
+							a(href='#') Sub menu 3
+					li
+						a(href='#') Option 5
+					li
+						a(href='#') Option 6
+			section.main-section
+				h1.text-center Something Important
+				img(src='http://placeimg.com/1640/480/arch/grayscale', alt='')
+				h1.text-center Something Important
+			a.exit-off-canvas
+	script(type='text/javascript', src='https://code.jquery.com/jquery-latest.min.js')
+	script(type='text/javascript', src='js/lodash.min.js')
+	script(type='text/javascript', src='/js/foundation.min.js')
+	script.
+		$(document).foundation();
+		$(".off-canvas-submenu").hide();
+		$(".off-canvas-submenu-call").click(function() {
+			var icon = $(this).parent().next(".off-canvas-submenu").is(':visible') ? '+' : '-';
+			$(this).parent().next(".off-canvas-submenu").slideToggle('fast');
+			$(this).find("span").text(icon);
+		});
