@@ -10,6 +10,7 @@
 	</head>
 	<body>
 		<script src="js/three.min.js"></script>
+		<script src="js/threex.domevents.js"></script>
 		<script>
 
 			var Width = window.innerWidth;
@@ -48,6 +49,49 @@
 			camera.position.z = 700;
 			camera.rotation.x = 0;
 
+			//init domEvents
+			var domEvents	= new THREEx.DomEvents(camera, renderer.domElement);
+
+			THREEx.DomEvents.eventNames.forEach(function(eventName){
+				if( eventName === 'mousemove' )	return
+					domEvents.addEventListener(plane, eventName, function(event){
+					var domElement	= document.querySelector('#logs');
+					domElement.innerHTML = event.type + '<br/>' + domElement.innerHTML;
+					}, false);
+			});
+	
+
+			var mouse	= {x : 0, y : 0};
+			document.addEventListener('mousemove', function(event){
+				mouse.x	= (event.clientX / window.innerWidth )-0.5;
+				mouse.y	= (event.clientY / window.innerHeight)-0.5;
+			}, false);
+			var onRenderFcts= [];
+			onRenderFcts.push(function(delta, now){
+				camera.position.x += 30*(mouse.x*250 - camera.position.x) * (delta*3);
+				camera.position.y += 30*(mouse.y*250 - camera.position.y) * (delta*3);
+				camera.lookAt( scene.position );
+			});
+			// render the scene
+			onRenderFcts.push(function(){
+				renderer.render( scene, camera );		
+			});
+
+			//loop runner
+			var lastTimeMsec= null;
+			requestAnimationFrame(function animate(nowMsec){
+				// keep looping
+				requestAnimationFrame( animate );
+				// measure time
+				lastTimeMsec	= lastTimeMsec || nowMsec-1000/60;
+				var deltaMsec	= Math.min(200, nowMsec - lastTimeMsec);
+				lastTimeMsec	= nowMsec;
+				// call each update function
+				onRenderFcts.forEach(function(onRenderFct){
+					onRenderFct(deltaMsec/1000, nowMsec/1000);
+				});
+			});
+
 			var render = function () {
 				requestAnimationFrame( render );
 
@@ -55,10 +99,11 @@
 				plane2.rotation.x += 0.1;
 				//plane.rotation.y += 0.1;
 				//camera.position.z += 1;
-				camera.rotation.y += 0.001*Math.cos(timer1);
-				camera.rotation.x += 0.0005*Math.cos(timer2);
-				timer1+=0.01;
-				timer2+=0.003;
+				//camera.rotation.y += 0.001*Math.cos(timer1);
+				//camera.rotation.x += 0.0005*Math.cos(timer2);
+				//timer1+=0.01;
+				//timer2+=0.003;
+
 
 				renderer.render(scene, camera);
 			};
