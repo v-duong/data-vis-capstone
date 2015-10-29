@@ -19,10 +19,10 @@
 			var timer2 = 0;
 			// Our Javascript will go here.
 			var scene = new THREE.Scene();
-			var camera = new THREE.PerspectiveCamera( 75, 500/500, 0.1, 100000 );
+			var camera = new THREE.PerspectiveCamera( 75, Width/Height, 0.1, 100000 );
 
 			var renderer = new THREE.WebGLRenderer();
-			renderer.setSize( 500, 500 );
+			renderer.setSize( Width, Height );
 			document.body.appendChild( renderer.domElement );
 
 
@@ -36,21 +36,46 @@
         	var cube = new THREE.Mesh(new THREE.BoxGeometry(200, 200, 200), new THREE.MeshNormalMaterial({ color: 0xffff00 }));
         	var cube2 = new THREE.Mesh(new THREE.BoxGeometry(100, 200, 100), new THREE.MeshNormalMaterial({ color: 0x0fff0f }));        	
         	var plane3 = new THREE.Mesh(new THREE.PlaneGeometry(32000, 20000),backimg);
-        	plane.overdraw = true;
-        	plane.position.x = -200
+        	var geometry = new THREE.SphereGeometry( 100, 32, 32 );
+			var sphere = new THREE.Mesh( geometry, new THREE.MeshNormalMaterial( {color: 0x0f00f0}));
+
+			var geometry = new THREE.CylinderGeometry( 100, 100, 300, 16 );
+			var cylinder = new THREE.Mesh( geometry,new THREE.MeshNormalMaterial( {color: 0xffff00} ) );
+        	//plane.overdraw = true;
+        	//plane.position.x = -200;
+        	//sphere.position.x = -200;
+        	cylinder.position.x=-200;
         	cube.position.x = 200;
         	cube2.position.z = -200;
         	plane3.overdraw = true;
         	plane3.position.z = -8000;
 
-        	scene.add(plane);
+        	//scene.add(plane);
         	scene.add(cube);
         	scene.add(cube2);
         	scene.add(plane3);
+        	scene.add(cylinder);
+        	//scene.add( sphere );
 
 			camera.position.y = 0;
 			camera.position.z = 700;
 			camera.rotation.x = 0;
+
+			//add 3 points light
+			(function(){
+			// add a ambient light
+				var light	= new THREE.AmbientLight( 0x020202 );
+				light.position.set(300, 100, -200);
+				scene.add( light );
+				// add a light in front
+				var light	= new THREE.DirectionalLight('white', 1);
+				light.position.set(500, 500, 200);
+				scene.add( light );
+				// add a light behind
+				var light	= new THREE.DirectionalLight('white', 0.75);
+				light.position.set(-500, -500, 200);
+				scene.add( light );	
+			})()
 
 			//init domEvents
 			var domEvents	= new THREEx.DomEvents(camera, renderer.domElement);
@@ -71,8 +96,8 @@
 			}, false);
 			var onRenderFcts= [];
 			onRenderFcts.push(function(delta, now){
-				camera.position.x += 30*(mouse.x*250 - camera.position.x) * (delta*3);
-				camera.position.y += 30*(mouse.y*250 - camera.position.y) * (delta*3);
+				camera.position.x += 30*(mouse.x*200 - camera.position.x) * (delta*3);
+				camera.position.y += 30*(mouse.y*200 - camera.position.y) * (delta*3);
 				camera.lookAt( scene.position );
 			});
 			// render the scene
@@ -106,7 +131,7 @@
 				//camera.position.z += 1;
 				//camera.rotation.y += 0.001*Math.cos(timer1);
 				//camera.rotation.x += 0.0005*Math.cos(timer2);
-				//timer1+=0.01;
+				timer1+=0.01;
 				//timer2+=0.003;
 
 
