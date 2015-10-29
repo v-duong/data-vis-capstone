@@ -11,19 +11,133 @@ block maintext
 	script.
 		var tableName = location.search.split('filename=')[1];
 		var query = "select * from " + tableName;
+
+		var getColumnTypeQuery = "SELECT column_name ,data_type FROM information_schema.columns where table_name = '";
+		getColumnTypeQuery = getColumnTypeQuery.concat(tableName + "'");
+
+
+
 		$.getJSON('/retrieveData', { myQuery : query }, function(data){
 				var columnNames;
 				columnNames = _.keys(data[0]);
-				//var in = columnNames.indexOf("");
-				//l[in];
-				$("tbody").append("<tr><td>"+ columnNames[2] + "</td>><td>" + columnNames[1] + "</td></tr>");
+				
+				$("tbody").append("<tr>");
+				$.each(columnNames, function(iter, colN){
+					$("tbody").append("<td>" + colN + "</td>");
+				});
+				$("tbody").append("</tr>");
+				//$("tbody").append("<td>"+ columnNames[2] + "</td><td>" + columnNames[1] + "</td></tr>");
+				
+
 				$.each(data, function(i, f) {
 					var l = _.values(f);
-					$("tbody").append("<tr><td>" + l[2] + "</td><td>" + l[1] +"</td></tr>" );
+
+					$("tbody").append("<tr>");
+					$.each(l, function(iter2, colN2){
+						$("tbody").append("<td>" + colN2 + "</td>");
+					});
+					$("tbody").append("</tr>");
 				});
+
+				//SELECT column_name ,data_type FROM information_schema.columns where table_name = 'randnum';
+				// get ColumnName/ColumnType 
+
+				$.getJSON('/retrieveData', {myQuery : getColumnTypeQuery}, function(data2){
+					$("optionList").html("");
+					var tempStr;
+									
+					//$("#dropDown").append($("<select id='listUploaded'>"))
+
+					$.each(data2, function(j, k){
+						var m = _.values(k);
+						console.log(m[0]);
+						tempStr = '<option selected="'+m[0] + '">' + m[0] +'</option>';
+						console.log(tempStr);
+
+						$("#listUploaded").append(tempStr);
+
+						
+
+					});
+					
+				});
+
 			}
 		);
+
+
+		function FilterData(){
+			var selectedCol = $("#listUploaded option:selected").text();
+			var filterfrom = $("#filterFrom").val();
+			var filterto = $("#filterTo").val();
+			
+			if ((filterfrom == "") && (filterto == "")){
+
+			}
+
+			else if (filterfrom == ""){
+
+			}
+			else if (filterto == ""){
+
+			}
+
+			else {
+				
+			}
+
+
+			var getColumnQuery = "SELECT column_name FROM information_schema.columns where table_name = '" + tableName + "'";
+			
+
+
+			if (parseFloat(filterto) < parseFloat(filterfrom)){
+				$("tbody").html("");
+				return;
+			}
+			var filterQuery = "SELECT * from " + tableName + " where " + selectedCol + " > " + filterfrom + " AND " + selectedCol + " < " + filterto ;
+			console.log(filterQuery);
+			var getColumnQuery = "SELECT column_name FROM information_schema.columns where table_name = '" + tableName + "'";
+			$.getJSON('/retrieveData', { myQuery : getColumnQuery }, function(data){
+				var columnNames = [];
+				$.each(data, function(i, f) {
+					columnNames.push(f.column_name);
+				});
+				// requesting sort
+				//var sortQuery = "select * from " + tableName + " ORDER BY (substring(" + columnNames[2] + ", '^[0-9]+'))::int, substring(" + columnNames[2] + ", '[^0-9_].*$')";
+				sortQuery = "select * from test_4y order by ";
+				sortQuery = sortQuery.concat(selectedCol);
+				$.getJSON('/retrieveData', { myQuery : filterQuery }, function(data){
+					var colNames;
+					colNames = _.keys(data[0]);
+					$("tbody").html("");
+					
+					$("tbody").append("<tr>");
+					$.each(colNames, function(iter, colN){
+						$("tbody").append("<td>" + colN + "</td>");
+					});
+					$("tbody").append("</tr>");
+
+					$.each(data, function(j, g) {
+						var l = _.values(g);
+
+						$("tbody").append("<tr>");
+						$.each(l, function(iter2, colN2){
+							$("tbody").append("<td>" + colN2 + "</td>");
+						});
+						$("tbody").append("</tr>");
+
+						});
+					}
+				);
+			}
+		);
+			return;
+
+		}
+
 		function SortData(){
+			var selectedCol = $("#listUploaded option:selected").text();
 			console.log(tableName);
 			//var getTableQuery = "SELECT table_name FROM information_schema.columns WHERE table_schema = 'public'";
 			var getColumnQuery = "SELECT column_name FROM information_schema.columns where table_name = '" + tableName + "'";
@@ -33,15 +147,29 @@ block maintext
 					columnNames.push(f.column_name);
 				});
 				// requesting sort
-				var sortQuery = "select * from " + tableName + " ORDER BY (substring(" + columnNames[2] + ", '^[0-9]+'))::int, substring(" + columnNames[2] + ", '[^0-9_].*$')";
+				//var sortQuery = "select * from " + tableName + " ORDER BY (substring(" + columnNames[2] + ", '^[0-9]+'))::int, substring(" + columnNames[2] + ", '[^0-9_].*$')";
+				sortQuery = "select * from test_4y order by ";
+				sortQuery = sortQuery.concat(selectedCol);
 				$.getJSON('/retrieveData', { myQuery : sortQuery }, function(data){
 					var colNames;
 					colNames = _.keys(data[0]);
 					$("tbody").html("");
-					$("tbody").append("<tr><td>"+ colNames[2] + "</td>><td>" + colNames[1] + "</td></tr>");
+					
+					$("tbody").append("<tr>");
+					$.each(colNames, function(iter, colN){
+						$("tbody").append("<td>" + colN + "</td>");
+					});
+					$("tbody").append("</tr>");
+
 					$.each(data, function(j, g) {
 						var l = _.values(g);
-						$("tbody").append("<tr><td>" + l[2] + "</td><td>" + l[1] +"</td></tr>" );
+
+						$("tbody").append("<tr>");
+						$.each(l, function(iter2, colN2){
+							$("tbody").append("<td>" + colN2 + "</td>");
+						});
+						$("tbody").append("</tr>");
+
 						});
 					}
 				);
@@ -49,9 +177,24 @@ block maintext
 		);
 		}
 	p
+		div(id='dropDown')
+			select(id='listUploaded')
+				
+		br
 		form(name='viewUploadedFiles')
 			input(type='button', value='Sort', onclick='SortData()')
+			br 
+			br
+			br
+		form(name="Filter_data")
+			input(type="text" id="filterFrom") 
+			&nbsp &nbsp &nbsp To &nbsp &nbsp &nbsp 
+			input(type="text" id="filterTo")
+			br
+			br
+			input(type='button', value='Filter', onclick='FilterData()')
 
 
 		table(id="entrydata")
 			tbody
+

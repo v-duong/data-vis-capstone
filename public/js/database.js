@@ -74,6 +74,8 @@ function findType(dataSet, colNum){
 exports.insertTable = function(tableName, dataSet, callback){
 	// make sure dataSet is not empty
 
+
+
 	if (dataSet.length == 0){
 		callback(false);
 		return;
@@ -82,8 +84,10 @@ exports.insertTable = function(tableName, dataSet, callback){
 	tableName = tableName.substr(0, tableName.length-4);
 	tableName = tableName.replace(/ /g, "_");  // table name can't have spaces
 	dataSet = dataSet.split("\r");
-	
+	console.log("\n\n\nHERE!!!");
+	//console.log(dataSet[0]);
 	var columnNames = dataSet[0].split(",");
+
 	
 	var colTypes = [];
 	//CREATE table firsttest (x TEXT, y TEXT, z TEXT);
@@ -133,6 +137,7 @@ exports.insertTable = function(tableName, dataSet, callback){
 	
 	insertBaseQuery = insertBaseQuery.concat(columnNames[i] + ") values (");
 
+	//console.log(createTableQuery);
 
 	client.query(createTableQuery, function(err, rows){
 		if (err){
@@ -187,8 +192,9 @@ exports.insertTable = function(tableName, dataSet, callback){
 						}
 				}
 
-				console.log(insertQuery);
+				//console.log(insertQuery);
 				client.query(insertQuery, function(err, rows){
+
 					if (err){
 						console.log("Could not insert data");
 					}

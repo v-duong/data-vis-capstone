@@ -96,12 +96,12 @@ app.post('/file-upload', file_uploaded.single('datafile'), function(req, res){
 
   src.on('data', function(fileData){
     textBuff = fileData.toString();
-  });
-    // uploaded successfully
-  src.on('end', function() {
+    
+    src.on('end', function() {
     // add textBuff into DB
+    
     var myDB = require('./public/js/database.js');
-
+    console.log("oh god");
     myDB.insertTable(req.file.originalname, textBuff, function(myRows){
 
       if (myRows == true){
@@ -123,9 +123,12 @@ app.post('/file-upload', file_uploaded.single('datafile'), function(req, res){
       }
 
     });
+    });
 
 
   });
+    // uploaded successfully
+  
   // failed to upload
   src.on('error', function(err) { res.render('back'); });
 });
