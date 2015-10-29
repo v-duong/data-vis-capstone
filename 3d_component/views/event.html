@@ -33,16 +33,19 @@
     		});
         	// plane
         	var plane = new THREE.Mesh(new THREE.PlaneGeometry(300, 300),img);
-        	var plane2 = new THREE.Mesh(new THREE.BoxGeometry(100, 100, 100), new THREE.MeshNormalMaterial({ color: 0xffff00 }));
+        	var cube = new THREE.Mesh(new THREE.BoxGeometry(200, 200, 200), new THREE.MeshNormalMaterial({ color: 0xffff00 }));
+        	var cube2 = new THREE.Mesh(new THREE.BoxGeometry(100, 200, 100), new THREE.MeshNormalMaterial({ color: 0x0fff0f }));        	
         	var plane3 = new THREE.Mesh(new THREE.PlaneGeometry(32000, 20000),backimg);
         	plane.overdraw = true;
         	plane.position.x = -200
-        	plane2.position.x = 200;
+        	cube.position.x = 200;
+        	cube2.position.z = -200;
         	plane3.overdraw = true;
         	plane3.position.z = -8000;
 
         	scene.add(plane);
-        	scene.add(plane2);
+        	scene.add(cube);
+        	scene.add(cube2);
         	scene.add(plane3);
 
 			camera.position.y = 0;
@@ -96,7 +99,9 @@
 				requestAnimationFrame( render );
 
 				//plane.rotation.y += 0.1;
-				plane2.rotation.x += 0.1;
+				cube.rotation.x += 0.1;
+				cube2.rotation.z += 0.1;
+				cube2.rotation.y += 0.03;
 				//plane.rotation.y += 0.1;
 				//camera.position.z += 1;
 				//camera.rotation.y += 0.001*Math.cos(timer1);
