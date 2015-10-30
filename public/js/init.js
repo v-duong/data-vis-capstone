@@ -1,6 +1,6 @@
-var camera, scene, renderer, geometry, material, mesh
+var camera, scene, renderer
 
-init()
+var meshes = []
 
 
 
@@ -17,7 +17,7 @@ $("#VisualList").change(function(){
 
 function visualSelected() {
 	var dropDownSelected = $("#VisualList option:selected").val();
-	
+
 	switch(dropDownSelected){
 		case 'bar':
 			console.log('bar');
@@ -37,11 +37,11 @@ function generateBarFilters(){
 
 
 
-	//Columns for X 
-	
-	
-	//Columns for Y 
-	
+	//Columns for X
+
+
+	//Columns for Y
+
 
 	//Columns for Z
 }
@@ -54,4 +54,10 @@ function generateBar(){
 	initbars();
 	animate();
 	addBar(1 * 50, 150 * 2, 1 * 50);
+}
+function clearmeshes() {
+  for (var i = 0; i < meshes.length; i++) {
+    scene.remove(meshes[i]);
+  }
+  meshes = [];
 }

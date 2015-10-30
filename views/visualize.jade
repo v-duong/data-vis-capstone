@@ -1,7 +1,5 @@
 extend vistemplate
 block sidelist
-
-
 	ul.off-canvas-list
 		li
 			label Visualization
@@ -11,19 +9,19 @@ block sidelist
 			select(id='VisualList')
 				option(value='' selected='selected' disabled="disabled") Choose Visual
 				option(value='bar') bar
-				option(value='scatter') scatter 
-		li 
+				option(value='scatter') scatter
+		li
 			select(id='TableList')
 				option(value='' selected='selected' disabled="disabled") Choose Table
 				each item in tables
 					option(selected=item.table_name) #{item.table_name}
 		li
 			input(type='button', value='Apply', onclick='visualSelected()')
-		
+
 		li
 			a.off-canvas-submenu-call(href='#')
-				| Option 2 
-				span.right + 
+				| Option 2
+				span.right +
 
 		ul#filters.off-canvas-submenu
 			li
@@ -31,20 +29,19 @@ block sidelist
 			li
 				a(href='#') Sub menu 2
 			li
-				a(href='#') Sub menu 3		
+				a(href='#') Sub menu 3
 
 		li
 			a.off-canvas-submenu-call(href='#')
-				| Option 2 
-				span.right + 
-		
+				| Option 2
+				span.right +
+
 		ul#columns.off-canvas-submenu
-		
+
 
 block scripts
-	script(src='js/three.min.js')
+	script(src='/js/three.min.js')
 	script(src='/js/OrbitControls.js')
-	script(src='/js/usercontrol.js')
 	script(src='/js/init.js')
 	script(src='/js/bars.js')
 	script(type='text/javascript').
