@@ -191,8 +191,9 @@ app.get('/displayData',function(req, res){
   res.render('displayData');
 });
 
-
-
+app.get('/visualize',function(req, res){
+  res.render('visualize');
+});
 
 app.get('/retrieveData', function(req, res){
     var myQuery = req.query.myQuery;
