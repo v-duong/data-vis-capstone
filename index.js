@@ -209,7 +209,12 @@ app.get('/displayData',function(req, res){
 });
 
 app.get('/visualize',function(req, res){
-  res.render('visualize');
+  var client = require('./public/js/database.js');
+  var tlist;
+  client.queryDB("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';" , function(tlist){
+    res.render('visualize', { tables : tlist});
+  });
+
 });
 
 app.get('/retrieveData', function(req, res){
@@ -220,6 +225,7 @@ app.get('/retrieveData', function(req, res){
         console.log("Couldnt access database");
       }
       else{
+        console.log(JSON.stringify(myRows))
        res.send(JSON.stringify(myRows));
       }
     });
