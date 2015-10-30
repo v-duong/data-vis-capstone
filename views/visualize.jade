@@ -4,23 +4,22 @@ block sidelist
 		li
 			label Visualization
 		li
-			a(href='#') Option 3
-		li
 			select(id='VisualList')
 				option(value='' selected='selected' disabled="disabled") Choose Visual
 				option(value='bar') bar
 				option(value='scatter') scatter
 		li
+			label Table
+		li
 			select(id='TableList')
 				option(value='' selected='selected' disabled="disabled") Choose Table
 				each item in tables
-					option(selected=item.table_name) #{item.table_name}
-		li
-			input(type='button', value='Apply', onclick='visualSelected()')
+					option(value=item.table_name) #{item.table_name}
+	
 
 		li
 			a.off-canvas-submenu-call(href='#')
-				| Option 2
+				| Filters
 				span.right +
 
 		ul#filters.off-canvas-submenu
@@ -32,11 +31,8 @@ block sidelist
 				a(href='#') Sub menu 3
 
 		li
-			a.off-canvas-submenu-call(href='#')
-				| Option 2
-				span.right +
-
-		ul#columns.off-canvas-submenu
+			input(type='button', value='Apply', onclick='displayVisuals()')
+		
 
 
 block scripts

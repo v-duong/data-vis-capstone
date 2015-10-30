@@ -11,14 +11,10 @@ function init(){
 }
 
 
+
 $("#VisualList").change(function(){
-	console.log($("#VisualList option:selected").val());
-});
-
-function visualSelected() {
-	var dropDownSelected = $("#VisualList option:selected").val();
-
-	switch(dropDownSelected){
+	var tableSelected = $("#VisualList option:selected").val();
+	switch(tableSelected){
 		case 'bar':
 			console.log('bar');
 			generateBar();
@@ -30,6 +26,53 @@ function visualSelected() {
 			console.log('broke');
 			break;
 	}
+
+});
+
+// table selected, time to show columns 
+$("#TableList").change(function(){
+	var tableSelected = $("#TableList option:selected").val();
+	console.log(tableSelected);
+	var getColumnTypeQuery = "SELECT column_name ,data_type FROM information_schema.columns where table_name = '";
+	getColumnTypeQuery = getColumnTypeQuery.concat(tableSelected + "'");
+	console.log(getColumnTypeQuery);
+	
+	$("#filters.off-canvas-submenu").html("");
+	$.getJSON('/retrieveData', { myQuery : getColumnTypeQuery }, function(data){
+		// create a dropdown list
+		
+		
+		var htmlStr = '';
+		//$("#filters.off-canvas-submenu").append('<li><select>');
+
+		// populate dropdown list with columnNames and Values
+		for (var i = 0; i < data.length; i++){
+			//$("#filters.off-canvas-submenu").append('<option value="' + data[i].data_type + '">' + data[i].column_name + '</option>');
+			htmlStr = htmlStr.concat('<option value="' + data[i].data_type + '">' + data[i].column_name + '</option>');
+		}
+
+
+		//$.each(data, function(j, g){
+			
+		//});
+		htmlStr = htmlStr.concat('</select></li>');
+		$("#filters.off-canvas-submenu").append('<li><select id="x">' + htmlStr);
+		$("#filters.off-canvas-submenu").append('<li><select id="y">' + htmlStr);
+		$("#filters.off-canvas-submenu").append('<li><select id="z">' + htmlStr);
+
+	});
+	
+
+	
+
+});
+
+
+function displayVisuals() {
+	var dropDownSelected = $("#VisualList option:selected").val();
+	var tableSelected = $("#TableList option:selected").val();
+
+
 }
 
 function generateBarFilters(){

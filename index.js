@@ -208,6 +208,7 @@ app.get('/retrieveData', function(req, res){
         console.log("Couldnt access database");
       }
       else{
+        console.log(JSON.stringify(myRows))
        res.send(JSON.stringify(myRows));
       }
     });
