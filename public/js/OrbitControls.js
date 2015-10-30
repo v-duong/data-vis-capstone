@@ -29,15 +29,7 @@ THREE.OrbitControls = function ( object, domElement ) {
   // API
 
   // Set to false to disable this control
-  this.enabled = false;
-  $( ".visual" ).mouseover(function() {
-    this.enabled = true;
-    console.log("EF");
-  });
-  $( ".visual" ).mouseleave(function() {
-    this.enabled = false;
-    console.log("EFsss");
-  });
+  this.enabled = true;
   // "target" sets the location of focus, where the control orbits around
   // and where it pans with respect to.
   this.target = new THREE.Vector3();

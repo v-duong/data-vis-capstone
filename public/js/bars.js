@@ -7,13 +7,11 @@ function initbars() {
   camera.position.x = 600;
   camera.lookAt(new THREE.Vector3(0, 0, 0));
 
-  controls = new THREE.OrbitControls(camera);
-  //				controls.damping = 0.2;
-  controls.addEventListener('change', render);
-
   geometry3 = new THREE.BoxGeometry(2400, 10, 2000);
-  material3 = new THREE.MeshBasicMaterial({
-    color: 0xa0afaf
+  material3 = new THREE.MeshNormalMaterial({
+    color: 0xa0afaf,
+    transparent: true,
+    opacity: 0.5
   });
 
   mesh3 = new THREE.Mesh(geometry3, material3);
@@ -26,6 +24,10 @@ function initbars() {
     alpha: true
   });
   renderer.setSize(window.innerWidth, window.innerHeight);
+
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
+    //				controls.damping = 0.2;
+    controls.addEventListener('change', render);
 
   $('.visual').append(renderer.domElement);
 }
@@ -52,7 +54,7 @@ function addBar(x, y, z) {
   });
   geometry.colorsNeedUpdate = true;
   mesh = new THREE.Mesh(geometry, material);
-  mesh.position.y = 10 + y / 2;
+  mesh.position.y = -200;
   mesh.position.x = x - 500;
   mesh.position.z = z;
   scene.add(mesh);
