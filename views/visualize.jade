@@ -4,18 +4,40 @@ block sidelist
 		li
 			label Visualization
 		li
-			a(href='#') option 3
+			select(id='VisualList')
+				option(value='' selected='selected' disabled="disabled") Choose Visual
+				option(value='bar') bar
+				option(value='scatter') scatter
 		li
-			select
-				option test
-				option sfs
+			label Table
+		li
+			select(id='TableList')
+				option(value='' selected='selected' disabled="disabled") Choose Table
+				each item in tables
+					option(value=item.table_name) #{item.table_name}
+	
+
+		li
+			a.off-canvas-submenu-call(href='#')
+				| Filters
+				span.right +
+
+		ul#filters.off-canvas-submenu
+			li
+				a(href='#') Sub menu 1
+			li
+				a(href='#') Sub menu 2
+			li
+				a(href='#') Sub menu 3
+
+		li
+			input(type='button', value='Apply', onclick='displayVisuals()')
+		
+
+
 block scripts
 	script(src='/js/three.min.js')
 	script(src='/js/OrbitControls.js')
 	script(src='/js/init.js')
 	script(src='/js/bars.js')
-	script.
-		init();
-		initbars();
-		animate();
-		addBar(1,1440,12);
+	script(type='text/javascript').

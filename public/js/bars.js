@@ -7,6 +7,7 @@ function initbars() {
   camera.position.x = 600;
   camera.lookAt(new THREE.Vector3(0, 0, 0));
 
+
   geometry3 = new THREE.BoxGeometry(2400, 10, 2000);
   material3 = new THREE.MeshNormalMaterial({
     color: 0xa0afaf,
@@ -25,11 +26,12 @@ function initbars() {
   });
   renderer.setSize(window.innerWidth, window.innerHeight);
 
-    controls = new THREE.OrbitControls(camera, renderer.domElement);
-    //				controls.damping = 0.2;
-    controls.addEventListener('change', render);
+  $('.visual').append( renderer.domElement );
 
-  $('.visual').append(renderer.domElement);
+
+  controls = new THREE.OrbitControls(camera, renderer.domElement);
+  //        controls.damping = 0.2;
+  controls.addEventListener('change', render);
 }
 
 function animate() {
