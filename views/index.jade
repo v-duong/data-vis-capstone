@@ -1,4 +1,4 @@
-extend template
+extend navtemplate
 
 h1 head
 
@@ -6,7 +6,7 @@ block maintext
 	script.
 
 		function clickFunc() {	
-			window.location.href = '/bars'
+			window.location.href = '/visualize'
 		}		
 		
 		function SelectFunc() {	
@@ -22,55 +22,54 @@ block maintext
 		function goThree(){
 			window.location.href = '/scatter'
 		}
+	.main-content
+		p
 
+		form(name='testform')
+			label Data Search
+				br
+				input(type='text', name='username', id='user')
+				br
+				input(type='button', value='Search', onclick='clickFunc()')
+		br
+		br
+		form(name='importData')
+			input(type='button', value='Import', onclick='uploadClick()')
+		br
+		form(name='viewUploadedFiles')
+			input(type='button', value='Data Sets', onclick='LoadDataClick()')
+		br
+		select(id='listUploaded')
+			each item in tables
+				option(selected=item.table_name) #{item.table_name}
+		br
+		br
+		input(type='button', value='Get Selected', onclick='SelectFunc()')
+		br
+		br
+		br
+		br
+		br
 
-	p
+		//This form take three input and pass them to the node -- Newman
+		//1label After submitting values, values will be passed to node. Node will then combine the values into a single Json object and pass it back to the jade.
 
-	form(name='testform')
-		label Data Search
+		form(name='TestJSON', method="POST", action="/")
+			label X
+				br 
+				input(type='text', name='X')
 			br
-			input(type='text', name='username', id='user')
 			br
-			input(type='button', value='Search', onclick='clickFunc()')
-	br
-	br
-	form(name='importData')
-		input(type='button', value='Import', onclick='uploadClick()')
-	br
-	form(name='viewUploadedFiles')
-		input(type='button', value='Data Sets', onclick='LoadDataClick()')
-	br
-	select(id='listUploaded')
-		each item in tables
-			option(selected=item.table_name) #{item.table_name}
-	br
-	br
-	input(type='button', value='Get Selected', onclick='SelectFunc()')
-	br
-	br
-	br
-	br
-	br
+			label Y
+				br 
+				input(type='text', name='Y')
+			br
+			br
+			label Z
+				br 
+				input(type='text', name='Z')
+			br
+			label Generate a yellow dot on scatter plot based on given xyz
+			input(type = 'submit', value = 'Go')
 
-	//This form take three input and pass them to the node -- Newman
-	//1label After submitting values, values will be passed to node. Node will then combine the values into a single Json object and pass it back to the jade.
-
-	form(name='TestJSON', method="POST", action="/")
-		label X
-			br 
-			input(type='text', name='X')
-		br
-		br
-		label Y
-			br 
-			input(type='text', name='Y')
-		br
-		br
-		label Z
-			br 
-			input(type='text', name='Z')
-		br
-		label Generate a yellow dot on scatter plot based on given xyz
-		input(type = 'submit', value = 'Go')
-
-	
+		

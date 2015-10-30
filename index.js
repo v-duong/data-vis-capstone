@@ -152,17 +152,33 @@ app.post('/file-upload', file_uploaded.single('datafile'), function(req, res){
 
 
 var server = require('http').createServer(app);
-var io = require('socket.io').listen(server);
 server.listen((process.env.PORT || app.get('port')), function(){
   console.log("Express server listening on port %d ", server.address().port);
 });
 
 
 
-app.get('/scatter',function(req,res){
-  res.render('scatter', {title: 'scatter', data1:x, data2:y, data3:z});
-})
+// app.get('/scatter',function(req,res){
+//   res.render('scatter', {title: 'scatter', data1:x, data2:y, data3:z});
+// })
 
+app.get('/scatter',function(req, res){
+  var client = require('./public/js/database.js');
+  if (client == null)
+    console.log("cannot get database");
+  else {
+    client.queryDB("select * from smartphonestestexcel" , function(myRows){
+      if (myRows == null){
+        console.log("query fail");
+      }
+      else{
+          res.render('scatter', {
+            _data : myRows
+          });
+      }
+    });
+  }
+});
 
 app.get('/bars',function(req, res){
   var client = require('./public/js/database.js');
@@ -192,8 +208,9 @@ app.get('/displayData',function(req, res){
   res.render('displayData');
 });
 
-
-
+app.get('/visualize',function(req, res){
+  res.render('visualize');
+});
 
 app.get('/retrieveData', function(req, res){
     var myQuery = req.query.myQuery;
