@@ -2,14 +2,14 @@
 .header {
   text-align: center;
   background-color: #333333;
-  padding: 2rem; }
+  padding: 1rem; }
   .header .main-header {
     color: #fff; }
 
 .header-subnav {
   float: none;
   position: relative;
-  top: 2rem;
+  top: 1rem;
   text-align: center;
   margin-bottom: 0; }
   .header-subnav li {
