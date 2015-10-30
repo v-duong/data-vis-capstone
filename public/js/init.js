@@ -16,32 +16,27 @@ $("#VisualList").change(function(){
 	var tableSelected = $("#VisualList option:selected").val();
 	switch(tableSelected){
 		case 'bar':
-			console.log('bar');
-			generateBar();
 			break;
 		case 'scatter':
-			console.log('scatter');
 			break;
 		default:
-			console.log('broke');
 			break;
 	}
 
 });
 
-// table selected, time to show columns 
+// table selected, time to show columns
 $("#TableList").change(function(){
 	var tableSelected = $("#TableList option:selected").val();
-	console.log(tableSelected);
 	var getColumnTypeQuery = "SELECT column_name ,data_type FROM information_schema.columns where table_name = '";
 	getColumnTypeQuery = getColumnTypeQuery.concat(tableSelected + "'");
 	console.log(getColumnTypeQuery);
-	
+
 	$("#filters.off-canvas-submenu").html("");
 	$.getJSON('/retrieveData', { myQuery : getColumnTypeQuery }, function(data){
 		// create a dropdown list
-		
-		
+
+
 		var htmlStr = '';
 		//$("#filters.off-canvas-submenu").append('<li><select>');
 
@@ -53,7 +48,7 @@ $("#TableList").change(function(){
 
 
 		//$.each(data, function(j, g){
-			
+
 		//});
 		htmlStr = htmlStr.concat('</select></li>');
 		$("#filters.off-canvas-submenu").append('<li><select id="x">' + htmlStr);
@@ -61,9 +56,9 @@ $("#TableList").change(function(){
 		$("#filters.off-canvas-submenu").append('<li><select id="z">' + htmlStr);
 
 	});
-	
 
-	
+
+
 
 });
 
@@ -90,17 +85,35 @@ function generateBarFilters(){
 }
 
 function generateBar(){
-
+  clearmeshes();
 	generateBarFilters();
 
-	init();
-	initbars();
-	animate();
-	addBar(1 * 50, 150 * 2, 1 * 50);
+  init();
+  initbars();
+  animate();
+
+  var tableSelected = $("#TableList option:selected").val();
+  var x = $("#x option:selected").text();
+  var y = $("#y option:selected").text();
+  var z = $("#z option:selected").text();
+
+  var getColumnTypeQuery = "SELECT " + x + ", " + y + ", " + z + " where table_name = '" + tableSelected + "'";
+  console.log(getColumnTypeQuery);
+  var test;
+  $.getJSON('/retrieveData', { myQuery : getColumnTypeQuery }, function(data){
+    test = data;
+    renderData(data);
+  });
+
 }
 function clearmeshes() {
   for (var i = 0; i < meshes.length; i++) {
     scene.remove(meshes[i]);
   }
   meshes = [];
+}
+
+
+function fetchData(){
+
 }

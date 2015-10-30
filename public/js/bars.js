@@ -69,19 +69,11 @@ function addBar(x, y, z) {
 }
 
 function createDictionary(_json) {
-  if (typeof _json.x[0] === 'string')
-    var uniqx = _.uniq(_json.x);
-  if (typeof _json.y[0] === 'string')
-    var uniqy = _.uniq(_json.y);
-  if (typeof _json.z[0] === 'string')
-    var uniqz = _.uniq(_json.z);
-  var dict = [uniqx, uniqy, uniqz]
-  return dict
+  var uniqarr = _.uniq(_json.column_name);
+  return uniqarr
 }
 
 function renderData(data) {
-  var d;
-  var dict = createDictionary(data);
   for (var i = 0; i < data.length; i++) {
     d = data[i];
     addBar(d.x * 50, d.y * 2, d.z * 50);
