@@ -1,0 +1,14 @@
+extend vistemplate
+block list
+	
+block scripts
+	script(src='js/three.min.js')
+	script(src='/js/OrbitControls.js')
+	script(src='/js/usercontrol.js')
+	script(src='/js/init.js')
+	script(src='/js/bars.js')
+	script(type='text/javascript').
+		init();
+		initbars();
+		animate();
+		addBar(1 * 50, 150 * 2, 1 * 50);
