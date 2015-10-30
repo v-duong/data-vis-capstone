@@ -104,7 +104,6 @@ exports.insertTable = function(tableName, dataSet, callback){
 
 //exports.insertTable = function(fileName, filePath, callback){
 	// make sure dataSet is not empty
-
 	if (dataSet.length == 0){
 		callback(false);
 		return;
@@ -116,8 +115,6 @@ exports.insertTable = function(tableName, dataSet, callback){
 	dataSet = dataSet.split("\r");
 	//console.log(dataSet[0]);
 	var columnNames = dataSet[0].split(",");
-
-	
 	var colTypes = [];
 	//CREATE table firsttest (x TEXT, y TEXT, z TEXT);
 	var createTableQuery = "CREATE TABLE ";
