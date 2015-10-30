@@ -103,12 +103,7 @@ function findType(dataSet, colNum){
 exports.insertTable = function(tableName, dataSet, callback){
 
 //exports.insertTable = function(fileName, filePath, callback){
-
-
-
 	// make sure dataSet is not empty
-
-
 
 	if (dataSet.length == 0){
 		callback(false);

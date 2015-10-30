@@ -152,7 +152,6 @@ app.post('/file-upload', file_uploaded.single('datafile'), function(req, res){
 
 
 var server = require('http').createServer(app);
-var io = require('socket.io').listen(server);
 server.listen((process.env.PORT || app.get('port')), function(){
   console.log("Express server listening on port %d ", server.address().port);
 });
