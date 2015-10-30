@@ -3,6 +3,7 @@
 var exports = module.exports = {};
 
 var pg = require('pg');
+var moment = require('moment');
 
 //connect to local postgres database
 
@@ -56,23 +57,58 @@ exports.deleteTable = function(tableName, callback){
 
 }
 
-// returns 0 for text, 1 for int, 2 for float(real)
+
+function isADate(dateStr){
+
+	var formats = ["MM/DD/YY H:mm", "MM/DD/YY HH:mm", "M/DD/YY H:mm", "M/D/YY H:mm", "MM/D/YY H:mm"];
+	if (moment(dateStr, formats, true).isValid()){
+		return true;
+	}
+	return false;
+	
+
+}
+
+// returns 0 for text, 2 for float(double precision), 3 for date
 function findType(dataSet, colNum){
 
-	var retVal = 1; // default for int
+	var retVal = 0; // default for int
 	var curRow;
 	for (var i = 1; i < dataSet.length; i++){
 		curRow = dataSet[i].split(",");
+		// ignore NULL or empty
+		if ((curRow[colNum]) == "" || (curRow[colNum] == "NULL")){
+			continue; 
+		}
+
+		// if a date is found, and its the first .. assume column will contain date
+		// Must do this orelse too slow
+		if (retVal == 0){
+			if (isADate(curRow[colNum])){
+				return 3;
+			}
+
+		}
+		
 		if (isNaN(curRow[colNum]))  // found a non numerical number. Column will be text
 			return 0;
-		if (curRow[colNum] != Math.floor(curRow[colNum]))  //Col will be float, unless text is found. 
-			retVal = 2;
+		
+		retVal = 2;
 	}
+			
+	
 	return retVal;
 }
 
 exports.insertTable = function(tableName, dataSet, callback){
+
+//exports.insertTable = function(fileName, filePath, callback){
+
+
+
 	// make sure dataSet is not empty
+
+
 
 	if (dataSet.length == 0){
 		callback(false);
@@ -81,9 +117,11 @@ exports.insertTable = function(tableName, dataSet, callback){
 
 	tableName = tableName.substr(0, tableName.length-4);
 	tableName = tableName.replace(/ /g, "_");  // table name can't have spaces
-	dataSet = dataSet.split("\r");
 	
+	dataSet = dataSet.split("\r");
+	//console.log(dataSet[0]);
 	var columnNames = dataSet[0].split(",");
+
 	
 	var colTypes = [];
 	//CREATE table firsttest (x TEXT, y TEXT, z TEXT);
@@ -101,11 +139,11 @@ exports.insertTable = function(tableName, dataSet, callback){
 			case 0:
 				createTableQuery = createTableQuery.concat(columnNames[i] + " TEXT,");
 				break;
-			case 1: 
-				createTableQuery = createTableQuery.concat(columnNames[i] + " INTEGER,");
-				break;
 			case 2:
-				createTableQuery = createTableQuery.concat(columnNames[i] + " REAL,");
+				createTableQuery = createTableQuery.concat(columnNames[i] + " double precision,");
+				break;
+			case 3:
+				createTableQuery = createTableQuery.concat(columnNames[i] + " timestamp,");
 				break;
 			default:
 				break;
@@ -119,20 +157,21 @@ exports.insertTable = function(tableName, dataSet, callback){
 	colTypes.push(findType(dataSet, i));
 	switch(colTypes[i]) {
 		case 0:
-				createTableQuery = createTableQuery.concat(columnNames[i] + " TEXT)");
-				break;
-			case 1: 
-				createTableQuery = createTableQuery.concat(columnNames[i] + " INTEGER)");
-				break;
-			case 2:
-				createTableQuery = createTableQuery.concat(columnNames[i] + " REAL)");
-				break;
-			default:
-				break;
+			createTableQuery = createTableQuery.concat(columnNames[i] + " TEXT)");
+			break;
+		case 2:
+			createTableQuery = createTableQuery.concat(columnNames[i] + " double precision)");
+			break;
+		case 3:
+			createTableQuery = createTableQuery.concat(columnNames[i] + " timestamp)");
+			break;
+		default:
+			break;
 	}
 	
 	insertBaseQuery = insertBaseQuery.concat(columnNames[i] + ") values (");
 
+	//console.log(createTableQuery);
 
 	client.query(createTableQuery, function(err, rows){
 		if (err){
@@ -150,7 +189,7 @@ exports.insertTable = function(tableName, dataSet, callback){
 				insertQuery = insertQuery.concat(insertBaseQuery);
 				for (j = 0; j < columnNames.length-1; j++){
 					
-					if (j >= tempRow.length){
+					if ((j >= tempRow.length) || (tempRow[j] == "NULL") || (tempRow[j] == "")){
 						insertQuery = insertQuery.concat('null,');
 					}
 					else{
@@ -158,9 +197,11 @@ exports.insertTable = function(tableName, dataSet, callback){
 							case 0:
 								insertQuery = insertQuery.concat("'" + tempRow[j] + "'" + ',');
 								break;
-							case 1:
 							case 2:
 								insertQuery = insertQuery.concat(tempRow[j] + ',');
+								break;
+							case 3: 
+								insertQuery = insertQuery.concat("timestamp '" + tempRow[j] + "'," );
 								break;
 							default:
 								break;
@@ -171,26 +212,31 @@ exports.insertTable = function(tableName, dataSet, callback){
 
 				}
 
-				if (j >= tempRow.length)
+				if ((j >= tempRow.length) || (tempRow[j] == "NULL") || (tempRow[j] == ""))
 					insertQuery = insertQuery.concat('null)');
+			
 				else{
 					switch (colTypes[j]){
 							case 0:
 								insertQuery = insertQuery.concat("'" + tempRow[j] + "'" + ')');
 								break;
-							case 1:
 							case 2:
 								insertQuery = insertQuery.concat(tempRow[j] + ')');
+								break;
+								case 3: 
+								insertQuery = insertQuery.concat("timestamp '" + tempRow[j] + "')" );
 								break;
 							default:
 								break;
 						}
 				}
 
-				console.log(insertQuery);
+				
 				client.query(insertQuery, function(err, rows){
+
 					if (err){
-						console.log("Could not insert data");
+
+						console.log("Could not insert data", insertQuery);
 					}
 
 				});

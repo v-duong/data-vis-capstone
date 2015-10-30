@@ -37,6 +37,7 @@ app.post('/',function(req,res)
   });
 
 app.get('/', function (req, res) {
+  
   var client = require('./public/js/database.js');
   var tlist;
   client.queryDB("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';" , function(tlist){
@@ -92,26 +93,43 @@ app.post('/file-upload', file_uploaded.single('datafile'), function(req, res){
 
   var tmp_path = req.file.path;
   var target_path = 'public_files/' + req.file.originalname;
+  var textBuff = "";
+  // reading Line by Line
+/*
+  var rl = require('readline').createInterface({
+    terminal: false,
+    input: fs.createReadStream(tmp_path)
+  });
+
+  rl.on('line', function(line){
+    console.log('1:', line);
+  });
+
+*/
   var src = fs.createReadStream(tmp_path);
 
   src.on('data', function(fileData){
-    textBuff = fileData.toString();
+    textBuff = textBuff.concat(fileData.toString());
   });
+
+
+
     // uploaded successfully
   src.on('end', function() {
     // add textBuff into DB
+   
     var myDB = require('./public/js/database.js');
-
+  
     myDB.insertTable(req.file.originalname, textBuff, function(myRows){
 
       if (myRows == true){
         console.log("insert success");
         // delete the physical file
-        fs.unlinkSync(target_path);
+        
         res.render('uploadPage', {
           "fileData" : textBuff
         });
-        return;
+        
       }
       else{
         console.log("insert fail");
@@ -119,15 +137,17 @@ app.post('/file-upload', file_uploaded.single('datafile'), function(req, res){
         res.render('uploadPage', {
           "fileData" : textBuff
         });
-        return;
+        
       }
+      fs.unlinkSync(target_path);
 
     });
-
-
   });
+
+
   // failed to upload
   src.on('error', function(err) { res.render('back'); });
+  
 });
 
 
@@ -178,14 +198,12 @@ app.get('/visualize',function(req, res){
 
 app.get('/retrieveData', function(req, res){
     var myQuery = req.query.myQuery;
-    console.log(myQuery);
     var myDB = require('./public/js/database.js');
     myDB.queryDB(myQuery, function(myRows){
       if (myRows == null){
         console.log("Couldnt access database");
       }
       else{
-        console.log(JSON.stringify(myRows));
        res.send(JSON.stringify(myRows));
       }
     });
@@ -196,12 +214,8 @@ app.get('/retrieveData', function(req, res){
 
 
 app.post('/delData', function(req, res){
-    //console.log(req);
-    console.log(req.body);
     var tableName = req.body.tName;
-    //tableName = tableName.substr(0, tableName.length-4);
     var myDB = require('./public/js/database.js');
-    console.log(tableName);
     var dropSuccess = false;
     myDB.deleteTable(tableName, function(dropErr){
       res.send(JSON.stringify(dropErr));
