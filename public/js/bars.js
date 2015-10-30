@@ -2,7 +2,6 @@ var meshes = [];
 
 function initbars() {
 
-  document.addEventListener('mousedown', onDocumentMouseDown_Ortho, false);
 
   //camera = new THREE.PerspectiveCamera( 85, window.innerWidth / window.innerHeight, 1, 10000 );
   camera = new THREE.OrthographicCamera(window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, 1, 100000);
@@ -12,9 +11,6 @@ function initbars() {
   camera.position.x = 600;
   camera.lookAt(new THREE.Vector3(0, 0, 0));
 
-  controls = new THREE.OrbitControls(camera);
-  //				controls.damping = 0.2;
-  controls.addEventListener('change', render);
 
 
   geometry3 = new THREE.BoxGeometry(2400, 10, 2000);
@@ -36,6 +32,11 @@ function initbars() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 
   $('.visual').append( renderer.domElement );
+
+  
+  controls = new THREE.OrbitControls(camera, renderer.domElement);
+  //        controls.damping = 0.2;
+  controls.addEventListener('change', render);
 }
 
 function animate() {
