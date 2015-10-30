@@ -158,10 +158,27 @@ server.listen((process.env.PORT || app.get('port')), function(){
 
 
 
-app.get('/scatter',function(req,res){
-  res.render('scatter', {title: 'scatter', data1:x, data2:y, data3:z});
-})
+// app.get('/scatter',function(req,res){
+//   res.render('scatter', {title: 'scatter', data1:x, data2:y, data3:z});
+// })
 
+app.get('/scatter',function(req, res){
+  var client = require('./public/js/database.js');
+  if (client == null)
+    console.log("cannot get database");
+  else {
+    client.queryDB("select * from smartphonestestexcel" , function(myRows){
+      if (myRows == null){
+        console.log("query fail");
+      }
+      else{
+          res.render('scatter', {
+            _data : myRows
+          });
+      }
+    });
+  }
+});
 
 app.get('/bars',function(req, res){
   var client = require('./public/js/database.js');
