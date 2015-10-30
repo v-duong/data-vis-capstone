@@ -30,7 +30,6 @@ THREE.OrbitControls = function ( object, domElement ) {
 
   // Set to false to disable this control
   this.enabled = true;
-
   // "target" sets the location of focus, where the control orbits around
   // and where it pans with respect to.
   this.target = new THREE.Vector3();

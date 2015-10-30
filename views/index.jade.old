@@ -1,0 +1,75 @@
+extend navtemplate
+
+h1 head
+
+block maintext
+	script.
+
+		function clickFunc() {	
+			window.location.href = '/visualize'
+		}		
+		
+		function SelectFunc() {	
+			window.location.href = '/displayData?filename=' + $("#listUploaded option:selected").text();
+		}
+
+		function uploadClick(){
+			var windowObjectReference = window.open('/uploadPage', 'Import', 'resizable=0, width=400, height=300,scrollbars=yes,status=yes');
+		}
+		function LoadDataClick(){
+			window.location.href = '/Uploaded_Files'
+		}
+		function goThree(){
+			window.location.href = '/scatter'
+		}
+	.main-content
+		p
+
+		form(name='testform')
+			label Data Search
+				br
+				input(type='text', name='username', id='user')
+				br
+				input(type='button', value='Search', onclick='clickFunc()')
+		br
+		br
+		form(name='importData')
+			input(type='button', value='Import', onclick='uploadClick()')
+		br
+		form(name='viewUploadedFiles')
+			input(type='button', value='Data Sets', onclick='LoadDataClick()')
+		br
+		select(id='listUploaded')
+			each item in tables
+				option(selected=item.table_name) #{item.table_name}
+		br
+		br
+		input(type='button', value='Get Selected', onclick='SelectFunc()')
+		br
+		br
+		br
+		br
+		br
+
+		//This form take three input and pass them to the node -- Newman
+		//1label After submitting values, values will be passed to node. Node will then combine the values into a single Json object and pass it back to the jade.
+
+		form(name='TestJSON', method="POST", action="/")
+			label X
+				br 
+				input(type='text', name='X')
+			br
+			br
+			label Y
+				br 
+				input(type='text', name='Y')
+			br
+			br
+			label Z
+				br 
+				input(type='text', name='Z')
+			br
+			label Generate a yellow dot on scatter plot based on given xyz
+			input(type = 'submit', value = 'Go')
+
+		
