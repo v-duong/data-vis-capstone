@@ -56,7 +56,7 @@ function addBar(x, y, z) {
   });
   geometry.colorsNeedUpdate = true;
   mesh = new THREE.Mesh(geometry, material);
-  mesh.position.y = -200;
+  mesh.position.y = 1 + y/2;;
   mesh.position.x = x - 500;
   mesh.position.z = z;
   scene.add(mesh);

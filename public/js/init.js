@@ -97,7 +97,7 @@ function generateBar(){
   var y = $("#y option:selected").text();
   var z = $("#z option:selected").text();
 
-  var getColumnTypeQuery = "SELECT " + x + ", " + y + ", " + z + " where table_name = '" + tableSelected + "'";
+  var getColumnTypeQuery = "SELECT " + x + ", " + y + ", " + z + " from " + tableSelected;
   console.log(getColumnTypeQuery);
   var test;
   $.getJSON('/retrieveData', { myQuery : getColumnTypeQuery }, function(data){
