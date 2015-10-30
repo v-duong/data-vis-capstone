@@ -1,7 +1,14 @@
-var camera, scene, renderer, geometry, material, mesh
+var camera, scene, renderer
 
-init()
+var meshes = []
 
-function init(){
+function init() {
   scene = new THREE.Scene();
+}
+
+function clearmeshes() {
+  for (var i = 0; i < meshes.length; i++) {
+    scene.remove(meshes[i]);
+  }
+  meshes = [];
 }
