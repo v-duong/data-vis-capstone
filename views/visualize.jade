@@ -32,11 +32,16 @@ block sidelist
 
 		li
 			input(type='button', value='Apply', onclick='generateBar()')
+			input(type='button', value='ApplyScatterPlot', onclick='generateScatter()')
 		
 
 
 block scripts
 	script(src='/js/three.min.js')
+	script(src='js/TextGeometry.js')
+	script(src='js/FontUtils.js')
+	script(src='js/helvetiker_regular.typeface.js')
 	script(src='/js/OrbitControls.js')
+	script(src='/js/scatter.js')
 	script(src='/js/init.js')
 	script(src='/js/bars.js')

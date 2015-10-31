@@ -1,6 +1,9 @@
-var render = function () {
-	requestAnimationFrame( render );
+var renderScatter = function () {
+	requestAnimationFrame(renderScatter);
+	textFaceCamera(texts);
 	renderer.render(scene, camera);
+	controls.update();
+	// console.log("renderScatter is called");
 };
 
 var cameraPosition = function(z, x, y)
@@ -9,6 +12,7 @@ var cameraPosition = function(z, x, y)
 	camera.position.y = y;
 	camera.position.x = x;
 };
+
 var changePosition = function(object, x, y, z)
 {
 	object.position.x = x;
@@ -38,10 +42,73 @@ var drawLines = function(line, movingDirection, movingDistance,times)
 		var tempLine = line.clone();
 		tempLine.translateOnAxis(movingDirection, movingDistance*i);
 		scene.add(tempLine);
+		meshes.push(tempLine);
 	}
 };
 
-var drawNumbers = function(startPoint, movingDirection, movingDistance,times)
+// function createTextCanvas(text, color, font, size) {
+
+//     size = size || 24;
+//     var canvas = document.createElement('canvas');
+//     var ctx = canvas.getContext('2d');
+//     var fontStr = (size + 'px ') + (font || 'Arial');
+//     ctx.font = fontStr;
+//     var w = ctx.measureText(text).width;
+//     var h = Math.ceil(size);
+
+//     canvas.width = w;
+//     canvas.height = h;
+
+//     ctx.font = fontStr;
+
+//     ctx.fillStyle = color || 'black';
+//     ctx.fillText(text, 0, Math.ceil(size * 0.8));
+
+//     return canvas;
+
+// }
+
+var drawText = function(text, x, y, z, texts)
+{
+	// var canvas = createTextCanvas(text, 0xdddddd, null, 1);
+	// var plane = new THREE.PlaneGeometry(canvas.width, canvas.height);
+	// var tex = new THREE.Texture(canvas);
+	// // tex.minFilter = THREE.LinearFilter;
+	// tex.needsUpdate = true;
+	// var planeMat = new THREE.MeshBasicMaterial({
+ //        map: tex,
+ //        color: 0xffffff,
+ //        transparent: true
+ //    });
+
+	var TextGeo = new THREE.TextGeometry(text, {
+		font:  'helvetiker'
+		,height:0
+		,size:0.2
+		});
+	var textMaterial = new THREE.MeshPhongMaterial({
+	color: 0xdddddd
+	});
+
+	var tempNumber = new THREE.Mesh(TextGeo,textMaterial);
+	texts.push(tempNumber);
+	tempNumber.quaternion.copy(camera.quaternion);
+	tempNumber.position.set(x,y,z);
+	scene.add(tempNumber);
+	meshes.push(tempNumber);
+}
+
+var textFaceCamera = function(texts)
+{
+	for(var i=0; i<texts.length; i++)
+	{
+		console.log(texts[i]+"?");
+		// texts[i].quaternion.copy( camera.quaternion );
+		texts[i].lookAt(camera.position);
+	}
+}
+
+var drawNumbers = function(startPoint, movingDirection, movingDistance,times,texts)
 {
 	for(i = 0; i < times-1; i++)
 	{
@@ -56,10 +123,11 @@ var textMaterial = new THREE.MeshPhongMaterial({
 var tempNumber = new THREE.Mesh(TextGeo,textMaterial);
 changePosition(tempNumber, startPoint.x, startPoint.y, startPoint.z);
 		tempNumber.translateOnAxis(movingDirection,movingDistance*i);
+		texts.push(tempNumber);
 		scene.add(tempNumber);
+		meshes.push(tempNumber);
 	}
 }
-
 
 var flipText = function(object)
 {
@@ -72,7 +140,31 @@ var createNode = function(geometry, material, x, y, z)
 	var sphere = new THREE.Mesh( geometry, material );
 	sphere.position.set(x,y,z);
 	scene.add( sphere );
+	meshes.push(sphere);
 }
+
+var displayNodes = function(data,geometry,material, x, y, z)
+{
+	var temp;
+	var xScale = findMax(data, x);
+	var yScale = findMax(data, y);
+	var zScale = findMax(data, z);
+	// console.log("Maxx: "+xScale+" Maxy:"+yScale+" Maxz: "+zScale);
+	var _x = 0;
+	var _y = 0;
+	var _z = 0;
+	for(var i in data)
+	{
+		temp = data[i];
+		if(eval("temp."+x) != "NULL"){_x = eval("temp."+x)*5/xScale;}
+		if(eval("temp."+y) != "NULL"){_y = eval("temp."+y)*5/yScale;}
+		if(eval("temp."+z) != "NULL"){_z = eval("temp."+z)*5/zScale;}
+		createNode(geometry,material, _x, _y, _z);
+		// console.log("Before x: "+eval("temp."+x)+" y:"+eval("temp."+y)+" z: "+eval("temp."+z));
+		// console.log("After x: "+_x+" y:"+_y+" z: "+_z);
+	}
+}
+
 
 var findMax = function(data, name)
 {
@@ -80,7 +172,7 @@ var findMax = function(data, name)
 	var temp;
 	for(var i in data)
 	{
-		temp = parseInt(eval("data[i]."+name));
+		temp = parseFloat(eval("data[i]."+name));
 		// if(temp == "NULL"){continue;}
 		if(temp > max){ max = temp;}
 		// console.log(data[i].name);
@@ -95,12 +187,15 @@ var setupScene = function()
 	var height = window.innerHeight;
 
 	var camFactor = 130;
-	controls = new THREE.OrbitControls( camera );
-	controls.addEventListener( 'change', render );
 
 	renderer.setClearColor( 0xffffff, 1);
 	renderer.setSize( window.innerWidth, window.innerHeight );
-	document.body.appendChild( renderer.domElement );
+	cameraPosition(10, 10, 10);
+	scene.add(camera);
+	// document.body.appendChild( renderer.domElement );
+
+	controls = new THREE.OrbitControls( camera );
+	// controls.addEventListener( 'change', renderScatter );
 
 	var geometry = new THREE.PlaneGeometry( 5, 5);
 	var material = new THREE.MeshBasicMaterial( {color: 0xF0F0F0, side: THREE.DoubleSide} );
@@ -117,6 +212,7 @@ var setupScene = function()
 	scene.add( plane );
 	scene.add(plane1);
 	scene.add(plane2);
+	meshes.push(plane); meshes.push(plane1);meshes.push(plane2);
 
 
 
@@ -133,28 +229,26 @@ var setupScene = function()
 	drawLines(line4, new THREE.Vector3(0,0,1),1,7);
 	drawLines(line5, new THREE.Vector3(0,1,0),1,7);
 
+	var Xaxis = drawLine(new THREE.Vector3(0,0,0), new THREE.Vector3(6,0,0));
+	var Yaxis = drawLine(new THREE.Vector3(0,0,0), new THREE.Vector3(0,6,0));
+	var Zaxis = drawLine(new THREE.Vector3(0,0,0), new THREE.Vector3(0,0,6));
+	scene.add(Xaxis); scene.add(Yaxis); scene.add(Zaxis);
+	meshes.push(Xaxis); meshes.push(Yaxis); meshes.push(Zaxis);
 
 
-	var TextGeo = new THREE.TextGeometry( '13', {
-		font:  'helvetiker'
-		,height:0
-		,size:1.0
-	});
-	var textMaterial = new THREE.MeshPhongMaterial({
-	color: 0xdddddd
-	});
-	var text = new THREE.Mesh(TextGeo,textMaterial);
-	changePosition(text, 3,0,2);
-	drawNumbers(new THREE.Vector3(0,5.1, 0), new THREE.Vector3(1,0,0), 1, 7);
 
+	// var TextGeo = new THREE.TextGeometry( '13', {
+	// 	font:  'helvetiker'
+	// 	,height:0
+	// 	,size:1.0
+	// });
+	// var textMaterial = new THREE.MeshPhongMaterial({
+	// color: 0xdddddd
+	// });
+	// var text = new THREE.Mesh(TextGeo,textMaterial);
+	// changePosition(text, 3,0,2);
 
-	cameraPosition(6, 5, 8);
-	text.lookAt(camera.position);
-	camera.up = new THREE.Vector3(0,0,1);
-	camera.lookAt(new THREE.Vector3(0,0,0));
+	// camera.up = new THREE.Vector3(0,0,1);
+	// camera.lookAt(new THREE.Vector3(0,0,0));
 }
 
-
-var scene = new THREE.Scene();
-var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
-var renderer = new THREE.WebGLRenderer({alpha:true});

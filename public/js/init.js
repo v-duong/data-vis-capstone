@@ -1,4 +1,5 @@
 var camera, scene, renderer
+var controls, texts
 
 var meshes = []
 
@@ -84,6 +85,37 @@ function generateBarFilters(){
 	//Columns for Z
 }
 
+//Xinglun Xu add generateScatter function here
+function generateScatter()
+{
+	clearmeshes();
+	scene = new THREE.Scene();
+	camera = new THREE.PerspectiveCamera( 45, window.innerWidth/window.innerHeight, 1, 10000 );
+	renderer = new THREE.WebGLRenderer({alpha:true});
+	texts = [];
+	setupScene();
+	var geometry = new THREE.SphereGeometry( 0.25, 32, 32 );
+	var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+	$('.visual').append( renderer.domElement );
+	var tableSelected = $("#TableList option:selected").val();
+	var x = $("#x option:selected").text();
+	var y = $("#y option:selected").text();
+	var z = $("#z option:selected").text();
+	var getColumnTypeQuery = "SELECT " + x + ", " + y + ", " + z + " from " + tableSelected;
+	console.log(getColumnTypeQuery);
+	// console.log("generateScatter: "+x+" "+y+" "+z);
+	$.getJSON('/retrieveData', { myQuery : getColumnTypeQuery }, function(data){
+		test = data;
+		displayNodes(data, geometry, material, x, y, z);
+	});
+	drawNumbers(new THREE.Vector3(0,5.1, 0), new THREE.Vector3(1,0,0), 1, 7, texts);
+	drawText(x, 6,0,0,texts); 
+	drawText(y, 0,6,0,texts);
+	drawText(z, 0,0,6,texts);
+	renderScatter();
+	// console.log("generateScatter is called");
+}
+
 function generateBar(){
   clearmeshes();
 	generateBarFilters();
@@ -101,14 +133,14 @@ function generateBar(){
   console.log(getColumnTypeQuery);
   var test;
   $.getJSON('/retrieveData', { myQuery : getColumnTypeQuery }, function(data){
-    test = data;
-    renderData(data);
+	test = data;
+	renderData(data);
   });
 
 }
 function clearmeshes() {
   for (var i = 0; i < meshes.length; i++) {
-    scene.remove(meshes[i]);
+	scene.remove(meshes[i]);
   }
   meshes = [];
 }
