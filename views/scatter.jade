@@ -12,6 +12,9 @@ block three
 	script(src='/js/usercontrol.js')
 	script(src='/js/scatter.js')
 	script.
+		var scene = new THREE.Scene();
+		var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+		var renderer = new THREE.WebGLRenderer({alpha:true});
 		setupScene();
 		var query = !{JSON.stringify(_data)}
 		var geometry = new THREE.SphereGeometry( 0.25, 32, 32 );
@@ -44,6 +47,6 @@ block three
 
 
 
-		//- sphere.position.set(x, y, z);
-		//- scene.add( sphere );
-		render(scene, camera);
+		sphere.position.set(x, y, z);
+		scene.add( sphere );
+		renderScatter();

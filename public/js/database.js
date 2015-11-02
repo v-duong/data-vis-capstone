@@ -7,7 +7,7 @@ var moment = require('moment');
 
 //connect to local postgres database
 
-//var connectionString = 'postgres://localhost:5432/capstone_data';
+// var connectionString = 'postgres://localhost:5432/capstone_data';
 
 // var connectionString = 'postgres://localhost:5432/mydb';
 
