@@ -1,7 +1,7 @@
 var renderScatter = function () {
 	requestAnimationFrame(renderScatter);
 	textFaceCamera(texts);
-	effect.render(scene, camera);
+	renderer.render(scene, camera);
 	controls.update();
 	checkHighlight();
 	// console.log("renderScatter is called");

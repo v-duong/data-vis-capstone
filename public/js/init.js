@@ -16,6 +16,11 @@ function init(){
   scene = new THREE.Scene();
   window.addEventListener( 'resize', onWindowResize, false );
   projector = new THREE.Projector();
+  targetlist = [];
+  highlightedColor = new THREE.Color( 0xf4412f);
+  mouse = { x: 0, y: 0 };
+  intersects = [];
+  document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 }
 
 

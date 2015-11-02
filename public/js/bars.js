@@ -42,24 +42,25 @@ function animate() {
 
   requestAnimationFrame(animate);
   render();
+  checkHighlight();
 }
 
 function render() {
-  effect.render(scene, camera);
+  renderer.render(scene, camera);
 }
 
 
 function addBar(x, y, z) {
   var frequency = 0.4;
-  geometry = new THREE.BoxGeometry(49, y, 49);
-  geometry.computeFaceNormals();
-  geometry.computeVertexNormals();
+  var geometry = new THREE.BoxGeometry(49, y, 49);
+  //geometry.computeFaceNormals();
+  //geometry.computeVertexNormals();
   var gcolor = new THREE.Color(Math.sin(x * frequency), Math.sin(x * frequency + 2), Math.sin(x * frequency + 4));
-  material = new THREE.MeshBasicMaterial({
+  var material = new THREE.MeshBasicMaterial({
     color: gcolor
   });
   geometry.colorsNeedUpdate = true;
-  mesh = new THREE.Mesh(geometry, material);
+  var mesh = new THREE.Mesh(geometry, material);
   mesh.position.y = 1 + y/2;;
   mesh.position.x = x - 500;
   mesh.position.z = z;
@@ -68,7 +69,7 @@ function addBar(x, y, z) {
   edges.material.linewidth = 2;
   meshes.push(mesh);
   meshes.push(edges);
-
+  targetlist.push(mesh);
   scene.add(edges);
 }
 
