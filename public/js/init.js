@@ -122,6 +122,7 @@ function generateScatter()
 	drawText(x, 6,0,0,texts); 
 	drawText(y, 0,6,0,texts);
 	drawText(z, 0,0,6,texts);
+	window.addEventListener( 'resize', onWindowResize, false );
 	renderScatter();
 	// console.log("generateScatter is called");
 }
