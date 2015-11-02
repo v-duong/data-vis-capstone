@@ -3,6 +3,7 @@ var renderScatter = function () {
 	textFaceCamera(texts);
 	effect.render(scene, camera);
 	controls.update();
+	checkHighlight();
 	// console.log("renderScatter is called");
 };
 
@@ -102,7 +103,7 @@ var textFaceCamera = function(texts)
 {
 	for(var i=0; i<texts.length; i++)
 	{
-		console.log(texts[i]+"?");
+		//console.log(texts[i]+"?");
 		// texts[i].quaternion.copy( camera.quaternion );
 		texts[i].lookAt(camera.position);
 	}
@@ -137,10 +138,11 @@ var flipText = function(object)
 
 var createNode = function(geometry, material, x, y, z)
 {
-	var sphere = new THREE.Mesh( geometry, material );
+	var sphere = new THREE.Mesh( new THREE.SphereGeometry( 0.25, 32, 32 ), new THREE.MeshBasicMaterial( {color: 0xffff00} ));
 	sphere.position.set(x,y,z);
 	scene.add( sphere );
 	meshes.push(sphere);
+	targetlist.push(sphere);
 }
 
 var displayNodes = function(data,geometry,material, x, y, z)

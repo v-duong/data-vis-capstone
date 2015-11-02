@@ -1,19 +1,21 @@
 var camera, scene, renderer
 var controls, texts
 var effect
+var tmpColor, highlightedColor
 var windowHalfX
 var windowHalfY
 var meshes = []
-
-
-
+var mouse
+var projector
+var targetlist
+var INTERSECTED
+var intersects
 
 
 function init(){
   scene = new THREE.Scene();
-  windowHalfX = window.innerWidth / 2;
-  windowHalfY = window.innerHeight / 2;
   window.addEventListener( 'resize', onWindowResize, false );
+  projector = new THREE.Projector();
 }
 
 
@@ -95,17 +97,28 @@ function generateScatter()
 {
 	clearmeshes();
 	scene = new THREE.Scene();
-	camera = new THREE.PerspectiveCamera( 45, window.innerWidth/window.innerHeight, 1, 10000 );
+	camera = new THREE.PerspectiveCamera( 45, window.innerWidth/window.innerHeight, 0.1, 10000 );
 	renderer = new THREE.WebGLRenderer({alpha:true});
 
 	//add effect
   	effect = new THREE.StereoEffect(renderer);
   	effect.setSize( window.innerWidth, window.innerHeight );
 
+  	//highlight part
+  	highlightedColor = new THREE.Color( 0xf4412f);
+
+  	//projector
+  	projector = new THREE.Projector();
+  	targetlist = [];
+  	mouse = { x: 0, y: 0 };
+  	intersects = [];
+  	document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+
 	texts = [];
 	setupScene();
 	var geometry = new THREE.SphereGeometry( 0.25, 32, 32 );
 	var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+	var normalMaterial = new THREE.MeshNormalMaterial();
 	$('.visual').append( renderer.domElement );
 	var tableSelected = $("#TableList option:selected").val();
 	var x = $("#x option:selected").text();
@@ -123,6 +136,7 @@ function generateScatter()
 	drawText(y, 0,6,0,texts);
 	drawText(z, 0,0,6,texts);
 	window.addEventListener( 'resize', onWindowResize, false );
+
 	renderScatter();
 	// console.log("generateScatter is called");
 }
@@ -167,6 +181,64 @@ function onWindowResize() {
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	effect.setSize( window.innerWidth, window.innerHeight );
 
+}
+
+
+function onDocumentMouseMove( event ) //http://www.moczys.com/webGL/Experiment_02_V05.html
+{
+	// the following line would stop any other event handler from firing
+	// (such as the mouse's TrackballControls)
+	//event.preventDefault();
+	
+	// update the mouse variable
+	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+	//checkHighlight();
+}
+
+
+function checkHighlight(){ //http://www.moczys.com/webGL/Experiment_02_V05.html
+	// find intersections
+
+	// create a Ray with origin at the mouse position
+	//   and direction into the scene (camera direction)
+	var vector = new THREE.Vector3( mouse.x, mouse.y, 0.1 );
+	//projector.unprojectVector( vector, camera );
+	vector.unproject( camera );
+	var ray = new THREE.Raycaster( camera.position, vector.sub( camera.position ).normalize() );
+	// create an array containing all objects in the scene with which the ray intersects
+	intersects = ray.intersectObjects( targetlist , false);
+
+	if ( intersects.length > 0 )
+	{	// case if mouse is not currently over an object
+		if(INTERSECTED==null){
+			INTERSECTED = intersects[ 0 ];
+			tmpColor = INTERSECTED.object.material.color;
+			INTERSECTED.object.material.color = highlightedColor;
+		}
+		else{	// if thse mouse is over an object
+			INTERSECTED.object.material.color= tmpColor;
+			INTERSECTED.object.geometry.colorsNeedUpdate=true;
+			INTERSECTED = intersects[ 0 ];
+			tmpColor = INTERSECTED.object.material.color;
+			INTERSECTED.object.material.color = highlightedColor;			
+		}
+		INTERSECTED.object.geometry.colorsNeedUpdate=true;
+		
+	} 
+	else // there are no intersections
+	{
+		// restore previous intersection object (if it exists) to its original color
+		if ( INTERSECTED ){
+			INTERSECTED.object.material.color = tmpColor;
+			INTERSECTED.object.geometry.colorsNeedUpdate=true;
+		}
+		// remove previous intersection object reference
+		//     by setting current intersection object to "nothing"
+		
+		INTERSECTED = null;
+
+	}
 }
 
 function fetchData(){
