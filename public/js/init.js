@@ -1,6 +1,8 @@
 var camera, scene, renderer
 var controls, texts
-
+var effect
+var windowHalfX
+var windowHalfY
 var meshes = []
 
 
@@ -9,6 +11,9 @@ var meshes = []
 
 function init(){
   scene = new THREE.Scene();
+  windowHalfX = window.innerWidth / 2;
+  windowHalfY = window.innerHeight / 2;
+  window.addEventListener( 'resize', onWindowResize, false );
 }
 
 
@@ -92,6 +97,11 @@ function generateScatter()
 	scene = new THREE.Scene();
 	camera = new THREE.PerspectiveCamera( 45, window.innerWidth/window.innerHeight, 1, 10000 );
 	renderer = new THREE.WebGLRenderer({alpha:true});
+
+	//add effect
+  	effect = new THREE.StereoEffect(renderer);
+  	effect.setSize( window.innerWidth, window.innerHeight );
+
 	texts = [];
 	setupScene();
 	var geometry = new THREE.SphereGeometry( 0.25, 32, 32 );
@@ -145,6 +155,18 @@ function clearmeshes() {
   meshes = [];
 }
 
+function onWindowResize() {
+
+	windowHalfX = window.innerWidth / 2;
+	windowHalfY = window.innerHeight / 2;
+
+	camera.aspect = window.innerWidth / window.innerHeight;
+	camera.updateProjectionMatrix();
+
+	renderer.setSize( window.innerWidth, window.innerHeight );
+	effect.setSize( window.innerWidth, window.innerHeight );
+
+}
 
 function fetchData(){
 

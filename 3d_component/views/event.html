@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset=utf-8>
+		<title>Three.js eventListener</title>
+		<style>
+			body { margin: 0; }
+			canvas { width: 100%; height: 100% }
+		</style>
+	</head>
+	<body>
+		<script src="js/three.min.js"></script>
+		<script src="js/threex.domevents.js"></script>
+		<script src="js/StereoEffect.js"></script>
+		<script>
+
+			var Width = window.innerWidth;
+			var Height = window.innerHeight;
+			var timer1 = 0;
+			var timer2 = 0;
+			
+			//init scene and camera
+			var scene = new THREE.Scene();
+			var camera = new THREE.PerspectiveCamera( 75, Width/Height, 0.1, 100000 );
+			camera.position.z = 700;
+			scene.add(camera);
+
+			var renderer = new THREE.WebGLRenderer();
+			renderer.setSize( Width, Height );
+			var element = renderer.domElement;
+			document.body.appendChild( element );
+
+
+			var img = new THREE.MeshBasicMaterial({ map:THREE.ImageUtils.loadTexture('pic2.jpg')
+    		});
+    		//img.map.needsUpdate = true;
+    		var backimg = new THREE.MeshBasicMaterial({ map:THREE.ImageUtils.loadTexture('background.jpg')
+    		});
+        	// plane
+        	var plane = new THREE.Mesh(new THREE.PlaneGeometry(300, 300),img);
+        	var cube = new THREE.Mesh(new THREE.BoxGeometry(200, 200, 200), new THREE.MeshNormalMaterial({ color: 0xffff00 }));
+        	var cube2 = new THREE.Mesh(new THREE.BoxGeometry(100, 200, 100), new THREE.MeshNormalMaterial({ color: 0x0fff0f }));        	
+        	var plane3 = new THREE.Mesh(new THREE.PlaneGeometry(32000, 20000),backimg);
+        	var geometry = new THREE.SphereGeometry( 100, 32, 32 );
+			var sphere = new THREE.Mesh( geometry, new THREE.MeshNormalMaterial( {color: 0x0f00f0}));
+
+			var geometry = new THREE.CylinderGeometry( 100, 100, 300, 16 );
+			var cylinder = new THREE.Mesh( geometry,new THREE.MeshNormalMaterial( {color: 0xffff00} ) );
+        	//plane.overdraw = true;
+        	//plane.position.x = -200;
+        	//sphere.position.x = -200;
+        	cylinder.position.x=-200;
+        	cube.position.x = 200;
+        	cube2.position.z = -200;
+        	plane3.overdraw = true;
+        	plane3.position.z = -8000;
+
+        	//scene.add(plane);
+        	scene.add(cube);
+        	scene.add(cube2);
+        	scene.add(plane3);
+        	scene.add(cylinder);
+        	//scene.add( sphere );
+
+		
+
+			//add 3 points light
+			(function(){
+			// add a ambient light
+				var light	= new THREE.AmbientLight( 0x020202 );
+				light.position.set(300, 100, -200);
+				scene.add( light );
+				// add a light in front
+				var light	= new THREE.DirectionalLight('white', 1);
+				light.position.set(500, 500, 200);
+				scene.add( light );
+				// add a light behind
+				var light	= new THREE.DirectionalLight('white', 0.75);
+				light.position.set(-500, -500, 200);
+				scene.add( light );	
+			})()
+
+			//init domEvents
+			var domEvents	= new THREEx.DomEvents(camera, renderer.domElement);
+
+			THREEx.DomEvents.eventNames.forEach(function(eventName){
+				if( eventName === 'mousemove' )	return
+					domEvents.addEventListener(plane, eventName, function(event){
+					var domElement	= document.querySelector('#logs');
+					domElement.innerHTML = event.type + '<br/>' + domElement.innerHTML;
+					}, false);
+			});
+	
+
+			var mouse	= {x : 0, y : 0};
+			document.addEventListener('mousemove', function(event){
+				mouse.x	= (event.clientX / window.innerWidth )-0.5;
+				mouse.y	= (event.clientY / window.innerHeight)-0.5;
+			}, false);
+			var onRenderFcts= [];
+			onRenderFcts.push(function(delta, now){
+				camera.position.x += 30*(mouse.x*200 - camera.position.x) * (delta*3);
+				camera.position.y += 30*(mouse.y*200 - camera.position.y) * (delta*3);
+				camera.lookAt( scene.position );
+			});
+			// render the scene
+			onRenderFcts.push(function(){
+				renderer.render( scene, camera );		
+			});
+
+			//loop runner
+			var lastTimeMsec= null;
+			requestAnimationFrame(function animate(nowMsec){
+				// keep looping
+				requestAnimationFrame( animate );
+				// measure time
+				lastTimeMsec	= lastTimeMsec || nowMsec-1000/60;
+				var deltaMsec	= Math.min(200, nowMsec - lastTimeMsec);
+				lastTimeMsec	= nowMsec;
+				// call each update function
+				onRenderFcts.forEach(function(onRenderFct){
+					onRenderFct(deltaMsec/1000, nowMsec/1000);
+				});
+			});
+
+			var render = function () {
+				requestAnimationFrame( render );
+
+				//plane.rotation.y += 0.1;
+				cube.rotation.x += 0.1;
+				cube2.rotation.z += 0.1;
+				cube2.rotation.y += 0.03;
+				//plane.rotation.y += 0.1;
+				//camera.position.z += 1;
+				//camera.rotation.y += 0.001*Math.cos(timer1);
+				//camera.rotation.x += 0.0005*Math.cos(timer2);
+				timer1+=0.01;
+				//timer2+=0.003;
+
+
+				renderer.render(scene, camera);
+			};
+
+			render();
+		</script>
+		
+	</body>
+</html>
