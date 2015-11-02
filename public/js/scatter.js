@@ -1,7 +1,7 @@
 var renderScatter = function () {
 	requestAnimationFrame(renderScatter);
 	textFaceCamera(texts);
-	renderer.render(scene, camera);
+	effect.render(scene, camera);
 	controls.update();
 	// console.log("renderScatter is called");
 };
@@ -251,4 +251,3 @@ var setupScene = function()
 	// camera.up = new THREE.Vector3(0,0,1);
 	// camera.lookAt(new THREE.Vector3(0,0,0));
 }
-

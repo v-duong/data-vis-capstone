@@ -1,6 +1,6 @@
 function initbars() {
-  //camera = new THREE.PerspectiveCamera( 85, window.innerWidth / window.innerHeight, 1, 10000 );
-  camera = new THREE.OrthographicCamera(window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, 1, 100000);
+  camera = new THREE.PerspectiveCamera( 85, window.innerWidth / window.innerHeight, 1, 10000 );
+  //camera = new THREE.OrthographicCamera(window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, 1, 100000);
 
   camera.position.z = 800;
   camera.position.y = 600;
@@ -26,6 +26,10 @@ function initbars() {
   });
   renderer.setSize(window.innerWidth, window.innerHeight);
 
+  //add effect
+  effect = new THREE.StereoEffect(renderer);
+  effect.setSize( window.innerWidth, window.innerHeight );
+
   $('.visual').append( renderer.domElement );
 
 
@@ -41,7 +45,7 @@ function animate() {
 }
 
 function render() {
-  renderer.render(scene, camera);
+  effect.render(scene, camera);
 }
 
 

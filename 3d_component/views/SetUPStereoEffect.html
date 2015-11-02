@@ -16,7 +16,7 @@
   		<script src="js/OrbitControls.js"></script>
 		<script>
 			//declare variable
-			var camera, scene, renderer, element;
+			var camera, scene, renderer, container, element;
 			var geometry;
 			var effect;
 			var backimg;
@@ -38,11 +38,13 @@
 				camera.position.z = 700;
 				scene.add(camera);
 
-				//set up renderer
+				//set up renderer, container, and domElement
 				renderer = new THREE.WebGLRenderer();
 				renderer.setSize( window.innerWidth, window.innerHeight );
+				container = document.createElement( 'div' );
   				element = renderer.domElement;
-				document.body.appendChild( element );
+  				container.appendChild( element );
+				document.body.appendChild( container );
 
 				//set up StereoEffect
 				effect = new THREE.StereoEffect(renderer);
@@ -66,7 +68,7 @@
   				controls.enablePan = false;
   				controls.enableZoom = false;
   				
-  				window.addEventListener('deviceorientation', setOrientationControls, true);
+  				// window.addEventListener('deviceorientation', setOrientationControls, true);
 
   				//controls = new THREE.DeviceOrientationControls(camera, true);
   	// 		controls.connect();
