@@ -12,6 +12,8 @@ var INTERSECTED
 var intersects
 
 
+
+
 function init(){
   scene = new THREE.Scene();
   window.addEventListener( 'resize', onWindowResize, false );
@@ -25,52 +27,53 @@ function init(){
 
 
 
-$("#VisualList").change(function(){
-	var tableSelected = $("#VisualList option:selected").val();
-	switch(tableSelected){
+
+
+// table selected, time to show columns.. See what kind of Visualization was chosen first 
+$("#TableList").change(function(){
+	var visualSelected =  $("#VisualList option:selected").val();
+	console.log(visualSelected);
+	switch(visualSelected){
 		case 'bar':
-			break;
 		case 'scatter':
+			var tableSelected = $("#TableList option:selected").val();
+			var getColumnTypeQuery = "SELECT column_name ,data_type FROM information_schema.columns where table_name = '";
+			getColumnTypeQuery = getColumnTypeQuery.concat(tableSelected + "'");
+			console.log(getColumnTypeQuery);
+
+			$("#columnSelection.off-canvas-submenu").html("");
+			$.getJSON('/retrieveData', { myQuery : getColumnTypeQuery }, function(data){
+				// create a dropdown list
+
+				// default at "Choose Column" to make sure user actually chooses a column
+				var htmlStr = "<option value='' selected='selected' disabled='disabled'> Choose Column </option>";
+				
+
+				// populate dropdown list with columnNames and Values
+				for (var i = 0; i < data.length; i++){
+					htmlStr = htmlStr.concat('<option value="' + data[i].data_type + '">' + data[i].column_name + '</option>');
+				}
+
+
+				//$.each(data, function(j, g){
+
+				//});
+				htmlStr = htmlStr.concat('</select></li>');
+				$("#columnSelection.off-canvas-submenu").append('<li>X: <select id="x">' + htmlStr);
+				$("#columnSelection.off-canvas-submenu").append('<li>Y: <select id="y">' + htmlStr);
+				$("#columnSelection.off-canvas-submenu").append('<li>Z: <select id="z">' + htmlStr);
+
+				generateBarFilters();				
+
+			});
 			break;
 		default:
+			alert("Please choose a Visualization");
+			$("#TableList").val('');	// set it back to default 
 			break;
+
+
 	}
-
-});
-
-// table selected, time to show columns
-$("#TableList").change(function(){
-	var tableSelected = $("#TableList option:selected").val();
-	var getColumnTypeQuery = "SELECT column_name ,data_type FROM information_schema.columns where table_name = '";
-	getColumnTypeQuery = getColumnTypeQuery.concat(tableSelected + "'");
-	console.log(getColumnTypeQuery);
-
-	$("#filters.off-canvas-submenu").html("");
-	$.getJSON('/retrieveData', { myQuery : getColumnTypeQuery }, function(data){
-		// create a dropdown list
-
-
-		var htmlStr = '';
-		//$("#filters.off-canvas-submenu").append('<li><select>');
-
-		// populate dropdown list with columnNames and Values
-		for (var i = 0; i < data.length; i++){
-			//$("#filters.off-canvas-submenu").append('<option value="' + data[i].data_type + '">' + data[i].column_name + '</option>');
-			htmlStr = htmlStr.concat('<option value="' + data[i].data_type + '">' + data[i].column_name + '</option>');
-		}
-
-
-		//$.each(data, function(j, g){
-
-		//});
-		htmlStr = htmlStr.concat('</select></li>');
-		$("#filters.off-canvas-submenu").append('<li><select id="x">' + htmlStr);
-		$("#filters.off-canvas-submenu").append('<li><select id="y">' + htmlStr);
-		$("#filters.off-canvas-submenu").append('<li><select id="z">' + htmlStr);
-
-	});
-
-
 
 
 });
@@ -83,18 +86,121 @@ function displayVisuals() {
 
 }
 
+$("#xfrom").change(function(){
+	console.log("fuck you");
+});
+	
+
+// filters only for bar and scatter 
 function generateBarFilters(){
-	// initialize Column Selection
-
-
-
+	
+	var xType = $("#x option:selected").text();
+  	var yType = $("#y option:selected").text();
+  	var zType = $("#z option:selected").text();
+  	console.log('lei goh lo mo hai');
+  	console.log(xType);
 	//Columns for X
 
+	$("#filters.off-canvas-submenu").html(""); 
+	
+/*
+	$("#filters.off-canvas-submenu").append('<li>X: </li');
+	$("#filters.off-canvas-submenu").append('From: <input type="text" id="xfrom"></input>');
+	$("#filters.off-canvas-submenu").append('To: <input type="text" id="xto"></input>');
 
 	//Columns for Y
 
+	$("#filters.off-canvas-submenu").append('<li>Y: </li');
+	$("#filters.off-canvas-submenu").append('From: <input type="text" id="yfrom"></input>');
+	$("#filters.off-canvas-submenu").append('To: <input type="text" id="yto"></input>');
+
 
 	//Columns for Z
+	$("#filters.off-canvas-submenu").append('<li>Z: </li');
+	$("#filters.off-canvas-submenu").append('From: <input type="text" id="zfrom"></input>');
+	$("#filters.off-canvas-submenu").append('To: <input type="text" id="zto"></input>');
+*/
+
+
+	$("#filters.off-canvas-submenu").append('<li>X: </li');
+	$("#filters.off-canvas-submenu").append('From: <input type="text" class="BarTextClass"></input>');
+	$("#filters.off-canvas-submenu").append('To: <input type="text" class="BarTextClass"></input>');
+
+	//Columns for Y
+
+	$("#filters.off-canvas-submenu").append('<li>Y: </li');
+	$("#filters.off-canvas-submenu").append('From: <input type="text" class="BarTextClass"</input>');
+	$("#filters.off-canvas-submenu").append('To: <input type="text" class="BarTextClass"></input>');
+
+
+	//Columns for Z
+	$("#filters.off-canvas-submenu").append('<li>Z: </li');
+	$("#filters.off-canvas-submenu").append('From: <input type="text" class="BarTextClass"></input>');
+	$("#filters.off-canvas-submenu").append('To: <input type="text" class="BarTextClass"</input>');
+	
+}
+
+
+
+function generateBar(){
+  clearmeshes();
+	generateBarFilters();
+
+  init();
+  initbars();
+  animate();
+
+  var tableSelected = $("#TableList option:selected").val();
+  var x = $("#x option:selected").text();
+  var y = $("#y option:selected").text();
+  var z = $("#z option:selected").text();
+
+  var xType = $("#x option:selected").val();
+  var yType = $("#y option:selected").val();
+  var zType = $("#z option:selected").val();
+
+  var tempFrom;
+  var tempTo;
+
+  // if xType == 0 
+
+  console.log(xType);
+  console.log(yType);
+  console.log(zType);
+
+  var getColumnTypeQuery = "SELECT " + x + ", " + y + ", " + z + " from " + tableSelected;
+
+  console.log($("#testing_purposes").val());
+  // appending additional filtering queries
+  $(".BarTextClass").each(function(){
+    if($(this).val()!="")
+  		console.log($(this).val());
+  	else
+  		console.log("NULL");
+ });
+
+  if (xType == 'real'){
+  	console.log("Fuck me");
+  	console.log($("#xfrom").val());
+  }
+
+  if (yType == 'real'){
+
+  }
+
+  if (zType == 'real'){
+
+  }
+
+
+
+  console.log(getColumnTypeQuery);
+  var test;
+  $.getJSON('/retrieveData', { myQuery : getColumnTypeQuery }, function(data){
+	test = data;
+	renderData(data);
+  });
+
 }
 
 //Xinglun Xu add generateScatter function here
@@ -146,28 +252,7 @@ function generateScatter()
 	// console.log("generateScatter is called");
 }
 
-function generateBar(){
-  clearmeshes();
-	generateBarFilters();
 
-  init();
-  initbars();
-  animate();
-
-  var tableSelected = $("#TableList option:selected").val();
-  var x = $("#x option:selected").text();
-  var y = $("#y option:selected").text();
-  var z = $("#z option:selected").text();
-
-  var getColumnTypeQuery = "SELECT " + x + ", " + y + ", " + z + " from " + tableSelected;
-  console.log(getColumnTypeQuery);
-  var test;
-  $.getJSON('/retrieveData', { myQuery : getColumnTypeQuery }, function(data){
-	test = data;
-	renderData(data);
-  });
-
-}
 function clearmeshes() {
   for (var i = 0; i < meshes.length; i++) {
 	scene.remove(meshes[i]);

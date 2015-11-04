@@ -19,20 +19,26 @@ block sidelist
 
 		li
 			a.off-canvas-submenu-call(href='#')
+				| Column Selection
+				span.right +
+
+		ul#columnSelection.off-canvas-submenu
+			
+
+
+		li
+			a.off-canvas-submenu-call(href='#')
 				| Filters
 				span.right +
 
 		ul#filters.off-canvas-submenu
-			li
-				a(href='#') Sub menu 1
-			li
-				a(href='#') Sub menu 2
-			li
-				a(href='#') Sub menu 3
+		
 
 		li
 			input(type='button', value='Apply', onclick='generateBar()')
 			input(type='button', value='ApplyScatterPlot', onclick='generateScatter()')
+			br 
+			input(type='text', id='testing_purposes')
 		
 
 
