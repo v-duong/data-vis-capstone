@@ -66,7 +66,7 @@ function addBar(x, y, z) {
   });
   geometry.colorsNeedUpdate = true;
   var mesh = new THREE.Mesh(geometry, material);
-  mesh.position.y = 1 + y/2;
+  mesh.position.y = 1 + y/2;;
   mesh.position.x = x - 500;
   mesh.position.z = z;
   scene.add(mesh);
@@ -80,7 +80,7 @@ function addBar(x, y, z) {
 
 function createDictionary(_json) {
   var uniqarr = _.uniq(_json.column_name);
-  return uniqarr;
+  return uniqarr
 }
 
 function renderData(data) {
