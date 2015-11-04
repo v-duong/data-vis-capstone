@@ -122,29 +122,30 @@ function generateBarFilters(){
 */
 
 
-	$("#filters.off-canvas-submenu").append('<li>X: </li');
-	$("#filters.off-canvas-submenu").append('From: <input type="text" class="BarTextClass"></input>');
-	$("#filters.off-canvas-submenu").append('To: <input type="text" class="BarTextClass"></input>');
-
+	//$("#filters.off-canvas-submenu").append('<li> X: ');
+	$("#filters.off-canvas-submenu").append('<li>From: <input type="text" id="xfrom"></input></li>');
+	$("#filters.off-canvas-submenu").append('<li>To: <input type="text" id="xto"></input></li>');
+	//$("#filters.off-canvas-submenu").append("</li>");
 	//Columns for Y
 
-	$("#filters.off-canvas-submenu").append('<li>Y: </li');
-	$("#filters.off-canvas-submenu").append('From: <input type="text" class="BarTextClass"</input>');
-	$("#filters.off-canvas-submenu").append('To: <input type="text" class="BarTextClass"></input>');
-
+	//$("#filters.off-canvas-submenu").append('<li> Y: ');
+	$("#filters.off-canvas-submenu").append('<li>From: <input type="text" id="yfrom"</input></li>');
+	$("#filters.off-canvas-submenu").append('<li>To: <input type="text" id="yto"></input></li>');
+	//$("#filters.off-canvas-submenu").append("</li>");
 
 	//Columns for Z
-	$("#filters.off-canvas-submenu").append('<li>Z: </li');
-	$("#filters.off-canvas-submenu").append('From: <input type="text" class="BarTextClass"></input>');
-	$("#filters.off-canvas-submenu").append('To: <input type="text" class="BarTextClass"</input>');
-	
+	//$("#filters.off-canvas-submenu").append('<li> Z: ');
+	$("#filters.off-canvas-submenu").append('<li>From: <input type="text" id="zfrom"></input></li>');
+	$("#filters.off-canvas-submenu").append('<li>To: <input type="text" id="zto"</input></li>');
+	//$("#filters.off-canvas-submenu").append("</li>");
 }
 
 
 
 function generateBar(){
+	//event.preventDefault();
   clearmeshes();
-	generateBarFilters();
+//	generateBarFilters();
 
   init();
   initbars();
@@ -170,25 +171,28 @@ function generateBar(){
 
   var getColumnTypeQuery = "SELECT " + x + ", " + y + ", " + z + " from " + tableSelected;
 
-  console.log($("#testing_purposes").val());
-  // appending additional filtering queries
-  $(".BarTextClass").each(function(){
-    if($(this).val()!="")
-  		console.log($(this).val());
-  	else
-  		console.log("NULL");
- });
+ 
+  
 
-  if (xType == 'real'){
-  	console.log("Fuck me");
-  	console.log($("#xfrom").val());
+  if (xType == 'double precision'){
+  	tempFrom = $("#xfrom").val();
+  	tempTo = $("#xto").val()
+  	if(tempFrom!="")
+  	 	getColumnTypeQuery = getColumnTypeQuery.concat(" where x >= " + tempFrom);  
+  	if(tempTo!="")
+  		getColumnTypeQuery = getColumnTypeQuery.concat("and x <= " + tempTo);  
   }
 
-  if (yType == 'real'){
-
+  if (yType == 'double precision'){
+  	tempFrom = $("#yfrom").val();
+  	tempTo = $("#yto").val()
+  	if(tempFrom!="")
+  	 	getColumnTypeQuery = getColumnTypeQuery.concat(" where y >= " + tempFrom);  
+  	if(tempTo!="")
+  		getColumnTypeQuery = getColumnTypeQuery.concat("and y <= " + tempTo);
   }
 
-  if (zType == 'real'){
+  if (zType == 'double precision'){
 
   }
 
