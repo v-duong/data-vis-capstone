@@ -10,6 +10,7 @@ var projector
 var targetlist
 var INTERSECTED
 var intersects
+var vrModeIsOn = false
 
 
 function init(){
@@ -247,5 +248,30 @@ function checkHighlight(){ //http://www.moczys.com/webGL/Experiment_02_V05.html
 }
 
 function fetchData(){
+
+}
+
+function enterVRMode(){
+	vrModeIsOn = true;
+	element = document.getElementsByClassName('visual')[0];
+	if ( navigator.userAgent.indexOf('Chrome') != -1 ){			//Chrome
+		element.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+	}
+	else if (navigator.userAgent.indexOf('Firefox') != -1){		//Firefox
+		element.mozRequestFullScreen();
+	}
+}
+
+if (document.getElementsByClassName('visual')[0].addEventListener)
+{
+    document.getElementsByClassName('visual')[0].addEventListener('webkitfullscreenchange', fullScreenExitHandler, false);
+	document.getElementsByClassName('visual')[0].addEventListener('mozfullscreenchange', fullScreenExitHandler, false);
+	document.getElementsByClassName('visual')[0].addEventListener('fullscreenchange', fullScreenExitHandler, false);
+}
+
+function fullScreenExitHandler(){
+    if ( !(document.webkitIsFullScreen || document.mozFullScreen) ){
+    	vrModeIsOn = false;
+    }
 
 }

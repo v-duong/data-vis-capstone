@@ -46,7 +46,14 @@ function animate() {
 }
 
 function render() {
-  renderer.render(scene, camera);
+  if (vrModeIsOn) {
+    effect.render(scene, camera);
+
+    // effect.setFullScreen( true );
+  }
+  else {
+    renderer.render(scene, camera);
+  }
 }
 
 
