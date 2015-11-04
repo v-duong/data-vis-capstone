@@ -10,7 +10,7 @@ var projector
 var targetlist
 var INTERSECTED
 var intersects
-var orthCamera
+var hideCamera
 
 
 function init(){

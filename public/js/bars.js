@@ -1,11 +1,15 @@
 function initbars() {
   camera = new THREE.PerspectiveCamera( 85, window.innerWidth / window.innerHeight, 1, 10000 );
-  orthCamera = new THREE.OrthographicCamera(window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, 1, 100000);
+  hideCamera = new THREE.OrthographicCamera(window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, 1, 100000);
 
   camera.position.z = 800;
   camera.position.y = 600;
   camera.position.x = 600;
   camera.lookAt(new THREE.Vector3(0, 0, 0));
+  hideCamera.position.z = 800;
+  hideCamera.position.y = 600;
+  hideCamera.position.x = 600;
+  hideCamera.lookAt(new THREE.Vector3(0, 0, 0));
 
 
   geometry3 = new THREE.BoxGeometry(2400, 10, 2000);
@@ -34,6 +38,9 @@ function initbars() {
 
 
   controls = new THREE.OrbitControls(camera, renderer.domElement);
+  //        controls.damping = 0.2;
+  controls.addEventListener('change', render);
+  orthControls = new THREE.OrbitControls(hideCamera, renderer.domElement);
   //        controls.damping = 0.2;
   controls.addEventListener('change', render);
 }
