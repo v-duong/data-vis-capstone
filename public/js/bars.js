@@ -46,7 +46,12 @@ function animate() {
 }
 
 function render() {
-  renderer.render(scene, camera);
+  if (vrModeIsOn) {
+    effect.render(scene, camera);
+  }
+  else {
+    renderer.render(scene, camera);
+  }
 }
 
 

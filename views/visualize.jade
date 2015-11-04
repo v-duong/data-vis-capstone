@@ -15,7 +15,7 @@ block sidelist
 				option(value='' selected='selected' disabled="disabled") Choose Table
 				each item in tables
 					option(value=item.table_name) #{item.table_name}
-	
+
 
 		li
 			a.off-canvas-submenu-call(href='#')
@@ -23,7 +23,7 @@ block sidelist
 				span.right +
 
 		ul#columnSelection.off-canvas-submenu
-			
+
 
 
 		li
@@ -39,13 +39,16 @@ block sidelist
 
 			li
 				#slider1
-		
+
 
 		li
 			input(type='button', value='Apply', onclick='generateBar()')
 			input(type='button', value='ApplyScatterPlot', onclick='generateScatter()')
+<<<<<<< HEAD
 			
-		
+
+			input(type='button', value='Enter VR', onclick='enterVRMode()')
+>>>>>>> master
 
 
 block scripts
@@ -56,8 +59,10 @@ block scripts
 	script(src='/js/OrbitControls.js')
 	script(src='/js/scatter.js')
 	script(src='/js/init.js')
+	script(src='/js/vrDetection.js')
 	script(src='/js/bars.js')
 	script(src='/js/StereoEffect.js')
+<<<<<<< HEAD
 	meta(charset='utf-8')
 	link(rel='stylesheet', href='//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css')
 	script(src='//code.jquery.com/jquery-1.10.2.js')
@@ -76,7 +81,7 @@ block scripts
 			});
 			$( "#amount" ).val(  $( "#slider" ).slider( "values", 0 ) + " - " + $( "#slider" ).slider( "values", 1 ) );
 
-			
+
 		});
 
 		$(function(){
@@ -93,8 +98,7 @@ block scripts
 
 			$( "#amount" ).val( "$" + $( "#slider-range" ).slider( "values", 0 ) + " - $" + $( "#slider-range" ).slider( "values", 1 ) );
 
-			
+
 		});
-		
 
-
+>>>>>>> master
