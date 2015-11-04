@@ -48,8 +48,6 @@ function animate() {
 function render() {
   if (vrModeIsOn) {
     effect.render(scene, camera);
-
-    // effect.setFullScreen( true );
   }
   else {
     renderer.render(scene, camera);
