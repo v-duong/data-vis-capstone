@@ -3,6 +3,8 @@ This script allows the toggling of Virtual Reality Mode with the click of a butt
 With VR Mode on, the stereoscopic effect will be enabled and it will go into full screen.
 With VR Mode off, both will be disabled.
 
+//Bug: Exiting stereoscopic mode is buggy with Firefox. Works sometimes, other times doesnt.
+
 For this script to work correctly, you need to do the following:
 
 	You need to have 2 renderings in your animation.
@@ -40,6 +42,7 @@ See bars.js for reference.
 var vrModeIsOn = false
 
 function fullScreenExitHandler(){
+	console.log(document.mozFullScreen)
     if ( !(document.webkitIsFullScreen || document.mozFullScreen) ){
     	vrModeIsOn = false;
     }
@@ -47,10 +50,9 @@ function fullScreenExitHandler(){
 }
 
 if (document.getElementsByClassName('visual')[0].addEventListener)
-{
+{	
     document.getElementsByClassName('visual')[0].addEventListener('webkitfullscreenchange', fullScreenExitHandler, false);
-	document.getElementsByClassName('visual')[0].addEventListener('mozfullscreenchange', fullScreenExitHandler, false);
-	document.getElementsByClassName('visual')[0].addEventListener('fullscreenchange', fullScreenExitHandler, false);
+	document.addEventListener('mozfullscreenchange', fullScreenExitHandler, false);	
 }
 
 function enterVRMode(){
