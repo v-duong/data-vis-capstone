@@ -1,0 +1,10 @@
+extend navtemplate
+block maintext
+  .row
+    .large-8.columns
+      select(id='listUploaded')
+        each item in tables
+          option(selected=item.table_name) #{item.table_name}
+    .large-3.columns
+      form(name='importData')
+        input(type='button', value='Import', onclick='uploadClick()')

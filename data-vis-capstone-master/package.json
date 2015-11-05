@@ -1,0 +1,30 @@
+{
+  "name": "data-vis-capstone",
+  "version": "0.0.0",
+  "description": "WE'RE STARTING NOW",
+  "engines": {
+    "node": "4.1.1"
+  },
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/v-duong/data-vis-capstone.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/v-duong/data-vis-capstone/issues"
+  },
+  "dependencies": {
+    "body-parser": "^1.14.1",
+    "express": "^4.13.3",
+    "jade": "^1.11.0",
+    "moment": "^2.10.6",
+    "multer": "^1.0.6",
+    "pg": "^4.4.2",
+    "webvr-polyfill": "*"
+  }
+}
