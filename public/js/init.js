@@ -241,7 +241,7 @@ function onDocumentMouseDown(event) //http://www.moczys.com/webGL/Experiment_02_
 
   var intersects = raycaster.intersectObjects(targetlist, true);
   var temp = 0;
-  var coeff = 0.5;
+  var coeff = 1.1;
 
   if (intersects.length > 0) { // case if mouse is not currently over an object
     if (INTERSECTED == null) {

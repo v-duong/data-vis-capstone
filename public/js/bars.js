@@ -42,7 +42,7 @@ function render() {
 
 function addBar(x, y, z) {
   var frequency = 0.4;
-  var geometry = new THREE.BoxGeometry(49, y, 49);
+  var geometry = new THREE.BoxGeometry(45, y, 45);
   //geometry.computeFaceNormals();
   //geometry.computeVertexNormals();
   var gcolor = new THREE.Color(Math.sin(x * frequency), Math.sin(x * frequency + 2), Math.sin(x * frequency + 4));
