@@ -42,14 +42,13 @@ var vrModeIsOn = false;
 function fullScreenExitHandler(){
     if ( !(document.webkitIsFullScreen || document.mozFullScreen) ){
     	vrModeIsOn = false;
-    	if 	(barORScatter == 1){
+    	if (graphType === 'bar'){
 	 		var temp = hideCamera;
 			hideCamera = camera;
 			camera = temp;
 			camera.position.z = 800;
   			camera.position.y = 600;
   			camera.position.x = 600;
-  			animate();
 		}
     }
 
@@ -70,7 +69,7 @@ function enterVRMode(){
 	else if (navigator.userAgent.indexOf('Firefox') != -1){		//Firefox
 		element.mozRequestFullScreen();
 	}
-	if 	(barORScatter == 1){
+	if (graphType === 'bar'){
 	 	var temp = hideCamera;
 		hideCamera = camera;
 		camera = temp;
@@ -78,7 +77,5 @@ function enterVRMode(){
    		camera.position.y = 600;
   		camera.position.x = 600;
   		camera.camera.lookAt(new THREE.Vector3(0, 0, 0));
-  		animate();
 	}
 }
-
