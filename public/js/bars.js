@@ -27,20 +27,16 @@ function initbars() {
 
 function animate() {
   RENDERID = requestAnimationFrame(animate);
+  CheckMouseSphere();
   render();
 }
 
 function render() {
   if (vrModeIsOn) {
-    CheckMouseSphere();
     effect.render(scene, camera);
-    //controls2.update();
   }
   else {
-    mouseSphereCoords = null;
-    CheckMouseSphere();
     renderer.render(scene, camera);
-    //controls.update();
   }
 }
 
@@ -65,6 +61,7 @@ function addBar(x, y, z) {
   meshes.push(mesh);
   meshes.push(edges);
   targetlist.push(mesh);
+  mousetargetlist.push(mesh);
   scene.add(edges);
 }
 

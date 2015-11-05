@@ -3,19 +3,15 @@ var controls, texts
 var effect
 var meshes = []
 var mouse
-var targetlist
+var targetlist, mousetargetlist
 var INTERSECTED
-var INITIAL = false;
+var INITIAL = false
 var intersects = []
 var hidecontrols
-<<<<<<< HEAD
+var graphType
+var RENDERID = null
 var mouseSphereCoords = null
 var mouseSphere=[]
-
-=======
-var graphType
-var RENDERID = null;
->>>>>>> 356b0faf2757f3a7a5f440d493161cd841d37145
 
 function init() {
   scene = new THREE.Scene();
@@ -24,17 +20,9 @@ function init() {
     alpha: true
   });
   mouse = { x: 0, y: 0 };
-<<<<<<< HEAD
-  intersects = [];
-  document.addEventListener( 'mousemove', onDocumentMouseMove, false );
-  //mouse sphere
-  var msphere= new THREE.Mesh(new THREE.SphereGeometry(8,8,8), new THREE.MeshBasicMaterial({ color: 0xf9f9f9 }));
-	scene.add(msphere);
-	mouseSphere.push(msphere);
-=======
   document.addEventListener('mousedown', onDocumentMouseDown, false);
+  document.addEventListener('mousemove', onDocumentMouseMove, false );
   $('.visual').append(renderer.domElement);
->>>>>>> 356b0faf2757f3a7a5f440d493161cd841d37145
 }
 
 
@@ -130,65 +118,15 @@ function generateVisuals() {
 }
 
 //Xinglun Xu add generateScatter function here
-<<<<<<< HEAD
-function generateScatter()
-{
-	barORScatter = 0;
-	clearmeshes();
-	scene = new THREE.Scene();
-	camera = new THREE.PerspectiveCamera( 45, window.innerWidth/window.innerHeight, 0.1, 10000 );
-	renderer = new THREE.WebGLRenderer({alpha:true});
-
-	//add effect
-  	effect = new THREE.StereoEffect(renderer);
-  	effect.setSize( window.innerWidth, window.innerHeight );
-
-  	//highlight part
-  	highlightedColor = new THREE.Color( 0xf4412f);
-
-  	//mouse sphere
-  	var msphere= new THREE.Mesh(new THREE.SphereGeometry(0.1,32,32), new THREE.MeshBasicMaterial({ color: 0xf9f9f9 }));
-	scene.add(msphere);
-	mouseSphere.push(msphere);
-
-  	//projector
-  	projector = new THREE.Projector();
-  	targetlist = [];
-  	mouse = { x: 0, y: 0 };
-  	intersects = [];
-  	document.addEventListener( 'mousemove', onDocumentMouseMove, false );
-
-	texts = [];
-	setupScene();
-	var geometry = new THREE.SphereGeometry( 0.25, 32, 32 );
-	var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
-	var normalMaterial = new THREE.MeshNormalMaterial();
-	$('.visual').append( renderer.domElement );
-	var tableSelected = $("#TableList option:selected").val();
-	var x = $("#x option:selected").text();
-	var y = $("#y option:selected").text();
-	var z = $("#z option:selected").text();
-	var getColumnTypeQuery = "SELECT " + x + ", " + y + ", " + z + " from " + tableSelected;
-	console.log(getColumnTypeQuery);
-	// console.log("generateScatter: "+x+" "+y+" "+z);
-	$.getJSON('/retrieveData', { myQuery : getColumnTypeQuery }, function(data){
-		test = data;
-		displayNodes(data, geometry, material, x, y, z);
-	});
-	drawNumbers(new THREE.Vector3(0,5.1, 0), new THREE.Vector3(1,0,0), 1, 7, texts);
-	drawText(x, 6,0,0,texts); 
-	drawText(y, 0,6,0,texts);
-	drawText(z, 0,0,6,texts);
-	window.addEventListener( 'resize', onWindowResize, false );
-
-	renderScatter();
-	// console.log("generateScatter is called");
-=======
 function generateScatter() {
   clearmeshes();
   if (!INITIAL) {
     init();
     INITIAL = true;
+     //mouse sphere
+    var msphere= new THREE.Mesh(new THREE.SphereGeometry(0.1,8,8), new THREE.MeshBasicMaterial({ color: 0xf9f9f9 }));
+    scene.add(msphere);
+    mouseSphere.push(msphere);
   }
   if (RENDERID != null)
     cancelAnimationFrame( RENDERID );
@@ -199,6 +137,7 @@ function generateScatter() {
   effect.setSize(window.innerWidth, window.innerHeight);
 
   targetlist = [];
+  mousetargetlist = [];
   texts = [];
   setupScene();
   var geometry = new THREE.SphereGeometry(0.25, 32, 32);
@@ -227,7 +166,6 @@ function generateScatter() {
 
   renderScatter();
   // console.log("generateScatter is called");
->>>>>>> 356b0faf2757f3a7a5f440d493161cd841d37145
 }
 
 function generateBar() {
@@ -236,6 +174,11 @@ function generateBar() {
   if (!INITIAL) {
     init();
     INITIAL = true;
+     //mouse sphere
+    var msphere= new THREE.Mesh(new THREE.SphereGeometry(8,8,8), new THREE.MeshBasicMaterial({ color: 0xf9f9f9 }));
+    scene.add(msphere);
+    mouseSphere.push(msphere);
+
   }
   if (RENDERID != null)
     cancelAnimationFrame( RENDERID );
@@ -243,6 +186,7 @@ function generateBar() {
   animate();
 
   targetlist = [];
+  mousetargetlist = [];
 
   var tableSelected = $("#TableList option:selected").val();
   var x = $("#x option:selected").text();
@@ -293,69 +237,6 @@ function onDocumentMouseDown(event) //http://www.moczys.com/webGL/Experiment_02_
   mouse.y = -( ( event.clientY - $('.visual').offset().top + document.body.scrollTop) / renderer.domElement.height ) * 2 + 1;
   vector = new THREE.Vector3(mouse.x, mouse.y, 0.1);
 
-<<<<<<< HEAD
-function checkHighlight(){ //http://www.moczys.com/webGL/Experiment_02_V05.html
-	// find intersections
-
-	// create a Ray with origin at the mouse position
-	//   and direction into the scene (camera direction)
-	var vector = new THREE.Vector3( mouse.x, mouse.y, 0.1 );
-	//projector.unprojectVector( vector, camera );
-	vector.unproject( camera );
-	var ray = new THREE.Raycaster( camera.position, vector.sub( camera.position ).normalize() );
-	// create an array containing all objects in the scene with which the ray intersects
-	intersects = ray.intersectObjects( targetlist , false);
-
-	if ( intersects.length > 0 )
-	{	// case if mouse is not currently over an object
-		if(INTERSECTED==null){
-			INTERSECTED = intersects[ 0 ];
-			tmpColor = INTERSECTED.object.material.color;
-			INTERSECTED.object.material.color = highlightedColor;
-		}
-		else{	// if thse mouse is over an object
-			INTERSECTED.object.material.color= tmpColor;
-			INTERSECTED.object.geometry.colorsNeedUpdate=true;
-			INTERSECTED = intersects[ 0 ];
-			tmpColor = INTERSECTED.object.material.color;
-			INTERSECTED.object.material.color = highlightedColor;			
-		}
-		// upsdate mouseSphere coordinates and update colors
-		mouseSphereCoords = [INTERSECTED.point.x,INTERSECTED.point.y,INTERSECTED.point.z];
-		INTERSECTED.object.geometry.colorsNeedUpdate=true;
-		
-	} 
-	else // there are no intersections
-	{
-		// restore previous intersection object (if it exists) to its original color
-		if ( INTERSECTED ){
-			INTERSECTED.object.material.color = tmpColor;
-			INTERSECTED.object.geometry.colorsNeedUpdate=true;
-		}
-		// remove previous intersection object reference
-		//     by setting current intersection object to "nothing"
-		
-		INTERSECTED = null;
-		mouseSphereCoords = null;
-
-	}
-}
-
-function CheckMouseSphere(){
-	// if the coordinates exist, make the sphere visible
-	if(mouseSphereCoords != null){
-		//console.log(mouseSphereCoords[0].toString()+","+mouseSphereCoords[1].toString()+","+mouseSphereCoords[2].toString());
-		mouseSphere[0].position.set(mouseSphereCoords[0],mouseSphereCoords[1],mouseSphereCoords[2]);
-		mouseSphere[0].visible = true;
-	}
-	else{ // otherwise hide the sphere
-		mouseSphere[0].visible = false;
-	}
-}
-=======
->>>>>>> 356b0faf2757f3a7a5f440d493161cd841d37145
-
-
   var raycaster = new THREE.Raycaster();
   var dir = new THREE.Vector3(mouse.x, mouse.y, 0.1);
 
@@ -404,4 +285,46 @@ function CheckMouseSphere(){
     INTERSECTED = null;
 
   }
+  }
+
+ function onDocumentMouseMove( event ) //http://www.moczys.com/webGL/Experiment_02_V05.html
+ {
+  mouse.x = ( ( event.clientX - $('.visual').offset().left ) / renderer.domElement.width ) * 2 - 1;
+  mouse.y = -( ( event.clientY - $('.visual').offset().top + document.body.scrollTop) / renderer.domElement.height ) * 2 + 1;
+  var vector = new THREE.Vector3(mouse.x, mouse.y, 0.1);
+
+  var raycaster = new THREE.Raycaster();
+  var dir = new THREE.Vector3(mouse.x, mouse.y, 0.1);
+
+  if (camera instanceof THREE.OrthographicCamera) { //KEY BRANCH CONDITION: checks if ortha or prespetive
+    vector.set(((event.clientX - $('.visual').offset().left ) / window.innerWidth) * 2 - 1, -((event.clientY - $('.visual').offset().top + document.body.scrollTop) / window.innerHeight) * 2 + 1, -1); // z = - 1 important!
+    vector.unproject(camera);
+    dir.set(0, 0, -1).transformDirection(camera.matrixWorld);
+    raycaster.set(vector, dir);
+  } else if (camera instanceof THREE.PerspectiveCamera) {
+    vector.set(((event.clientX - $('.visual').offset().left ) / window.innerWidth) * 2 - 1, -((event.clientY - $('.visual').offset().top + document.body.scrollTop) / window.innerHeight) * 2 + 1, 0.5); // z = 0.5 important!
+    vector.unproject(camera);
+    raycaster.set(camera.position, vector.sub(camera.position).normalize());
+  }
+
+  var intersects = raycaster.intersectObjects(mousetargetlist, true);
+
+    if ( intersects.length > 0 )  {
+      mouseSphereCoords = [intersects[0].point.x, intersects[0].point.y, intersects[0].point.z];
+    } 
+    else {
+      mouseSphereCoords = null;
+    }
 }
+ 
+function CheckMouseSphere(){
+ // if the coordinates exist, make the sphere visible
+ if(mouseSphereCoords != null){
+   mouseSphere[0].position.set(mouseSphereCoords[0],mouseSphereCoords[1],mouseSphereCoords[2]);
+   mouseSphere[0].visible = true;
+ }
+ else{
+   mouseSphere[0].visible = false;
+  }
+ }
+
