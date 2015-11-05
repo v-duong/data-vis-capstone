@@ -10,6 +10,8 @@ var projector
 var targetlist
 var INTERSECTED
 var intersects
+var barORScatter //0=scatter, 1=bar
+var hidecontrols
 
 
 
@@ -29,7 +31,7 @@ function init(){
 
 
 
-// table selected, time to show columns.. See what kind of Visualization was chosen first 
+// table selected, time to show columns.. See what kind of Visualization was chosen first
 $("#TableList").change(function(){
 	var visualSelected =  $("#VisualList option:selected").val();
 	console.log(visualSelected);
@@ -47,7 +49,7 @@ $("#TableList").change(function(){
 
 				// default at "Choose Column" to make sure user actually chooses a column
 				var htmlStr = "<option value='' selected='selected' disabled='disabled'> Choose Column </option>";
-				
+
 
 				// populate dropdown list with columnNames and Values
 				for (var i = 0; i < data.length; i++){
@@ -63,13 +65,13 @@ $("#TableList").change(function(){
 				$("#columnSelection.off-canvas-submenu").append('<li>Y: <select id="y">' + htmlStr);
 				$("#columnSelection.off-canvas-submenu").append('<li>Z: <select id="z">' + htmlStr);
 
-				generateBarFilters();				
+				generateBarFilters();
 
 			});
 			break;
 		default:
 			alert("Please choose a Visualization");
-			$("#TableList").val('');	// set it back to default 
+			$("#TableList").val('');	// set it back to default
 			break;
 
 
@@ -140,11 +142,11 @@ function displayVisuals() {
 $("#xfrom").change(function(){
 	console.log("fuck you");
 });
-	
 
-// filters only for bar and scatter 
+
+// filters only for bar and scatter
 function generateBarFilters(){
-	
+
 	var xCol = $("#x option:selected").text();
   	var yCol = $("#y option:selected").text();
   	var zCol = $("#z option:selected").text();
@@ -203,12 +205,12 @@ function generateBarFilters(){
 
 	//Columns for X
 
-	//$("#filters.off-canvas-submenu").html(""); 
+	//$("#filters.off-canvas-submenu").html("");
 
 	//$("#filters.off-canvas-submenu").append('<li><input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;"></li>');
 	//$("#filters.off-canvas-submenu").append('<li><div id="sliderX"></div></li>');
-	  
-  	
+
+
 
 
 	/*
@@ -257,25 +259,25 @@ function generateBar(){
   console.log(yType);
   console.log(zType);
 
-  // start of query 
+  // start of query
   var getColumnTypeQuery = "SELECT " + x + ", " + y + ", " + z + " from " + tableSelected;
 
- 
-  // handle X Column Filter 
+
+  // handle X Column Filter
   /*switch (xType){
   	case "double precision":
   		tempFrom = $("#xfrom").val();
 	  	tempTo = $("#xto").val()
 	  	if(tempFrom!="")
-	  	 	getColumnTypeQuery = getColumnTypeQuery.concat(" where x >= " + tempFrom);  
+	  	 	getColumnTypeQuery = getColumnTypeQuery.concat(" where x >= " + tempFrom);
 	  	if(tempTo!="")
-	  		getColumnTypeQuery = getColumnTypeQuery.concat("and x <= " + tempTo); 
+	  		getColumnTypeQuery = getColumnTypeQuery.concat("and x <= " + tempTo);
 	 	break;
 
 	case "text":
 		break;
 
-	case "date": 
+	case "date":
 		break;
 	default:
 		console.log("should never happen");
@@ -283,22 +285,22 @@ function generateBar(){
 
   }*/
 
-  
+
 
   if (xType == 'double precision'){
   	tempFrom = $("#xfrom").val();
   	tempTo = $("#xto").val()
   	if(tempFrom!="")
-  	 	getColumnTypeQuery = getColumnTypeQuery.concat(" where x >= " + tempFrom);  
+  	 	getColumnTypeQuery = getColumnTypeQuery.concat(" where x >= " + tempFrom);
   	if(tempTo!="")
-  		getColumnTypeQuery = getColumnTypeQuery.concat(" and x <= " + tempTo);  
+  		getColumnTypeQuery = getColumnTypeQuery.concat(" and x <= " + tempTo);
   }
 
   if (yType == 'double precision'){
   	tempFrom = $("#yfrom").val();
   	tempTo = $("#yto").val()
   	if(tempFrom!="")
-  	 	getColumnTypeQuery = getColumnTypeQuery.concat(" and y >= " + tempFrom);  
+  	 	getColumnTypeQuery = getColumnTypeQuery.concat(" and y >= " + tempFrom);
   	if(tempTo!="")
   		getColumnTypeQuery = getColumnTypeQuery.concat(" and y <= " + tempTo);
   }
@@ -307,7 +309,7 @@ function generateBar(){
 	tempFrom = $("#zfrom").val();
   	tempTo = $("#zto").val()
   	if(tempFrom!="")
-  	 	getColumnTypeQuery = getColumnTypeQuery.concat(" and z >= " + tempFrom);  
+  	 	getColumnTypeQuery = getColumnTypeQuery.concat(" and z >= " + tempFrom);
   	if(tempTo!="")
   		getColumnTypeQuery = getColumnTypeQuery.concat(" and z <= " + tempTo);
   }
@@ -326,6 +328,7 @@ function generateBar(){
 //Xinglun Xu add generateScatter function here
 function generateScatter()
 {
+	barORScatter = 0;
 	clearmeshes();
 	scene = new THREE.Scene();
 	camera = new THREE.PerspectiveCamera( 45, window.innerWidth/window.innerHeight, 0.1, 10000 );
@@ -363,7 +366,7 @@ function generateScatter()
 		displayNodes(data, geometry, material, x, y, z);
 	});
 	drawNumbers(new THREE.Vector3(0,5.1, 0), new THREE.Vector3(1,0,0), 1, 7, texts);
-	drawText(x, 6,0,0,texts); 
+	drawText(x, 6,0,0,texts);
 	drawText(y, 0,6,0,texts);
 	drawText(z, 0,0,6,texts);
 	window.addEventListener( 'resize', onWindowResize, false );
@@ -373,6 +376,28 @@ function generateScatter()
 }
 
 
+function generateBar(){
+	barORScatter = 1;
+  clearmeshes();
+	generateBarFilters();
+
+  init();
+  initbars();
+  animate();
+
+  var tableSelected = $("#TableList option:selected").val();
+  var x = $("#x option:selected").text();
+  var y = $("#y option:selected").text();
+  var z = $("#z option:selected").text();
+
+  var getColumnTypeQuery = "SELECT " + x + ", " + y + ", " + z + " from " + tableSelected;
+  console.log(getColumnTypeQuery);
+  var test;
+  $.getJSON('/retrieveData', { myQuery : getColumnTypeQuery }, function(data){
+	test = data;
+	renderData(data);
+  });
+}
 function clearmeshes() {
   for (var i = 0; i < meshes.length; i++) {
 	scene.remove(meshes[i]);
@@ -399,7 +424,7 @@ function onDocumentMouseMove( event ) //http://www.moczys.com/webGL/Experiment_0
 	// the following line would stop any other event handler from firing
 	// (such as the mouse's TrackballControls)
 	//event.preventDefault();
-	
+
 	// update the mouse variable
 	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
@@ -431,11 +456,11 @@ function checkHighlight(){ //http://www.moczys.com/webGL/Experiment_02_V05.html
 			INTERSECTED.object.geometry.colorsNeedUpdate=true;
 			INTERSECTED = intersects[ 0 ];
 			tmpColor = INTERSECTED.object.material.color;
-			INTERSECTED.object.material.color = highlightedColor;			
+			INTERSECTED.object.material.color = highlightedColor;
 		}
 		INTERSECTED.object.geometry.colorsNeedUpdate=true;
-		
-	} 
+
+	}
 	else // there are no intersections
 	{
 		// restore previous intersection object (if it exists) to its original color
@@ -445,7 +470,7 @@ function checkHighlight(){ //http://www.moczys.com/webGL/Experiment_02_V05.html
 		}
 		// remove previous intersection object reference
 		//     by setting current intersection object to "nothing"
-		
+
 		INTERSECTED = null;
 
 	}
