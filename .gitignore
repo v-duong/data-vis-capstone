@@ -30,3 +30,4 @@ node_modules
 public_files/*.csv
 
 .DS_STORE
+*/.DS_STORE
