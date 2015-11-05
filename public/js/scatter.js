@@ -1,7 +1,12 @@
 var renderScatter = function () {
 	requestAnimationFrame(renderScatter);
 	textFaceCamera(texts);
-	renderer.render(scene, camera);
+	if (vrModeIsOn) {
+    	effect.render(scene, camera);
+  	}
+  	else {
+    	renderer.render(scene, camera);
+  	}
 	controls.update();
 	checkHighlight();
 	// console.log("renderScatter is called");
