@@ -33,22 +33,25 @@ block sidelist
 
 		ul#filters.off-canvas-submenu
 			li
-				input(type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;")
-				#slider
+				input(type="text" id="amountX" readonly style="border:0; color:#f6931f; font-weight:bold;")
+				#sliderX
 				br
 
 			li
-				#slider1
+				input(type="text" id="amountY" readonly style="border:0; color:#f6931f; font-weight:bold;")
+				#sliderY
+				br
+
+			li
+				input(type="text" id="amountZ" readonly style="border:0; color:#f6931f; font-weight:bold;")
+				#sliderZ
+				br
 
 
 		li
 			input(type='button', value='Apply', onclick='generateBar()')
 			input(type='button', value='ApplyScatterPlot', onclick='generateScatter()')
-<<<<<<< HEAD
-			
-
 			input(type='button', value='Enter VR', onclick='enterVRMode()')
->>>>>>> master
 
 
 block scripts
@@ -62,43 +65,8 @@ block scripts
 	script(src='/js/vrDetection.js')
 	script(src='/js/bars.js')
 	script(src='/js/StereoEffect.js')
-<<<<<<< HEAD
-	meta(charset='utf-8')
 	link(rel='stylesheet', href='//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css')
 	script(src='//code.jquery.com/jquery-1.10.2.js')
 	script(src='//code.jquery.com/ui/1.11.4/jquery-ui.js')
 	script.
-		$(function() {
-			$( "#slider" ).slider({
-			range: true,
-			min: 0,
-			max: 500,
-			values: [ 75, 300 ],
-			slide: function( event, ui ) {
-				$( "#amount" ).val(  ui.values[ 0 ] + " - " + ui.values[ 1 ] );
-			}
-
-			});
-			$( "#amount" ).val(  $( "#slider" ).slider( "values", 0 ) + " - " + $( "#slider" ).slider( "values", 1 ) );
-
-
-		});
-
-		$(function(){
-			$( "#slider1" ).slider({
-			range: true,
-			min: 0,
-			max: 500,
-			values: [ 75, 300 ],
-			slide: function( event, ui ) {
-				$( "#amount" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
-			}
-
-			});
-
-			$( "#amount" ).val( "$" + $( "#slider-range" ).slider( "values", 0 ) + " - $" + $( "#slider-range" ).slider( "values", 1 ) );
-
-
-		});
-
->>>>>>> master
+		

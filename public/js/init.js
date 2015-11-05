@@ -78,6 +78,57 @@ $("#TableList").change(function(){
 
 });
 
+/*
+$(function() {
+	$( "#sliderX" ).slider({
+	range: true,
+	min: 0,
+	max: 500,
+	values: [ 75, 300 ],
+	slide: function( event, ui ) {
+		$( "#amountX" ).val(  ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+	}
+
+	});
+	$( "#amountX" ).val(  $( "#sliderX" ).slider( "values", 0 ) + " - " + $( "#sliderX" ).slider( "values", 1 ) );
+
+
+});
+
+$(function(){
+	$( "#sliderY" ).slider({
+	range: true,
+	min: 0,
+	max: 500,
+	values: [ 75, 300 ],
+	slide: function( event, ui ) {
+		$( "#amountY" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
+	}
+
+	});
+
+	$( "#amountY" ).val( "$" + $( "#sliderY" ).slider( "values", 0 ) + " - $" + $( "#sliderY" ).slider( "values", 1 ) );
+
+
+});
+
+$(function(){
+	$( "#sliderZ" ).slider({
+	range: true,
+	min: 0,
+	max: 500,
+	values: [ 75, 300 ],
+	slide: function( event, ui ) {
+		$( "#amountZ" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
+	}
+
+	});
+
+	$( "#amountZ" ).val( "$" + $( "#sliderZ" ).slider( "values", 0 ) + " - $" + $( "#sliderZ" ).slider( "values", 1 ) );
+
+
+});
+*/
 
 function displayVisuals() {
 	var dropDownSelected = $("#VisualList option:selected").val();
@@ -94,14 +145,73 @@ $("#xfrom").change(function(){
 // filters only for bar and scatter 
 function generateBarFilters(){
 	
-	var xType = $("#x option:selected").text();
-  	var yType = $("#y option:selected").text();
-  	var zType = $("#z option:selected").text();
+	var xCol = $("#x option:selected").text();
+  	var yCol = $("#y option:selected").text();
+  	var zCol = $("#z option:selected").text();
+  	var tableSelected = $("#TableList option:selected").val();
+
+
+  	var getMinMaxQuery = 'select max(' + xCol + '), min(' + xCol + ') FROM ' + tableSelected;
+  	console.log(getMinMaxQuery);
+/*
+	$.getJSON('/retrieveData', { myQuery : getColumnTypeQuery }, function(data){
+		test = data;
+		renderData(data);
+  	});*/
+	// setting slider X
+	console.log("Setting slider X");
+  	$( "#sliderX" ).slider({
+	range: true,
+	min: 0,
+	max: 500,
+	values: [ 75, 300 ],
+	slide: function( event, ui ) {
+		$( "#amountX" ).val(  ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+	}
+
+	});
+	$( "#amountX" ).val(  $( "#sliderX" ).slider( "values", 0 ) + " - " + $( "#sliderX" ).slider( "values", 1 ) );
+
+
+
+	$( "#sliderY" ).slider({
+	range: true,
+	min: 0,
+	max: 1000,
+	values: [ 75, 400 ],
+	slide: function( event, ui ) {
+		$( "#amountY" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
+	}
+
+	});
+
+	$( "#amountY" ).val( "$" + $( "#sliderY" ).slider( "values", 0 ) + " - $" + $( "#sliderY" ).slider( "values", 1 ) );
+
+	$( "#sliderZ" ).slider({
+	range: true,
+	min: 0,
+	max: 500,
+	values: [ 75, 300 ],
+	slide: function( event, ui ) {
+		$( "#amountZ" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
+	}
+
+	});
+
+	$( "#amountZ" ).val( "$" + $( "#sliderZ" ).slider( "values", 0 ) + " - $" + $( "#sliderZ" ).slider( "values", 1 ) );
+
+
 	//Columns for X
 
-	$("#filters.off-canvas-submenu").html(""); 
+	//$("#filters.off-canvas-submenu").html(""); 
+
+	//$("#filters.off-canvas-submenu").append('<li><input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;"></li>');
+	//$("#filters.off-canvas-submenu").append('<li><div id="sliderX"></div></li>');
+	  
+  	
 
 
+	/*
 	//$("#filters.off-canvas-submenu").append('<li> X: ');
 	$("#filters.off-canvas-submenu").append('<li>From: <input type="text" id="xfrom"></input></li>');
 	$("#filters.off-canvas-submenu").append('<li>To: <input type="text" id="xto"></input></li>');
@@ -118,6 +228,7 @@ function generateBarFilters(){
 	$("#filters.off-canvas-submenu").append('<li>From: <input type="text" id="zfrom"></input></li>');
 	$("#filters.off-canvas-submenu").append('<li>To: <input type="text" id="zto"</input></li>');
 	//$("#filters.off-canvas-submenu").append("</li>");
+	*/
 }
 
 
@@ -171,6 +282,8 @@ function generateBar(){
 
 
   }*/
+
+  
 
   if (xType == 'double precision'){
   	tempFrom = $("#xfrom").val();
