@@ -42,7 +42,7 @@ var vrModeIsOn = false;
 function fullScreenExitHandler(){
     if ( !(document.webkitIsFullScreen || document.mozFullScreen) ){
     	vrModeIsOn = false;
-    	if 	(barORScatter == 1){
+    	if (graphType === 'bar'){
 	 		var temp = hideCamera;
 			hideCamera = camera;
 			camera = temp;
@@ -70,7 +70,7 @@ function enterVRMode(){
 	else if (navigator.userAgent.indexOf('Firefox') != -1){		//Firefox
 		element.mozRequestFullScreen();
 	}
-	if 	(barORScatter == 1){
+	if (graphType === 'bar'){
 	 	var temp = hideCamera;
 		hideCamera = camera;
 		camera = temp;
@@ -81,4 +81,3 @@ function enterVRMode(){
   		animate();
 	}
 }
-
