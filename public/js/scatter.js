@@ -1,5 +1,5 @@
 var renderScatter = function () {
-	requestAnimationFrame(renderScatter);
+	RENDERID = requestAnimationFrame(renderScatter);
 	textFaceCamera(texts);
 	if (vrModeIsOn) {
     	effect.render(scene, camera);
@@ -8,10 +8,14 @@ var renderScatter = function () {
     	renderer.render(scene, camera);
   	}
 	controls.update();
+<<<<<<< HEAD
 	checkHighlight();
 	CheckMouseSphere();
 	// console.log("renderScatter is called");
 };
+=======
+}
+>>>>>>> 356b0faf2757f3a7a5f440d493161cd841d37145
 
 var cameraPosition = function(z, x, y)
 {
@@ -202,7 +206,7 @@ var setupScene = function()
 	scene.add(camera);
 	// document.body.appendChild( renderer.domElement );
 
-	controls = new THREE.OrbitControls( camera );
+	controls = new THREE.OrbitControls( camera , renderer.domElement);
 	// controls.addEventListener( 'change', renderScatter );
 
 	var geometry = new THREE.PlaneGeometry( 5, 5);
