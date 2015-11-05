@@ -10,7 +10,8 @@ var projector
 var targetlist
 var INTERSECTED
 var intersects
-var hideCamera
+var barORScatter //0=scatter, 1=bar 
+var hidecontrols
 
 
 function init(){
@@ -101,6 +102,7 @@ function generateBarFilters(){
 //Xinglun Xu add generateScatter function here
 function generateScatter()
 {
+	barORScatter = 0;
 	clearmeshes();
 	scene = new THREE.Scene();
 	camera = new THREE.PerspectiveCamera( 45, window.innerWidth/window.innerHeight, 0.1, 10000 );
@@ -148,6 +150,7 @@ function generateScatter()
 }
 
 function generateBar(){
+	barORScatter = 1;
   clearmeshes();
 	generateBarFilters();
 

@@ -5,7 +5,7 @@ var renderScatter = function () {
     	effect.render(scene, camera);
   	}
   	else {
-    	renderer.render(scene, orthCamera);
+    	renderer.render(scene, camera);
   	}
 	controls.update();
 	checkHighlight();

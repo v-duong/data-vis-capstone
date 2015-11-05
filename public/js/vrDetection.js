@@ -42,9 +42,15 @@ var vrModeIsOn = false;
 function fullScreenExitHandler(){
     if ( !(document.webkitIsFullScreen || document.mozFullScreen) ){
     	vrModeIsOn = false;
-    	var temp = hideCamera;
-		hideCamera = camera;
-		camera = temp;
+    	if 	(barORScatter == 1){
+	 		var temp = hideCamera;
+			hideCamera = camera;
+			camera = temp;
+			camera.position.z = 800;
+  			camera.position.y = 600;
+  			camera.position.x = 600;
+  			animate();
+		}
     }
 
 }
@@ -57,15 +63,22 @@ if (document.getElementsByClassName('visual')[0].addEventListener)
 
 function enterVRMode(){
 	vrModeIsOn = true;
-	element = document.getElementsByClassName('visual')[0];
+	var element = document.getElementsByClassName('visual')[0];
 	if ( navigator.userAgent.indexOf('Chrome') != -1 ){			//Chrome
 		element.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
 	}
 	else if (navigator.userAgent.indexOf('Firefox') != -1){		//Firefox
 		element.mozRequestFullScreen();
 	}
-	var temp = hideCamera;
-	hideCamera = camera;
-	camera = temp;
+	if 	(barORScatter == 1){
+	 	var temp = hideCamera;
+		hideCamera = camera;
+		camera = temp;
+		camera.position.z = 800;
+   		camera.position.y = 600;
+  		camera.position.x = 600;
+  		camera.camera.lookAt(new THREE.Vector3(0, 0, 0));
+  		animate();
+	}
 }
 
