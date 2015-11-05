@@ -64,27 +64,48 @@ function renderData(data) {
   var t_x = []
   var t_y = []
   var t_z = []
+
   for (var i = 0; i < data.length; i++){
     t_x.push(data[i][keys[0]]);
     t_y.push(data[i][keys[1]]);
     t_z.push(data[i][keys[2]]);
   }
+
   var u_x = createDictionary(t_x)
   var u_y = createDictionary(t_y)
   var u_z = createDictionary(t_z)
   console.log(u_x)
   console.log(u_z)
+
   var min_y = _.min(u_y)
   var max_y = _.max(u_y)
+
   var size = Math.floor((window.innerWidth*0.80) / u_x.length)
-  setCameraPosition(size*8);
+  setCameraPosition(size*10);
+
   var scale = d3.scale.linear()
                       .domain([min_y, max_y])
                       .range([1, size*5]);
-  for (var i = 0; i < data.length; i++) {
-    d = data[i];
-    addBar(d[keys[0]] * size, scale(d[keys[1]]), d[keys[2]] * size, size);
-  }
+  if ( ($("#z option:selected").val() === 'text') && ($("#x option:selected").val() === 'text'))
+    for (var i = 0; i < data.length; i++) {
+      d = data[i];
+      addBar(_.indexOf(u_x,d[keys[0]]) * size, scale(d[keys[1]]),  _.indexOf(u_z,d[keys[2]]) * size, size);
+    }
+  else if ($("#x option:selected").val() === 'text')
+    for (var i = 0; i < data.length; i++) {
+      d = data[i];
+      addBar(_.indexOf(u_x,d[keys[0]]) * size, scale(d[keys[1]]), d[keys[2]] * size, size);
+    }
+  else if ($("#z option:selected").val() === 'text')
+    for (var i = 0; i < data.length; i++) {
+      d = data[i];
+      addBar(d[keys[0]] * size, scale(d[keys[1]]), _.indexOf(u_z,d[keys[2]]) * size, size);
+    }
+  else
+    for (var i = 0; i < data.length; i++) {
+      d = data[i];
+      addBar(d[keys[0]] * size, scale(d[keys[1]]), d[keys[2]] * size, size);
+    }
 
 
   for (var i = 0; i < u_x.length; i++) {
