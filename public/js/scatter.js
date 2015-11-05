@@ -9,6 +9,7 @@ var renderScatter = function () {
   	}
 	controls.update();
 	checkHighlight();
+	CheckMouseSphere();
 	// console.log("renderScatter is called");
 };
 

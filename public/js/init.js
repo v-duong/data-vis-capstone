@@ -12,6 +12,9 @@ var INTERSECTED
 var intersects
 var barORScatter //0=scatter, 1=bar 
 var hidecontrols
+var mouseSphereCoords = null
+var mouseSphere=[]
+
 
 
 function init(){
@@ -23,6 +26,10 @@ function init(){
   mouse = { x: 0, y: 0 };
   intersects = [];
   document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+  //mouse sphere
+  var msphere= new THREE.Mesh(new THREE.SphereGeometry(8,8,8), new THREE.MeshBasicMaterial({ color: 0xf9f9f9 }));
+	scene.add(msphere);
+	mouseSphere.push(msphere);
 }
 
 
@@ -114,6 +121,11 @@ function generateScatter()
 
   	//highlight part
   	highlightedColor = new THREE.Color( 0xf4412f);
+
+  	//mouse sphere
+  	var msphere= new THREE.Mesh(new THREE.SphereGeometry(0.1,32,32), new THREE.MeshBasicMaterial({ color: 0xf9f9f9 }));
+	scene.add(msphere);
+	mouseSphere.push(msphere);
 
   	//projector
   	projector = new THREE.Projector();
@@ -232,6 +244,8 @@ function checkHighlight(){ //http://www.moczys.com/webGL/Experiment_02_V05.html
 			tmpColor = INTERSECTED.object.material.color;
 			INTERSECTED.object.material.color = highlightedColor;			
 		}
+		// upsdate mouseSphere coordinates and update colors
+		mouseSphereCoords = [INTERSECTED.point.x,INTERSECTED.point.y,INTERSECTED.point.z];
 		INTERSECTED.object.geometry.colorsNeedUpdate=true;
 		
 	} 
@@ -246,7 +260,20 @@ function checkHighlight(){ //http://www.moczys.com/webGL/Experiment_02_V05.html
 		//     by setting current intersection object to "nothing"
 		
 		INTERSECTED = null;
+		mouseSphereCoords = null;
 
+	}
+}
+
+function CheckMouseSphere(){
+	// if the coordinates exist, make the sphere visible
+	if(mouseSphereCoords != null){
+		//console.log(mouseSphereCoords[0].toString()+","+mouseSphereCoords[1].toString()+","+mouseSphereCoords[2].toString());
+		mouseSphere[0].position.set(mouseSphereCoords[0],mouseSphereCoords[1],mouseSphereCoords[2]);
+		mouseSphere[0].visible = true;
+	}
+	else{ // otherwise hide the sphere
+		mouseSphere[0].visible = false;
 	}
 }
 

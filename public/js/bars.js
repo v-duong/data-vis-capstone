@@ -54,10 +54,15 @@ function animate() {
 
 function render() {
   if (vrModeIsOn) {
+    CheckMouseSphere();
     effect.render(scene, camera);
+    //controls2.update();
   }
   else {
+    mouseSphereCoords = null;
+    CheckMouseSphere();
     renderer.render(scene, camera);
+    //controls.update();
   }
 }
 
