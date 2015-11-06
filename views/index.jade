@@ -1,10 +1,12 @@
 extend navtemplate
 block maintext
-  .row
-    .large-8.columns
-      select(id='listUploaded')
-        each item in tables
-          option(selected=item.table_name) #{item.table_name}
-    .large-3.columns
-      form(name='importData')
-        input(type='button', value='Import', onclick='uploadClick()')
+  section.hero
+    .row.intro
+      .large-centered
+        h1 Simple 3D Data Visualizations
+        p
+          | Just upload a file and select what you want displayed.
+        a.d(href='/uploadPage' class="button") Upload Now
+      
+        
+    

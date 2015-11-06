@@ -37,7 +37,7 @@ app.post('/',function(req,res)
   });
 
 app.get('/', function (req, res) {
-  
+
   var client = require('./public/js/database.js');
   var tlist;
   client.queryDB("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';" , function(tlist){
@@ -67,7 +67,7 @@ app.get('/Uploaded_Files', function(req, res){
 });
 
 app.get('/uploadPage', function(req, res){
-  res.render('uploadPage.jade');
+  res.render('uploadPage');
 });
 
 
@@ -85,9 +85,6 @@ var file_uploaded = multer({ storage: storage });
 
 app.post('/file-upload', file_uploaded.single('datafile'), function(req, res){
   if (req.file == null){
-     res.render('uploadPage', {
-          "fileData" : "Please select a File"
-      });
      return;
   }
 
@@ -117,19 +114,19 @@ app.post('/file-upload', file_uploaded.single('datafile'), function(req, res){
     // uploaded successfully
   src.on('end', function() {
     // add textBuff into DB
-   
+
     var myDB = require('./public/js/database.js');
-  
+
     myDB.insertTable(req.file.originalname, textBuff, function(myRows){
 
       if (myRows == true){
         console.log("insert success");
         // delete the physical file
-        
+
         res.render('uploadPage', {
           "fileData" : textBuff
         });
-        
+
       }
       else{
         console.log("insert fail");
@@ -137,7 +134,7 @@ app.post('/file-upload', file_uploaded.single('datafile'), function(req, res){
         res.render('uploadPage', {
           "fileData" : textBuff
         });
-        
+
       }
       fs.unlinkSync(target_path);
 
@@ -147,7 +144,7 @@ app.post('/file-upload', file_uploaded.single('datafile'), function(req, res){
 
   // failed to upload
   src.on('error', function(err) { res.render('back'); });
-  
+
 });
 
 
