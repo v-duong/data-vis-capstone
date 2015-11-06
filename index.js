@@ -85,7 +85,6 @@ var file_uploaded = multer({ storage: storage });
 
 app.post('/file-upload', file_uploaded.single('datafile'), function(req, res){
   if (req.file == null){
-     res.end("Please select a File");
      return;
   }
 

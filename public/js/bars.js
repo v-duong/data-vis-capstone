@@ -18,7 +18,6 @@ function initbars() {
 
 function animate() {
   RENDERID = requestAnimationFrame(animate);
-  CheckMouseSphere();
   render();
 }
 
@@ -52,7 +51,6 @@ function addBar(x, y, z, size) {
   meshes.push(mesh);
   meshes.push(edges);
   targetlist.push(mesh);
-  mousetargetlist.push(mesh);
   scene.add(edges);
 }
 

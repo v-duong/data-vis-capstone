@@ -1,7 +1,6 @@
 var renderScatter = function () {
 	RENDERID = requestAnimationFrame(renderScatter);
 	textFaceCamera(texts);
-	CheckMouseSphere();
 	if (vrModeIsOn) {
     	effect.render(scene, camera);
   	}
@@ -147,7 +146,6 @@ var createNode = function(geometry, material, x, y, z)
 	scene.add( sphere );
 	meshes.push(sphere);
 	targetlist.push(sphere);
-	mousetargetlist.push(sphere);
 }
 
 var displayNodes = function(data,geometry,material, x, y, z)
@@ -220,10 +218,6 @@ var setupScene = function()
 	scene.add(plane1);
 	scene.add(plane2);
 	meshes.push(plane); meshes.push(plane1);meshes.push(plane2);
-	mousetargetlist.push(plane);
-	mousetargetlist.push(plane1);
-	mousetargetlist.push(plane2);
-
 
 
 	var line = drawLine(new THREE.Vector3(0,5,0.01), new THREE.Vector3(0,0,0.01));
