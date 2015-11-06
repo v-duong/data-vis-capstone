@@ -67,7 +67,7 @@ app.get('/Uploaded_Files', function(req, res){
 });
 
 app.get('/uploadPage', function(req, res){
-  res.render('uploadPage.jade');
+  res.render('uploadPage');
 });
 
 
@@ -85,9 +85,7 @@ var file_uploaded = multer({ storage: storage });
 
 app.post('/file-upload', file_uploaded.single('datafile'), function(req, res){
   if (req.file == null){
-     res.render('uploadPage', {
-          "fileData" : "Please select a File"
-      });
+     res.end("Please select a File");
      return;
   }
 

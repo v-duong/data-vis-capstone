@@ -86,11 +86,12 @@ function renderData(data) {
   var scale = d3.scale.linear()
                       .domain([min_y, max_y])
                       .range([1, size*5]);
-  if ( ($("#z option:selected").val() === 'text') && ($("#x option:selected").val() === 'text'))
+  //if ( ($("#z option:selected").val() === 'text') && ($("#x option:selected").val() === 'text'))
     for (var i = 0; i < data.length; i++) {
       d = data[i];
       addBar(_.indexOf(u_x,d[keys[0]]) * size, scale(d[keys[1]]),  _.indexOf(u_z,d[keys[2]]) * size, size);
     }
+    /*   For now we just use that top one. rest will be used when I can fix the cases.
   else if ($("#x option:selected").val() === 'text')
     for (var i = 0; i < data.length; i++) {
       d = data[i];
@@ -106,7 +107,7 @@ function renderData(data) {
       d = data[i];
       addBar(d[keys[0]] * size, scale(d[keys[1]]), d[keys[2]] * size, size);
     }
-
+*/
 
   for (var i = 0; i < u_x.length; i++) {
     v1 = new THREE.Vector3((u_x[i] * size - (window.innerWidth * 0.70)/2) + size/2, 0, -1 * size)
