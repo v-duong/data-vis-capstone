@@ -237,7 +237,21 @@ function generateBarFilters(){
 	*/
 }
 
-
+function generateVisuals() {
+  var tableSelected = $("#VisualList option:selected").val();
+  switch (tableSelected) {
+    case 'bar':
+      generateBar();
+      graphType = 'bar'
+      break;
+    case 'scatter':
+      generateScatter();
+      graphType = 'scatter'
+      break;
+    default:
+      break;
+  }
+}
 
 function generateBar(){
   clearmeshes();
