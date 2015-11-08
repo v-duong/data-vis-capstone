@@ -1,11 +1,7 @@
 var camera, scene, renderer
 var controls, texts
 var effect
-var tmpColor, highlightedColor
-var windowHalfX
-var windowHalfY
 var meshes = []
-
 var targetlist
 var INTERSECTED
 var INITIAL = false
@@ -15,13 +11,8 @@ var RENDERID = null
 var mouseSphere=[]
 var sphereToggle = false;
 
-
-
-
-
 function init(){
   scene = new THREE.Scene();
-
   window.addEventListener('resize', onWindowResize, false);
   renderer = new THREE.WebGLRenderer({
     alpha: true
@@ -32,7 +23,6 @@ function init(){
   scene.add(msphere);
   mouseSphere.push(msphere);
   sphereToggle = false;
-
 }
 
 $("#sphere").change(function(){
@@ -60,20 +50,14 @@ $("#TableList").change(function(){
 			$("#columnSelection.off-canvas-submenu").html("");
 			$.getJSON('/retrieveData', { myQuery : getColumnTypeQuery }, function(data){
 				// create a dropdown list
-
 				// default at "Choose Column" to make sure user actually chooses a column
 				var htmlStr = "<option value='' selected='selected' disabled='disabled'> Choose Column </option>";
-
 
 				// populate dropdown list with columnNames and Values
 				for (var i = 0; i < data.length; i++){
 					htmlStr = htmlStr.concat('<option value="' + data[i].data_type + '">' + data[i].column_name + '</option>');
 				}
 
-
-				//$.each(data, function(j, g){
-
-				//});
 				htmlStr = htmlStr.concat('</select></li>');
 				$("#columnSelection.off-canvas-submenu").append('<li>X: <select id="xColumn">' + htmlStr);
 				$("#columnSelection.off-canvas-submenu").append('<li>Y: <select id="yColumn">' + htmlStr);
@@ -185,12 +169,6 @@ function generateColumnFilter(colID){
 };
 
 
-function displayVisuals() {
-	var dropDownSelected = $("#VisualList option:selected").val();
-	var tableSelected = $("#TableList option:selected").val();
-
-
-}
 
 
 function generateVisuals() {
@@ -335,7 +313,6 @@ var z = $("#zColumn option:selected").text();
   window.addEventListener('resize', onWindowResize, false);
 
   renderScatter();
-  // console.log("generateScatter is called");
 }
 
 
