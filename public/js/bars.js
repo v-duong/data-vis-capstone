@@ -1,6 +1,8 @@
 function initbars() {
+
   hideCamera = new THREE.PerspectiveCamera( 85, window.innerWidth / window.innerHeight, 1, 10000 );
   camera = new THREE.OrthographicCamera(window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, 1, 10000);
+
 
   renderer.setSize(window.innerWidth, window.innerHeight);
 

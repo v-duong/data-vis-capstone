@@ -11,7 +11,7 @@ var RENDERID = null
 var mouseSphere=[]
 var sphereToggle = false;
 
-function init() {
+function init(){
   scene = new THREE.Scene();
   window.addEventListener('resize', onWindowResize, false);
   renderer = new THREE.WebGLRenderer({
@@ -33,79 +33,143 @@ $("#sphere").change(function(){
   }
 })
 
-$("#VisualList").change(function() {
-  var tableSelected = $("#VisualList option:selected").val();
-  switch (tableSelected) {
-    case 'bar':
+
+
+// table selected, time to show columns.. See what kind of Visualization was chosen first
+$("#TableList").change(function(){
+	var visualSelected =  $("#VisualList option:selected").val();
+	console.log(visualSelected);
+	switch(visualSelected){
+		case 'bar':
+		case 'scatter':
+			var tableSelected = $("#TableList option:selected").val();
+			var getColumnTypeQuery = "SELECT column_name ,data_type FROM information_schema.columns where table_name = '";
+			getColumnTypeQuery = getColumnTypeQuery.concat(tableSelected + "'");
+			console.log(getColumnTypeQuery);
+
+			$("#columnSelection.off-canvas-submenu").html("");
+			$.getJSON('/retrieveData', { myQuery : getColumnTypeQuery }, function(data){
+				// create a dropdown list
+				// default at "Choose Column" to make sure user actually chooses a column
+				var htmlStr = "<option value='' selected='selected' disabled='disabled'> Choose Column </option>";
+
+				// populate dropdown list with columnNames and Values
+				for (var i = 0; i < data.length; i++){
+					htmlStr = htmlStr.concat('<option value="' + data[i].data_type + '">' + data[i].column_name + '</option>');
+				}
+
+				htmlStr = htmlStr.concat('</select></li>');
+				$("#columnSelection.off-canvas-submenu").append('<li>X: <select id="xColumn">' + htmlStr);
+				$("#columnSelection.off-canvas-submenu").append('<li>Y: <select id="yColumn">' + htmlStr);
+				$("#columnSelection.off-canvas-submenu").append('<li>Z: <select id="zColumn">' + htmlStr);
+
+				//generateBarFilters();
+
+			});
+			break;
+		default:
+			alert("Please choose a Visualization");
+			$("#TableList").val('');	// set it back to default
+			break;
+
+
+	}
+
+
+});
+
+// Changes for Dynamic Column
+// each column will generate its own desired filters
+$(document).on('change', '#xColumn', function(){
+  switch (this.value){
+    case 'double precision':
+      console.log("calling generateColumNFilter");
+      generateColumnFilter('#xColumn');
       break;
-    case 'scatter':
+    case 'text':
       break;
     default:
+      console.log("no " + this.value + " support yet");
+  }
+
+
+});
+
+$(document).on('change', '#yColumn', function(){
+  switch (this.value){
+    case 'double precision':
+      console.log("calling generateColumNFilter");
+      generateColumnFilter('#yColumn');
+      break;
+    case 'text':
+      break;
+    default:
+      console.log("no " + this.value + " support yet");
+  }
+
+
+});
+$(document).on('change', '#zColumn', function(){
+  switch (this.value){
+    case 'double precision':
+      console.log("calling generateColumNFilter");
+      generateColumnFilter('#zColumn');
+      break;
+    case 'text':
+      break;
+    default:
+      console.log("no " + this.value + " support yet");
+  }
+
+
+});
+
+// create a filter for
+function generateColumnFilter(colID){
+	var tableSelected = $("#TableList option:selected").val();
+  var ColName = $(colID.concat(" option:selected")).text();
+  var getMinMaxQuery = 'select max(' + ColName + '), min(' + ColName + ') FROM ' + tableSelected;
+  console.log(getMinMaxQuery);
+
+  var slideName;
+  var amountName;
+  switch (colID){
+    case '#xColumn':
+      slideName = "#sliderX";
+      amountName = "#amountX";
+      break;
+    case '#yColumn':
+      slideName = "#sliderY";
+      amountName = "#amountY";
+      break;
+    case '#zColumn':
+      slideName = "#sliderZ";
+      amountName = "#amountZ";
       break;
   }
 
-});
+  $.getJSON('/retrieveData', { myQuery : getMinMaxQuery }, function(data){
+    console.log(data[0].min);
+    console.log(data[0].max);
+    console.log(slideName);
+    console.log(amountName);
+    $( slideName ).slider({
+    	range: true,
+    	min: parseFloat(data[0].min),
+    	max: parseFloat(data[0].max),
+    	values: [ data[0].min, data[0].max ],
+    	slide: function( event, ui ) {
+    		$( amountName ).val(  ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+    	}
 
-// table selected, time to show columns
-$("#TableList").change(function() {
-  var tableSelected = $("#TableList option:selected").val();
-  var getColumnTypeQuery = "SELECT column_name ,data_type FROM information_schema.columns where table_name = '";
-  getColumnTypeQuery = getColumnTypeQuery.concat(tableSelected + "'");
-  console.log(getColumnTypeQuery);
-
-  $("#filters.off-canvas-submenu").html("");
-  $.getJSON('/retrieveData', {
-    myQuery: getColumnTypeQuery
-  }, function(data) {
-    // create a dropdown list
-
-
-    var htmlStr = '';
-    //$("#filters.off-canvas-submenu").append('<li><select>');
-
-    // populate dropdown list with columnNames and Values
-    for (var i = 0; i < data.length; i++) {
-      //$("#filters.off-canvas-submenu").append('<option value="' + data[i].data_type + '">' + data[i].column_name + '</option>');
-      htmlStr = htmlStr.concat('<option value="' + data[i].data_type + '">' + data[i].column_name + '</option>');
-    }
-
-
-    //$.each(data, function(j, g){
-
-    //});
-    htmlStr = htmlStr.concat('</select></li>');
-    $("#filters.off-canvas-submenu").append('<li><select id="x">' + htmlStr);
-    $("#filters.off-canvas-submenu").append('<li><select id="y">' + htmlStr);
-    $("#filters.off-canvas-submenu").append('<li><select id="z">' + htmlStr);
+    	});
+    	$( amountName ).val(  $( slideName ).slider( "values", 0 ) + " - " + $( slideName ).slider( "values", 1 ) );
 
   });
+};
 
 
 
-
-});
-
-
-function displayVisuals() {
-  var dropDownSelected = $("#VisualList option:selected").val();
-  var tableSelected = $("#TableList option:selected").val();
-
-
-}
-
-function generateBarFilters() {
-  // initialize Column Selection
-
-
-
-  //Columns for X
-
-
-  //Columns for Y
-
-
-  //Columns for Z
-}
 
 function generateVisuals() {
   var tableSelected = $("#VisualList option:selected").val();
@@ -123,8 +187,83 @@ function generateVisuals() {
   }
 }
 
+// Creates a query based on Table, Columns, and Filters for Bar and Scatter
+function BarScatterFilterQuery(){
+
+
+  var tableSelected = $("#TableList option:selected").val();
+  var x = $("#xColumn option:selected").text();
+  var y = $("#yColumn option:selected").text();
+  var z = $("#zColumn option:selected").text();
+
+  var xType = $("#xColumn option:selected").val();
+  var yType = $("#yColumn option:selected").val();
+  var zType = $("#zColumn option:selected").val();
+
+  var tempFrom;
+  var tempTo;
+
+  console.log(tableSelected);
+  console.log(x);
+  console.log(y);
+  console.log(z);
+  console.log(xType);
+  console.log(yType);
+  console.log(zType);
+
+  // start of query
+  var getColumnTypeQuery = "SELECT " + x + ", " + y + ", " + z + " from " + tableSelected;
+
+  var startWord = " where";
+
+  if (xType == 'double precision'){
+  	tempFrom = $( "#sliderX" ).slider( "values", 0 );
+  	tempTo = $( "#sliderX" ).slider( "values", 1 );
+  	if(tempFrom!=""){
+  	 	getColumnTypeQuery = getColumnTypeQuery.concat(" where "+x+" >= " + tempFrom);
+      startWord = " and";
+    }
+    if(tempTo!=""){
+  		getColumnTypeQuery = getColumnTypeQuery.concat(startWord + " "+x+" <= " + tempTo);
+      startWord = " and";
+    }
+  }
+
+  if (yType == 'double precision'){
+  	tempFrom = $( "#sliderY" ).slider( "values", 0 );
+  	tempTo = $( "#sliderY" ).slider( "values", 1 );
+  	if(tempFrom!=""){
+  	 	getColumnTypeQuery = getColumnTypeQuery.concat(startWord +" "+y+" >= " + tempFrom);
+      startWord = " and";
+    }
+    if(tempTo!=""){
+  		getColumnTypeQuery = getColumnTypeQuery.concat(startWord +" "+y+" <= " + tempTo);
+      startWord = " and";
+    }
+  }
+
+  if (zType == 'double precision'){
+	tempFrom = $( "#sliderZ" ).slider( "values", 0 );
+  	tempTo = $( "#sliderZ" ).slider( "values", 1 );
+  	if(tempFrom!=""){
+  	 	getColumnTypeQuery = getColumnTypeQuery.concat(startWord +" "+z+" >= " + tempFrom);
+      startWord = " and";
+    }
+  	if(tempTo!=""){
+  		getColumnTypeQuery = getColumnTypeQuery.concat(startWord +" "+z+" <= " + tempTo);
+      startWord = " and";
+    }
+  }
+
+
+
+  return getColumnTypeQuery;
+
+}
+
 //Xinglun Xu add generateScatter function here
-function generateScatter() {
+function generateScatter()
+{
   clearmeshes();
   if (!INITIAL) {
     init();
@@ -143,11 +282,19 @@ function generateScatter() {
   var scales = [];
   setupScene();
   var normalMaterial = new THREE.MeshNormalMaterial();
+/*
   var tableSelected = $("#TableList option:selected").val();
-  var x = $("#x option:selected").text();
-  var y = $("#y option:selected").text();
-  var z = $("#z option:selected").text();
+  var x = $("#xColumn option:selected").text();
+  var y = $("#yColumn option:selected").text();
+  var z = $("#zColumn option:selected").text();
   var getColumnTypeQuery = "SELECT " + x + ", " + y + ", " + z + " from " + tableSelected;
+  console.log(getColumnTypeQuery);
+*/
+var x = $("#xColumn option:selected").text();
+var y = $("#yColumn option:selected").text();
+var z = $("#zColumn option:selected").text();
+  var getColumnTypeQuery = BarScatterFilterQuery();
+  console.log("Blah");
   console.log(getColumnTypeQuery);
   // console.log("generateScatter: "+x+" "+y+" "+z);
   $.getJSON('/retrieveData', {
@@ -166,10 +313,10 @@ function generateScatter() {
   window.addEventListener('resize', onWindowResize, false);
 
   renderScatter();
-  // console.log("generateScatter is called");
 }
 
-function generateBar() {
+
+function generateBar(){
   clearmeshes();
 
   if (!INITIAL) {
@@ -182,41 +329,48 @@ function generateBar() {
   animate();
 
   targetlist = [];
-
+/*
   var tableSelected = $("#TableList option:selected").val();
   var x = $("#x option:selected").text();
   var y = $("#y option:selected").text();
   var z = $("#z option:selected").text();
+  */
 
-  var getColumnTypeQuery = "SELECT " + x + ", " + y + ", " + z + " from " + tableSelected;
-  console.log(getColumnTypeQuery);
+  // generate bar/Scatter Query Based on Filters
+
+  var displayQuery = BarScatterFilterQuery();
+  console.log("Blah");
+  console.log(displayQuery);
+
+  //var getColumnTypeQuery = "SELECT " + x + ", " + y + ", " + z + " from " + tableSelected;
+  //console.log(getColumnTypeQuery);
   var test;
   $.getJSON('/retrieveData', {
-    myQuery: getColumnTypeQuery
+    myQuery: displayQuery
   }, function(data) {
     test = data;
     renderData(data);
   });
-
 }
+
 
 function clearmeshes() {
   for (var i = 0; i < meshes.length; i++) {
-    scene.remove(meshes[i]);
+	scene.remove(meshes[i]);
   }
   meshes = [];
 }
 
 function onWindowResize() {
 
-  windowHalfX = window.innerWidth / 2;
-  windowHalfY = window.innerHeight / 2;
+	windowHalfX = window.innerWidth / 2;
+	windowHalfY = window.innerHeight / 2;
 
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
+	camera.aspect = window.innerWidth / window.innerHeight;
+	camera.updateProjectionMatrix();
 
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  effect.setSize(window.innerWidth, window.innerHeight);
+	renderer.setSize( window.innerWidth, window.innerHeight );
+	effect.setSize( window.innerWidth, window.innerHeight );
 
 }
 
@@ -282,6 +436,7 @@ function onDocumentMouseDown(event) //http://www.moczys.com/webGL/Experiment_02_
   }
   if (sphereToggle)
     CheckMouseSphere(mouseSphereCoords);
+
 }
 
 function CheckMouseSphere(mouseSphereCoords){
