@@ -19,7 +19,7 @@ function init() {
   });
   document.addEventListener('mousedown', onDocumentMouseDown, false);
   $('.visual').append(renderer.domElement);
-  var msphere= new THREE.Mesh(new THREE.SphereGeometry(8,8,8), new THREE.MeshBasicMaterial({ color: 0xf9f9f9 }));
+  var msphere= new THREE.Mesh(new THREE.SphereGeometry(0,0,0), new THREE.MeshBasicMaterial({ color: 0xf9f9f9 }));
   scene.add(msphere);
   mouseSphere.push(msphere);
   sphereToggle = false;
@@ -140,11 +140,8 @@ function generateScatter() {
 
   targetlist = [];
   texts = [];
+  var scales = [];
   setupScene();
-  var geometry = new THREE.SphereGeometry(0.25, 32, 32);
-  var material = new THREE.MeshBasicMaterial({
-    color: 0xffff00
-  });
   var normalMaterial = new THREE.MeshNormalMaterial();
   var tableSelected = $("#TableList option:selected").val();
   var x = $("#x option:selected").text();
@@ -157,9 +154,12 @@ function generateScatter() {
     myQuery: getColumnTypeQuery
   }, function(data) {
     test = data;
-    displayNodes(data, geometry, material, x, y, z);
+    findScales(scales,data,x,y,z);
+    displayNodes(data, x, y, z, scales);
+    drawNumbers(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 0, 0), 1, 7, texts,scales[0]);
+    drawNumbers(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 1, 0), 1, 7, texts,scales[1]);
+    drawNumbers(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, 1), 1, 7, texts,scales[2]);
   });
-  drawNumbers(new THREE.Vector3(0, 5.1, 0), new THREE.Vector3(1, 0, 0), 1, 7, texts);
   drawText(x, 6, 0, 0, texts);
   drawText(y, 0, 6, 0, texts);
   drawText(z, 0, 0, 6, texts);
