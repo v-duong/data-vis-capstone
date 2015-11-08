@@ -220,7 +220,6 @@ var setupScene = function()
 	meshes.push(plane); meshes.push(plane1);meshes.push(plane2);
 
 
-
 	var line = drawLine(new THREE.Vector3(0,5,0.01), new THREE.Vector3(0,0,0.01));
 	var line1 = drawLine(new THREE.Vector3(5,0,0.01), new THREE.Vector3(0,0,0.01));
 	var line2 = drawLine(new THREE.Vector3(0,0.01,5), new THREE.Vector3(5,0.01,5));

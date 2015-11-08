@@ -2,16 +2,21 @@ head
   title PROJECTNAME
   link(rel='stylesheet', href='/css/foundation.css' type='text/css')
   link(rel='stylesheet', href='/css/style.css' type='text/css')
+  link(href='https://cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/foundation-icons.css', rel='stylesheet')
+  link(href='https://fonts.googleapis.com/css?family=Gudea:400,700', rel='stylesheet')
   body
-    link(href='http://cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/foundation-icons.css', rel='stylesheet')
-    header.header
-      h1.main-header OUR PROJECT STUFF
-      ul.header-subnav
-        li
-          a(href='/') Home
-        li
-          a(href='/visualize') Visualization
-        li
-          a(href='/') About
+    div
+      nav.navbar
+        .container
+          .nav-header
+            a(href='/') GraphiqReality
+          .subnav
+            ul.header-subnav
+              li
+                a(href='/') Upload
+              li
+                a(href='/visualize') Visualization
+              li
+                a(href='/') About
     block maintext
       

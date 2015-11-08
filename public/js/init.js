@@ -5,29 +5,43 @@ var tmpColor, highlightedColor
 var windowHalfX
 var windowHalfY
 var meshes = []
-var mouse
-var projector
+
 var targetlist
 var INTERSECTED
-var intersects
-var barORScatter //0=scatter, 1=bar
+var INITIAL = false
 var hidecontrols
+var graphType
+var RENDERID = null
+var mouseSphere=[]
+var sphereToggle = false;
+
 
 
 
 
 function init(){
   scene = new THREE.Scene();
-  window.addEventListener( 'resize', onWindowResize, false );
-  projector = new THREE.Projector();
-  targetlist = [];
-  highlightedColor = new THREE.Color( 0xf4412f);
-  mouse = { x: 0, y: 0 };
-  intersects = [];
-  document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+
+  window.addEventListener('resize', onWindowResize, false);
+  renderer = new THREE.WebGLRenderer({
+    alpha: true
+  });
+  document.addEventListener('mousedown', onDocumentMouseDown, false);
+  $('.visual').append(renderer.domElement);
+  var msphere= new THREE.Mesh(new THREE.SphereGeometry(8,8,8), new THREE.MeshBasicMaterial({ color: 0xf9f9f9 }));
+  scene.add(msphere);
+  mouseSphere.push(msphere);
+  sphereToggle = false;
+
 }
 
-
+$("#sphere").change(function(){
+  if (this.checked)
+    sphereToggle = true;
+  else {
+    sphereToggle = false;
+  }
+})
 
 
 
@@ -61,11 +75,11 @@ $("#TableList").change(function(){
 
 				//});
 				htmlStr = htmlStr.concat('</select></li>');
-				$("#columnSelection.off-canvas-submenu").append('<li>X: <select id="x">' + htmlStr);
-				$("#columnSelection.off-canvas-submenu").append('<li>Y: <select id="y">' + htmlStr);
-				$("#columnSelection.off-canvas-submenu").append('<li>Z: <select id="z">' + htmlStr);
+				$("#columnSelection.off-canvas-submenu").append('<li>X: <select id="xColumn">' + htmlStr);
+				$("#columnSelection.off-canvas-submenu").append('<li>Y: <select id="yColumn">' + htmlStr);
+				$("#columnSelection.off-canvas-submenu").append('<li>Z: <select id="zColumn">' + htmlStr);
 
-				generateBarFilters();
+				//generateBarFilters();
 
 			});
 			break;
@@ -80,61 +94,96 @@ $("#TableList").change(function(){
 
 });
 
-$("#TableList").change(function(){
-
-});
-
-/*
-$(function() {
-	$( "#sliderX" ).slider({
-	range: true,
-	min: 0,
-	max: 500,
-	values: [ 75, 300 ],
-	slide: function( event, ui ) {
-		$( "#amountX" ).val(  ui.values[ 0 ] + " - " + ui.values[ 1 ] );
-	}
-
-	});
-	$( "#amountX" ).val(  $( "#sliderX" ).slider( "values", 0 ) + " - " + $( "#sliderX" ).slider( "values", 1 ) );
+// Changes for Dynamic Column
+// each column will generate its own desired filters
+$(document).on('change', '#xColumn', function(){
+  switch (this.value){
+    case 'double precision':
+      console.log("calling generateColumNFilter");
+      generateColumnFilter('#xColumn');
+      break;
+    case 'text':
+      break;
+    default:
+      console.log("no " + this.value + " support yet");
+  }
 
 
 });
 
-$(function(){
-	$( "#sliderY" ).slider({
-	range: true,
-	min: 0,
-	max: 500,
-	values: [ 75, 300 ],
-	slide: function( event, ui ) {
-		$( "#amountY" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
-	}
+$(document).on('change', '#yColumn', function(){
+  switch (this.value){
+    case 'double precision':
+      console.log("calling generateColumNFilter");
+      generateColumnFilter('#yColumn');
+      break;
+    case 'text':
+      break;
+    default:
+      console.log("no " + this.value + " support yet");
+  }
 
-	});
 
-	$( "#amountY" ).val( "$" + $( "#sliderY" ).slider( "values", 0 ) + " - $" + $( "#sliderY" ).slider( "values", 1 ) );
+});
+$(document).on('change', '#zColumn', function(){
+  switch (this.value){
+    case 'double precision':
+      console.log("calling generateColumNFilter");
+      generateColumnFilter('#zColumn');
+      break;
+    case 'text':
+      break;
+    default:
+      console.log("no " + this.value + " support yet");
+  }
 
 
 });
 
-$(function(){
-	$( "#sliderZ" ).slider({
-	range: true,
-	min: 0,
-	max: 500,
-	values: [ 75, 300 ],
-	slide: function( event, ui ) {
-		$( "#amountZ" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
-	}
+// create a filter for
+function generateColumnFilter(colID){
+	var tableSelected = $("#TableList option:selected").val();
+  var ColName = $(colID.concat(" option:selected")).text();
+  var getMinMaxQuery = 'select max(' + ColName + '), min(' + ColName + ') FROM ' + tableSelected;
+  console.log(getMinMaxQuery);
 
-	});
+  var slideName;
+  var amountName;
+  switch (colID){
+    case '#xColumn':
+      slideName = "#sliderX";
+      amountName = "#amountX";
+      break;
+    case '#yColumn':
+      slideName = "#sliderY";
+      amountName = "#amountY";
+      break;
+    case '#zColumn':
+      slideName = "#sliderZ";
+      amountName = "#amountZ";
+      break;
+  }
 
-	$( "#amountZ" ).val( "$" + $( "#sliderZ" ).slider( "values", 0 ) + " - $" + $( "#sliderZ" ).slider( "values", 1 ) );
+  $.getJSON('/retrieveData', { myQuery : getMinMaxQuery }, function(data){
+    console.log(data[0].min);
+    console.log(data[0].max);
+    console.log(slideName);
+    console.log(amountName);
+    $( slideName ).slider({
+    	range: true,
+    	min: parseFloat(data[0].min),
+    	max: parseFloat(data[0].max),
+    	values: [ data[0].min, data[0].max ],
+    	slide: function( event, ui ) {
+    		$( amountName ).val(  ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+    	}
 
+    	});
+    	$( amountName ).val(  $( slideName ).slider( "values", 0 ) + " - " + $( slideName ).slider( "values", 1 ) );
 
-});
-*/
+  });
+};
+
 
 function displayVisuals() {
 	var dropDownSelected = $("#VisualList option:selected").val();
@@ -143,99 +192,6 @@ function displayVisuals() {
 
 }
 
-$("#xfrom").change(function(){
-	console.log("fuck you");
-});
-
-
-// filters only for bar and scatter
-function generateBarFilters(){
-
-	var xCol = $("#x option:selected").text();
-  	var yCol = $("#y option:selected").text();
-  	var zCol = $("#z option:selected").text();
-  	var tableSelected = $("#TableList option:selected").val();
-
-
-  	var getMinMaxQuery = 'select max(' + xCol + '), min(' + xCol + ') FROM ' + tableSelected;
-  	console.log(getMinMaxQuery);
-/*
-	$.getJSON('/retrieveData', { myQuery : getColumnTypeQuery }, function(data){
-		test = data;
-		renderData(data);
-  	});*/
-	// setting slider X
-	console.log("Setting slider X");
-  	$( "#sliderX" ).slider({
-	range: true,
-	min: 0,
-	max: 500,
-	values: [ 75, 300 ],
-	slide: function( event, ui ) {
-		$( "#amountX" ).val(  ui.values[ 0 ] + " - " + ui.values[ 1 ] );
-	}
-
-	});
-	$( "#amountX" ).val(  $( "#sliderX" ).slider( "values", 0 ) + " - " + $( "#sliderX" ).slider( "values", 1 ) );
-
-
-
-	$( "#sliderY" ).slider({
-	range: true,
-	min: 0,
-	max: 1000,
-	values: [ 75, 400 ],
-	slide: function( event, ui ) {
-		$( "#amountY" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
-	}
-
-	});
-
-	$( "#amountY" ).val( "$" + $( "#sliderY" ).slider( "values", 0 ) + " - $" + $( "#sliderY" ).slider( "values", 1 ) );
-
-	$( "#sliderZ" ).slider({
-	range: true,
-	min: 0,
-	max: 500,
-	values: [ 75, 300 ],
-	slide: function( event, ui ) {
-		$( "#amountZ" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
-	}
-
-	});
-
-	$( "#amountZ" ).val( "$" + $( "#sliderZ" ).slider( "values", 0 ) + " - $" + $( "#sliderZ" ).slider( "values", 1 ) );
-
-
-	//Columns for X
-
-	//$("#filters.off-canvas-submenu").html("");
-
-	//$("#filters.off-canvas-submenu").append('<li><input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;"></li>');
-	//$("#filters.off-canvas-submenu").append('<li><div id="sliderX"></div></li>');
-
-
-
-
-	/*
-	//$("#filters.off-canvas-submenu").append('<li> X: ');
-	$("#filters.off-canvas-submenu").append('<li>From: <input type="text" id="xfrom"></input></li>');
-	$("#filters.off-canvas-submenu").append('<li>To: <input type="text" id="xto"></input></li>');
-	//$("#filters.off-canvas-submenu").append("</li>");
-	//Columns for Y
-
-	//$("#filters.off-canvas-submenu").append('<li> Y: ');
-	$("#filters.off-canvas-submenu").append('<li>From: <input type="text" id="yfrom"</input></li>');
-	$("#filters.off-canvas-submenu").append('<li>To: <input type="text" id="yto"></input></li>');
-	//$("#filters.off-canvas-submenu").append("</li>");
-
-	//Columns for Z
-	//$("#filters.off-canvas-submenu").append('<li> Z: ');
-	$("#filters.off-canvas-submenu").append('<li>From: <input type="text" id="zfrom"></input></li>');
-	$("#filters.off-canvas-submenu").append('<li>To: <input type="text" id="zto"</input></li>');
-	//$("#filters.off-canvas-submenu").append("</li>");
-	*/
-}
 
 function generateVisuals() {
   var tableSelected = $("#VisualList option:selected").val();
@@ -253,26 +209,26 @@ function generateVisuals() {
   }
 }
 
-function generateBar(){
-  clearmeshes();
+// Creates a query based on Table, Columns, and Filters for Bar and Scatter
+function BarScatterFilterQuery(){
 
-  init();
-  initbars();
-  animate();
 
   var tableSelected = $("#TableList option:selected").val();
-  var x = $("#x option:selected").text();
-  var y = $("#y option:selected").text();
-  var z = $("#z option:selected").text();
+  var x = $("#xColumn option:selected").text();
+  var y = $("#yColumn option:selected").text();
+  var z = $("#zColumn option:selected").text();
 
-  var xType = $("#x option:selected").val();
-  var yType = $("#y option:selected").val();
-  var zType = $("#z option:selected").val();
+  var xType = $("#xColumn option:selected").val();
+  var yType = $("#yColumn option:selected").val();
+  var zType = $("#zColumn option:selected").val();
 
   var tempFrom;
   var tempTo;
 
-
+  console.log(tableSelected);
+  console.log(x);
+  console.log(y);
+  console.log(z);
   console.log(xType);
   console.log(yType);
   console.log(zType);
@@ -280,142 +236,147 @@ function generateBar(){
   // start of query
   var getColumnTypeQuery = "SELECT " + x + ", " + y + ", " + z + " from " + tableSelected;
 
-
-  // handle X Column Filter
-  /*switch (xType){
-  	case "double precision":
-  		tempFrom = $("#xfrom").val();
-	  	tempTo = $("#xto").val()
-	  	if(tempFrom!="")
-	  	 	getColumnTypeQuery = getColumnTypeQuery.concat(" where x >= " + tempFrom);
-	  	if(tempTo!="")
-	  		getColumnTypeQuery = getColumnTypeQuery.concat("and x <= " + tempTo);
-	 	break;
-
-	case "text":
-		break;
-
-	case "date":
-		break;
-	default:
-		console.log("should never happen");
-
-
-  }*/
-
-
+  var startWord = " where";
 
   if (xType == 'double precision'){
-  	tempFrom = $("#xfrom").val();
-  	tempTo = $("#xto").val()
-  	if(tempFrom!="")
-  	 	getColumnTypeQuery = getColumnTypeQuery.concat(" where x >= " + tempFrom);
-  	if(tempTo!="")
-  		getColumnTypeQuery = getColumnTypeQuery.concat(" and x <= " + tempTo);
+  	tempFrom = $( "#sliderX" ).slider( "values", 0 );
+  	tempTo = $( "#sliderX" ).slider( "values", 1 );
+  	if(tempFrom!=""){
+  	 	getColumnTypeQuery = getColumnTypeQuery.concat(" where "+x+" >= " + tempFrom);
+      startWord = " and";
+    }
+    if(tempTo!=""){
+  		getColumnTypeQuery = getColumnTypeQuery.concat(startWord + " "+x+" <= " + tempTo);
+      startWord = " and";
+    }
   }
 
   if (yType == 'double precision'){
-  	tempFrom = $("#yfrom").val();
-  	tempTo = $("#yto").val()
-  	if(tempFrom!="")
-  	 	getColumnTypeQuery = getColumnTypeQuery.concat(" and y >= " + tempFrom);
-  	if(tempTo!="")
-  		getColumnTypeQuery = getColumnTypeQuery.concat(" and y <= " + tempTo);
+  	tempFrom = $( "#sliderY" ).slider( "values", 0 );
+  	tempTo = $( "#sliderY" ).slider( "values", 1 );
+  	if(tempFrom!=""){
+  	 	getColumnTypeQuery = getColumnTypeQuery.concat(startWord +" "+y+" >= " + tempFrom);
+      startWord = " and";
+    }
+    if(tempTo!=""){
+  		getColumnTypeQuery = getColumnTypeQuery.concat(startWord +" "+y+" <= " + tempTo);
+      startWord = " and";
+    }
   }
 
   if (zType == 'double precision'){
-	tempFrom = $("#zfrom").val();
-  	tempTo = $("#zto").val()
-  	if(tempFrom!="")
-  	 	getColumnTypeQuery = getColumnTypeQuery.concat(" and z >= " + tempFrom);
-  	if(tempTo!="")
-  		getColumnTypeQuery = getColumnTypeQuery.concat(" and z <= " + tempTo);
+	tempFrom = $( "#sliderZ" ).slider( "values", 0 );
+  	tempTo = $( "#sliderZ" ).slider( "values", 1 );
+  	if(tempFrom!=""){
+  	 	getColumnTypeQuery = getColumnTypeQuery.concat(startWord +" "+z+" >= " + tempFrom);
+      startWord = " and";
+    }
+  	if(tempTo!=""){
+  		getColumnTypeQuery = getColumnTypeQuery.concat(startWord +" "+z+" <= " + tempTo);
+      startWord = " and";
+    }
   }
 
 
 
-  console.log(getColumnTypeQuery);
-  var test;
-  $.getJSON('/retrieveData', { myQuery : getColumnTypeQuery }, function(data){
-	test = data;
-	renderData(data);
-  });
+  return getColumnTypeQuery;
 
 }
 
 //Xinglun Xu add generateScatter function here
 function generateScatter()
 {
-	barORScatter = 0;
-	clearmeshes();
-	scene = new THREE.Scene();
-	camera = new THREE.PerspectiveCamera( 45, window.innerWidth/window.innerHeight, 0.1, 10000 );
-	renderer = new THREE.WebGLRenderer({alpha:true});
+  clearmeshes();
+  if (!INITIAL) {
+    init();
+    INITIAL = true;
+  }
+  if (RENDERID != null)
+    cancelAnimationFrame( RENDERID );
+  camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
 
-	//add effect
-  	effect = new THREE.StereoEffect(renderer);
-  	effect.setSize( window.innerWidth, window.innerHeight );
+  //add effect
+  effect = new THREE.StereoEffect(renderer);
+  effect.setSize(window.innerWidth, window.innerHeight);
 
-  	//highlight part
-  	highlightedColor = new THREE.Color( 0xf4412f);
+  targetlist = [];
+  texts = [];
+  setupScene();
+  var geometry = new THREE.SphereGeometry(0.25, 32, 32);
+  var material = new THREE.MeshBasicMaterial({
+    color: 0xffff00
+  });
+  var normalMaterial = new THREE.MeshNormalMaterial();
+/*
+  var tableSelected = $("#TableList option:selected").val();
+  var x = $("#xColumn option:selected").text();
+  var y = $("#yColumn option:selected").text();
+  var z = $("#zColumn option:selected").text();
+  var getColumnTypeQuery = "SELECT " + x + ", " + y + ", " + z + " from " + tableSelected;
+  console.log(getColumnTypeQuery);
+*/
+var x = $("#xColumn option:selected").text();
+var y = $("#yColumn option:selected").text();
+var z = $("#zColumn option:selected").text();
+  var getColumnTypeQuery = BarScatterFilterQuery();
+  console.log("Blah");
+  console.log(getColumnTypeQuery);
+  // console.log("generateScatter: "+x+" "+y+" "+z);
+  $.getJSON('/retrieveData', {
+    myQuery: getColumnTypeQuery
+  }, function(data) {
+    test = data;
+    displayNodes(data, geometry, material, x, y, z);
+  });
+  drawNumbers(new THREE.Vector3(0, 5.1, 0), new THREE.Vector3(1, 0, 0), 1, 7, texts);
+  drawText(x, 6, 0, 0, texts);
+  drawText(y, 0, 6, 0, texts);
+  drawText(z, 0, 0, 6, texts);
+  window.addEventListener('resize', onWindowResize, false);
 
-  	//projector
-  	projector = new THREE.Projector();
-  	targetlist = [];
-  	mouse = { x: 0, y: 0 };
-  	intersects = [];
-  	document.addEventListener( 'mousemove', onDocumentMouseMove, false );
-
-	texts = [];
-	setupScene();
-	var geometry = new THREE.SphereGeometry( 0.25, 32, 32 );
-	var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
-	var normalMaterial = new THREE.MeshNormalMaterial();
-	$('.visual').append( renderer.domElement );
-	var tableSelected = $("#TableList option:selected").val();
-	var x = $("#x option:selected").text();
-	var y = $("#y option:selected").text();
-	var z = $("#z option:selected").text();
-	var getColumnTypeQuery = "SELECT " + x + ", " + y + ", " + z + " from " + tableSelected;
-	console.log(getColumnTypeQuery);
-	// console.log("generateScatter: "+x+" "+y+" "+z);
-	$.getJSON('/retrieveData', { myQuery : getColumnTypeQuery }, function(data){
-		test = data;
-		displayNodes(data, geometry, material, x, y, z);
-	});
-	drawNumbers(new THREE.Vector3(0,5.1, 0), new THREE.Vector3(1,0,0), 1, 7, texts);
-	drawText(x, 6,0,0,texts);
-	drawText(y, 0,6,0,texts);
-	drawText(z, 0,0,6,texts);
-	window.addEventListener( 'resize', onWindowResize, false );
-
-	renderScatter();
-	// console.log("generateScatter is called");
+  renderScatter();
+  // console.log("generateScatter is called");
 }
 
 
 function generateBar(){
-	barORScatter = 1;
   clearmeshes();
-	generateBarFilters();
 
-  init();
+  if (!INITIAL) {
+    init();
+    INITIAL = true;
+  }
+  if (RENDERID != null)
+    cancelAnimationFrame( RENDERID );
   initbars();
   animate();
 
+  targetlist = [];
+/*
   var tableSelected = $("#TableList option:selected").val();
   var x = $("#x option:selected").text();
   var y = $("#y option:selected").text();
   var z = $("#z option:selected").text();
+  */
 
-  var getColumnTypeQuery = "SELECT " + x + ", " + y + ", " + z + " from " + tableSelected;
-  console.log(getColumnTypeQuery);
+  // generate bar/Scatter Query Based on Filters
+
+  var displayQuery = BarScatterFilterQuery();
+  console.log("Blah");
+  console.log(displayQuery);
+
+  //var getColumnTypeQuery = "SELECT " + x + ", " + y + ", " + z + " from " + tableSelected;
+  //console.log(getColumnTypeQuery);
   var test;
-  $.getJSON('/retrieveData', { myQuery : getColumnTypeQuery }, function(data){
-	test = data;
-	renderData(data);
+  $.getJSON('/retrieveData', {
+    myQuery: displayQuery
+  }, function(data) {
+    test = data;
+    renderData(data);
   });
 }
+
+
 function clearmeshes() {
   for (var i = 0; i < meshes.length; i++) {
 	scene.remove(meshes[i]);
@@ -437,63 +398,77 @@ function onWindowResize() {
 }
 
 
-function onDocumentMouseMove( event ) //http://www.moczys.com/webGL/Experiment_02_V05.html
+function onDocumentMouseDown(event) //http://www.moczys.com/webGL/Experiment_02_V05.html
 {
-	// the following line would stop any other event handler from firing
-	// (such as the mouse's TrackballControls)
-	//event.preventDefault();
+  // the following line would stop any other event handler from firing
+  // (such as the mouse's TrackballControls)
+  //event.preventDefault();
 
-	// update the mouse variable
-	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-	//checkHighlight();
+  // update the mouse variable
+  var mouse = { x: 0, y: 0 };
+  mouse.x = ( ( event.clientX - $('.visual').offset().left ) / renderer.domElement.width ) * 2 - 1;
+  mouse.y = -( ( event.clientY - $('.visual').offset().top + document.body.scrollTop) / renderer.domElement.height ) * 2 + 1;
+  vector = new THREE.Vector3(mouse.x, mouse.y, 0.1);
+
+  var raycaster = new THREE.Raycaster();
+  var dir = new THREE.Vector3(mouse.x, mouse.y, 0.1);
+
+  if (camera instanceof THREE.OrthographicCamera) { //KEY BRANCH CONDITION: checks if ortha or prespetive
+    vector.set(((event.clientX - $('.visual').offset().left ) / window.innerWidth) * 2 - 1, -((event.clientY - $('.visual').offset().top + document.body.scrollTop) / window.innerHeight) * 2 + 1, -1); // z = - 1 important!
+    vector.unproject(camera);
+    dir.set(0, 0, -1).transformDirection(camera.matrixWorld);
+    raycaster.set(vector, dir);
+  } else if (camera instanceof THREE.PerspectiveCamera) {
+    vector.set(((event.clientX - $('.visual').offset().left ) / window.innerWidth) * 2 - 1, -((event.clientY - $('.visual').offset().top + document.body.scrollTop) / window.innerHeight) * 2 + 1, 0.5); // z = 0.5 important!
+    vector.unproject(camera);
+    raycaster.set(camera.position, vector.sub(camera.position).normalize());
+  }
+
+  var intersects = raycaster.intersectObjects(targetlist, true);
+  var temp = 0;
+  var coeff = 1.1;
+  var mouseSphereCoords;
+  if (intersects.length > 0) { // case if mouse is not currently over an object
+    mouseSphereCoords = [intersects[0].point.x, intersects[0].point.y, intersects[0].point.z];
+    if (INTERSECTED == null) {
+      INTERSECTED = intersects[0];
+      tmpColor = INTERSECTED.object.material.color;
+      temp = INTERSECTED.object.material.color
+      INTERSECTED.object.material.color = new THREE.Color((temp.r + Math.max(0.35 - temp.r, 0)) * coeff, (temp.g + Math.max(0.35 - temp.g, 0)) * coeff, (temp.b + Math.max(0.35 - temp.b, 0)) * coeff);
+
+    } else { // if thse mouse is over an object
+      INTERSECTED.object.material.color = tmpColor;
+      INTERSECTED.object.geometry.colorsNeedUpdate = true;
+      INTERSECTED = intersects[0];
+      tmpColor = INTERSECTED.object.material.color;
+      temp = INTERSECTED.object.material.color
+      INTERSECTED.object.material.color = new THREE.Color((temp.r + Math.max(0.35 - temp.r, 0)) * coeff, (temp.g + Math.max(0.35 - temp.g, 0)) * coeff, (temp.b + Math.max(0.35 - temp.b, 0)) * coeff);
+    }
+    INTERSECTED.object.geometry.colorsNeedUpdate = true;
+
+  } else // there are no intersections
+  {
+    mouseSphereCoords = null;
+    // restore previous intersection object (if it exists) to its original color
+    if (INTERSECTED) {
+      INTERSECTED.object.material.color = tmpColor;
+      INTERSECTED.object.geometry.colorsNeedUpdate = true;
+    }
+    // remove previous intersection object reference
+    //     by setting current intersection object to "nothing"
+  }
+  if (sphereToggle)
+    CheckMouseSphere(mouseSphereCoords);
+
 }
 
-
-function checkHighlight(){ //http://www.moczys.com/webGL/Experiment_02_V05.html
-	// find intersections
-
-	// create a Ray with origin at the mouse position
-	//   and direction into the scene (camera direction)
-	var vector = new THREE.Vector3( mouse.x, mouse.y, 0.1 );
-	//projector.unprojectVector( vector, camera );
-	vector.unproject( camera );
-	var ray = new THREE.Raycaster( camera.position, vector.sub( camera.position ).normalize() );
-	// create an array containing all objects in the scene with which the ray intersects
-	intersects = ray.intersectObjects( targetlist , false);
-
-	if ( intersects.length > 0 )
-	{	// case if mouse is not currently over an object
-		if(INTERSECTED==null){
-			INTERSECTED = intersects[ 0 ];
-			tmpColor = INTERSECTED.object.material.color;
-			INTERSECTED.object.material.color = highlightedColor;
-		}
-		else{	// if thse mouse is over an object
-			INTERSECTED.object.material.color= tmpColor;
-			INTERSECTED.object.geometry.colorsNeedUpdate=true;
-			INTERSECTED = intersects[ 0 ];
-			tmpColor = INTERSECTED.object.material.color;
-			INTERSECTED.object.material.color = highlightedColor;
-		}
-		INTERSECTED.object.geometry.colorsNeedUpdate=true;
-
-	}
-	else // there are no intersections
-	{
-		// restore previous intersection object (if it exists) to its original color
-		if ( INTERSECTED ){
-			INTERSECTED.object.material.color = tmpColor;
-			INTERSECTED.object.geometry.colorsNeedUpdate=true;
-		}
-		// remove previous intersection object reference
-		//     by setting current intersection object to "nothing"
-
-		INTERSECTED = null;
-
-	}
-}
-
-function fetchData(){
-
-}
+function CheckMouseSphere(mouseSphereCoords){
+ // if the coordinates exist, make the sphere visible
+ if(mouseSphereCoords != null){
+   mouseSphere[0].position.set(mouseSphereCoords[0],mouseSphereCoords[1],mouseSphereCoords[2]);
+   mouseSphere[0].visible = true;
+ }
+ else{
+   mouseSphere[0].visible = false;
+  }
+ }
