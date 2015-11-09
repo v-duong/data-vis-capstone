@@ -10,6 +10,10 @@ var graphType
 var RENDERID = null
 var mouseSphere=[]
 var sphereToggle = false;
+var vector
+var sprite1;
+var canvas1,context1,texture1;
+var scatter_check = 0;
 
 function init(){
   scene = new THREE.Scene();
@@ -18,11 +22,18 @@ function init(){
     alpha: true
   });
   document.addEventListener('mousedown', onDocumentMouseDown, false);
+  document.addEventListener('mousemove', onDocumentMouseMove, false );
   $('.visual').append(renderer.domElement);
   var msphere= new THREE.Mesh(new THREE.SphereGeometry(0,0,0), new THREE.MeshBasicMaterial({ color: 0xf9f9f9 }));
   scene.add(msphere);
   mouseSphere.push(msphere);
   sphereToggle = false;
+
+    canvas1 = document.createElement('canvas'); //canvas for text popup
+    context1=canvas1.getContext('2d');
+
+    texture1 = new THREE.Texture(canvas1); //texture for canvas
+    texture1.needsUpdate = true;
 }
 
 $("#sphere").change(function(){
@@ -268,16 +279,21 @@ function generateScatter()
   if (!INITIAL) {
     init();
     INITIAL = true;
+     //mouse sphere
+    var msphere= new THREE.Mesh(new THREE.SphereGeometry(0.1,8,8), new THREE.MeshBasicMaterial({ color: 0xf9f9f9 }));
+    scene.add(msphere);
+    mouseSphere.push(msphere);
   }
   if (RENDERID != null)
     cancelAnimationFrame( RENDERID );
   camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
-
+  scatter_check=1; //used in branch statement to change pop-up parameters
   //add effect
   effect = new THREE.StereoEffect(renderer);
   effect.setSize(window.innerWidth, window.innerHeight);
 
   targetlist = [];
+  mousetargetlist = [];
   texts = [];
   var scales = [];
   setupScene();
@@ -322,6 +338,11 @@ function generateBar(){
   if (!INITIAL) {
     init();
     INITIAL = true;
+     //mouse sphere
+    var msphere= new THREE.Mesh(new THREE.SphereGeometry(8,8,8), new THREE.MeshBasicMaterial({ color: 0xf9f9f9 }));
+    scene.add(msphere);
+    mouseSphere.push(msphere);
+
   }
   if (RENDERID != null)
     cancelAnimationFrame( RENDERID );
@@ -329,7 +350,8 @@ function generateBar(){
   animate();
 
   targetlist = [];
-/*
+  mousetargetlist = [];
+  scater_check = 0;
   var tableSelected = $("#TableList option:selected").val();
   var x = $("#x option:selected").text();
   var y = $("#y option:selected").text();
@@ -351,6 +373,7 @@ function generateBar(){
     test = data;
     renderData(data);
   });
+
 }
 
 
@@ -375,7 +398,7 @@ function onWindowResize() {
 }
 
 
-function onDocumentMouseDown(event) //http://www.moczys.com/webGL/Experiment_02_V05.html
+ function onDocumentMouseDown(event) //http://www.moczys.com/webGL/Experiment_02_V05.html
 {
   // the following line would stop any other event handler from firing
   // (such as the mouse's TrackballControls)
@@ -411,7 +434,58 @@ function onDocumentMouseDown(event) //http://www.moczys.com/webGL/Experiment_02_
       INTERSECTED = intersects[0];
       tmpColor = INTERSECTED.object.material.color;
       temp = INTERSECTED.object.material.color
-      INTERSECTED.object.material.color = new THREE.Color((temp.r + Math.max(0.35 - temp.r, 0)) * coeff, (temp.g + Math.max(0.35 - temp.g, 0)) * coeff, (temp.b + Math.max(0.35 - temp.b, 0)) * coeff);
+      INTERSECTED.object.material.color = new THREE.Color((temp.r + Math.max(0.4 - temp.r, 0)) * coeff, (temp.g + Math.max(0.4 - temp.g, 0)) * coeff, (temp.b + Math.max(0.4 - temp.b, 0)) * coeff);
+      scene.remove(sprite1);
+
+      var resultx=Math.round(intersects[0].object.position.x*100)/100
+      var resulty=Math.round(intersects[0].object.position.y*100)/100
+      var resultz=Math.round(intersects[0].object.position.z*100)/100
+    // POP UP TEXT, must create new sprite each time, updating did not work
+
+      intersects[0].object.name = "X:"+resultx+ '\n'  + "Y:"+resulty+ '\n'  + "Z:"+resultz ;message = intersects[0].object.name;
+      canvas1 = document.createElement('canvas');
+      context1.clearRect(0,0,100,100);
+      context1=canvas1.getContext('2d');
+      context1.font = "Bold 30px Arial";
+      var metrics = context1.measureText(message);
+      var width = metrics.width;
+      context1.fillStyle = "rgba(0,0,0,0.95)"; // black border
+      context1.fillRect( 0,0, width+16,20+16);
+      context1.fillStyle = "rgba(255,255,255,0.95)"; // white filler
+      context1.fillRect( 2,2, width+16,20+16 );
+      context1.fillStyle = "rgba(0,0,0,1)"; // text color
+      context1.fillText( message, 10,30 );
+      texture1.needsUpdate = true;
+
+
+      texture1 = new THREE.Texture(canvas1);
+      texture1.needsUpdate = true;
+      var spriteMaterial = new THREE.SpriteMaterial( { map: texture1, color: 0xffffff, fog: true } );
+      sprite1 = new THREE.Sprite( spriteMaterial );
+
+      if (scatter_check == 0) { //check if scatter or bar, adjusts sprite parameters
+
+
+        //need to work on scaling so it is relative to bar size, dont know how to yet
+        sprite1.scale.set(200,100,1)
+        sprite1.position.set( 50, 50, 0 );
+        scene.add( sprite1 );
+        //need to work on putting sprite on a new scene, so other bars wont block the sprite
+        // this will also fix the issue with positioning, right now i position it so sprite is above all other bars
+        sprite1.position.set( intersects[0].object.position.x, intersects[0].object.position.y+150, intersects[0].object.position.z ); //update sprite position
+      }
+
+      else {
+        sprite1.scale.set(1.5,1.5,1)
+        sprite1.position.set( 50, 50, 0 );
+        scene.add( sprite1 );
+        sprite1.position.set( intersects[0].object.position.x, intersects[0].object.position.y, intersects[0].object.position.z ); //update sprite position
+
+      }
+
+
+
+
 
     } else { // if thse mouse is over an object
       INTERSECTED.object.material.color = tmpColor;
@@ -419,8 +493,59 @@ function onDocumentMouseDown(event) //http://www.moczys.com/webGL/Experiment_02_
       INTERSECTED = intersects[0];
       tmpColor = INTERSECTED.object.material.color;
       temp = INTERSECTED.object.material.color
-      INTERSECTED.object.material.color = new THREE.Color((temp.r + Math.max(0.35 - temp.r, 0)) * coeff, (temp.g + Math.max(0.35 - temp.g, 0)) * coeff, (temp.b + Math.max(0.35 - temp.b, 0)) * coeff);
+      INTERSECTED.object.material.color = new THREE.Color((temp.r + Math.max(0.4 - temp.r, 0)) * coeff, (temp.g + Math.max(0.4 - temp.g, 0)) * coeff, (temp.b + Math.max(0.4 - temp.b, 0)) * coeff);
+      scene.remove(sprite1);
+      var resultx=Math.round(intersects[0].object.position.x*100)/100
+      var resulty=Math.round(intersects[0].object.position.y*100)/100
+      var resultz=Math.round(intersects[0].object.position.z*100)/100
+    // POP UP TEXT, must create new sprite each time, updating did not work
+      intersects[0].object.name = "X:"+resultx+ '\n'  + "Y:"+resulty+ '\n'  + "Z:"+resultz ;
+      message = intersects[0].object.name; //new line dsnt work
+  console.log(message);
+      canvas1 = document.createElement('canvas');
+      context1.clearRect(0,0,100,100);
+      context1=canvas1.getContext('2d');
+      context1.font = "Bold 30px Arial";
+      var metrics = context1.measureText(message);
+      var width = metrics.width;
+      context1.fillStyle = "rgba(0,0,0,0.95)"; // black border
+      context1.fillRect( 0,0, width+16,20+16);
+      context1.fillStyle = "rgba(255,255,255,0.95)"; // white filler
+      context1.fillRect( 2,2, width+16,20+16 );
+      context1.fillStyle = "rgba(0,0,0,1)"; // text color
+      context1.fillText( message, 10,30 );
+      texture1.needsUpdate = true;
+
+
+      texture1 = new THREE.Texture(canvas1);
+      texture1.needsUpdate = true;
+
+      var spriteMaterial = new THREE.SpriteMaterial( { map: texture1, color: 0xffffff, fog: true } );
+      sprite1 = new THREE.Sprite( spriteMaterial );
+
+
+
+
+      if (scatter_check == 0) { //check if scatter or bar, adjusts sprite parameters
+
+        sprite1.scale.set(200,100,1)
+        sprite1.position.set( 50, 50, 0 );
+        scene.add( sprite1 );
+        //need to work on putting sprite on a new scene, so other bars wont block the sprite
+        // this will also fix the issue with positioning, right now i position it so sprite is above all other bars
+        sprite1.position.set( intersects[0].object.position.x, intersects[0].object.position.y+150, intersects[0].object.position.z ); //update sprite position
+      }
+      else {
+        sprite1.scale.set(1.5,1.5,1)
+        sprite1.position.set( 50, 50, 0 );
+        scene.add( sprite1 );
+
+        sprite1.position.set( intersects[0].object.position.x, intersects[0].object.position.y, intersects[0].object.position.z ); //update sprite position
+
+      }
+
     }
+
     INTERSECTED.object.geometry.colorsNeedUpdate = true;
 
   } else // there are no intersections
@@ -430,6 +555,8 @@ function onDocumentMouseDown(event) //http://www.moczys.com/webGL/Experiment_02_
     if (INTERSECTED) {
       INTERSECTED.object.material.color = tmpColor;
       INTERSECTED.object.geometry.colorsNeedUpdate = true;
+      sprite1.position.set( event.clientX+9999, event.clientY+999, 0 ); //moves sprite away from screen when not clicked on
+
     }
     // remove previous intersection object reference
     //     by setting current intersection object to "nothing"
