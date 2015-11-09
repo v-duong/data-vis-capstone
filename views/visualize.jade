@@ -1,0 +1,76 @@
+extend vistemplate
+block sidelist
+	ul.off-canvas-list
+		li
+			label Visualization
+		li
+			select(id='VisualList')
+				option(value='' selected='selected' disabled="disabled") Choose Visual
+				option(value='bar') bar
+				option(value='scatter') scatter
+		li
+			label Table
+		li
+			select(id='TableList')
+				option(value='' selected='selected' disabled="disabled") Choose Table
+				each item in tables
+					option(value=item.table_name) #{item.table_name}
+
+
+		li
+			a.off-canvas-submenu-call(href='#')
+				| Column Selection
+				span.right +
+
+		ul#columnSelection.off-canvas-submenu
+
+
+
+		li
+			a.off-canvas-submenu-call(href='#')
+				| Filters
+				span.right +
+
+		ul#filters.off-canvas-submenu
+
+			li
+				input(type="text" id="amountX" readonly style="border:0; color:#f6931f; font-weight:bold;")
+				#sliderX
+				br
+
+			li
+				input(type="text" id="amountY" readonly style="border:0; color:#f6931f; font-weight:bold;")
+				#sliderY
+				br
+
+			li
+				input(type="text" id="amountZ" readonly style="border:0; color:#f6931f; font-weight:bold;")
+				#sliderZ
+				br
+
+
+
+		li
+			input.button(type='button', value='Apply', onclick='generateVisuals()')
+			input.button(type='button', value='Enter VR', onclick='enterVRMode()')
+		li
+			input(id="sphere" type='checkbox', checked=false)
+			p Sphere Toggle
+
+
+block scripts
+	script(src='/js/three.min.js')
+	script(src='js/TextGeometry.js')
+	script(src='js/FontUtils.js')
+	script(src='js/helvetiker_regular.typeface.js')
+	script(src='/js/OrbitControls.js')
+	script(src='/js/scatter.js')
+	script(src='/js/init.js')
+	script(src='/js/vrDetection.js')
+	script(src='/js/bars.js')
+	script(src='/js/StereoEffect.js')
+	link(rel='stylesheet', href='//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css')
+	script(src='//code.jquery.com/jquery-1.10.2.js')
+	script(src='//code.jquery.com/ui/1.11.4/jquery-ui.js')
+	script.
+		

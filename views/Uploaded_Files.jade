@@ -1,0 +1,46 @@
+head
+title= title
+body
+block what
+	script(type='text/javascript', src='https://code.jquery.com/jquery-latest.min.js')
+	script.
+		var fileListings = [];
+		function openFunc(btnID) {
+			console.log("clicked open!");
+			var index = btnID.substring(10);
+			var tableName = fileListings[parseInt(index)];
+			var loc = '/displayData?filename=';
+			loc = loc.concat(tableName);
+			console.log(loc);
+			window.location.href = loc;
+			// Enter Code here
+		}
+		function deleteFunc(btnID){
+			var index = btnID.substring(12);
+			var fileName = fileListings[parseInt(index)];
+			$.post('/delData', { tName: fileName }, function(data){
+				console.log(data);
+				if (data == true){
+					location.reload();
+				}
+				else {
+					console.log("It died");
+				}
+			}, 'json');
+		}
+	h1.
+	List of Uploaded Files
+
+	ul
+		script.
+			var fileListings = [];
+			var json = !{JSON.stringify(showFiles)};
+			for(var i = 0; i < json.length; i++) {
+				//console.log(json[i].table_name);
+				fileListings.push(json[i].table_name);
+			}
+		each files, i in showFiles
+			li
+				a= files.table_name
+				input(type='button', id='openbutton'+i, value='open', onclick='openFunc(this.id)')
+				input(type='button', id='deletebutton'+i, value='delete', onclick='deleteFunc(this.id)')
