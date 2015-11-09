@@ -22,7 +22,6 @@ function init(){
     alpha: true
   });
   document.addEventListener('mousedown', onDocumentMouseDown, false);
-  document.addEventListener('mousemove', onDocumentMouseMove, false );
   $('.visual').append(renderer.domElement);
   var msphere= new THREE.Mesh(new THREE.SphereGeometry(0,0,0), new THREE.MeshBasicMaterial({ color: 0xf9f9f9 }));
   scene.add(msphere);
@@ -356,7 +355,7 @@ function generateBar(){
   var x = $("#x option:selected").text();
   var y = $("#y option:selected").text();
   var z = $("#z option:selected").text();
-  */
+
 
   // generate bar/Scatter Query Based on Filters
 
