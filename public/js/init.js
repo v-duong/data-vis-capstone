@@ -35,6 +35,15 @@ function init(){
     texture1.needsUpdate = true;
 }
 
+function isNumber(evt) {
+    evt = (evt) ? evt : window.event;
+    var charCode = (evt.which) ? evt.which : evt.keyCode;
+    if (charCode > 31 && charCode != 46 && (charCode < 48 || charCode > 57)) {
+        return false;
+    }
+    return true;
+}
+
 $("#sphere").change(function(){
   if (this.checked)
     sphereToggle = true;
@@ -163,11 +172,22 @@ function generateColumnFilter(colID){
     console.log(data[0].max);
     console.log(slideName);
     console.log(amountName);
+    var stepValue = 1;
+    var dataDiff = data[0].max - data[0].min;
+
+    if (dataDiff < 100){
+        while(dataDiff  < 100 ){
+          dataDiff = dataDiff * 10;
+          stepValue = stepValue/10;
+        }
+    }
+    console.log(stepValue);
     $( slideName ).slider({
     	range: true,
     	min: parseFloat(data[0].min),
     	max: parseFloat(data[0].max),
     	values: [ data[0].min, data[0].max ],
+      step: stepValue,
     	slide: function( event, ui ) {
     		$( amountName ).val(  ui.values[ 0 ] + " - " + ui.values[ 1 ] );
     	}

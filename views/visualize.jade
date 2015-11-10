@@ -34,17 +34,17 @@ block sidelist
 		ul#filters.off-canvas-submenu
 
 			li
-				input(type="text" id="amountX" readonly style="border:0; color:#f6931f; font-weight:bold;")
+				input(type="text" id="amountX" style="border:0; color:#f6931f; font-weight:bold;" onkeypress="return isNumber(event);")
 				#sliderX
 				br
 
 			li
-				input(type="text" id="amountY" readonly style="border:0; color:#f6931f; font-weight:bold;")
+				input(type="text" id="amountY" style="border:0; color:#f6931f; font-weight:bold;" onkeypress="return isNumber(event);")
 				#sliderY
 				br
 
 			li
-				input(type="text" id="amountZ" readonly style="border:0; color:#f6931f; font-weight:bold;")
+				input(type="text" id="amountZ" style="border:0; color:#f6931f; font-weight:bold;" onkeypress="return isNumber(event);")
 				#sliderZ
 				br
 
