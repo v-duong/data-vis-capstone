@@ -150,12 +150,18 @@ function generateColumnFilter(colID){
   var getMinMaxQuery = 'select max(' + ColName + '), min(' + ColName + ') FROM ' + tableSelected;
   console.log(getMinMaxQuery);
 
+
+	$("#columnSelection.off-canvas-submenu").html("");
+  var htmlTag;
   var slideName;
   var amountName;
   switch (colID){
     case '#xColumn':
       slideName = "#sliderX";
       amountName = "#amountX";
+      htmlTag = "#filter1.off-canvas-submenu";
+      $(htmlTag).html("");
+
       break;
     case '#yColumn':
       slideName = "#sliderY";
@@ -172,6 +178,9 @@ function generateColumnFilter(colID){
     console.log(data[0].max);
     console.log(slideName);
     console.log(amountName);
+    $(htmlTag).append('<li><input id=' + amountName.substring(1) + ' type=text onkeypress=”return isNumber(event);” style=”border:0; color:#f6931f; font-weight:bold;”></input>');
+    $(htmlTag).append('<div id=' + slideName.substring(1) + '></div></li>');
+
     var stepValue = 1;
     var dataDiff = data[0].max - data[0].min;
 

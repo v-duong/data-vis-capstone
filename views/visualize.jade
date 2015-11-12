@@ -32,21 +32,18 @@ block sidelist
 				span.right +
 
 		ul#filters.off-canvas-submenu
-
-			li
-				input(type="text" id="amountX" style="border:0; color:#f6931f; font-weight:bold;" onkeypress="return isNumber(event);")
-				#sliderX
-				br
-
-			li
-				input(type="text" id="amountY" style="border:0; color:#f6931f; font-weight:bold;" onkeypress="return isNumber(event);")
-				#sliderY
-				br
-
-			li
-				input(type="text" id="amountZ" style="border:0; color:#f6931f; font-weight:bold;" onkeypress="return isNumber(event);")
-				#sliderZ
-				br
+			ul#filter1.off-canvas-submenu
+			
+			ul#filter2.off-canvas-submenu
+				li
+					input(type="text" id="amountY" style="border:0; color:#f6931f; font-weight:bold;" onkeypress="return isNumber(event);")
+					#sliderY
+					br
+			ul#filter3.off-canvas-submenu
+				li
+					input(type="text" id="amountZ" style="border:0; color:#f6931f; font-weight:bold;" onkeypress="return isNumber(event);")
+					#sliderZ
+					br
 
 
 
