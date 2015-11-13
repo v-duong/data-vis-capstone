@@ -1,4 +1,4 @@
-var renderScatter = function () {
+ var renderScatter = function () {
 	RENDERID = requestAnimationFrame(renderScatter);
 	textFaceCamera(texts);
 	if (vrModeIsOn) {
@@ -88,7 +88,7 @@ var drawText = function(text, x, y, z, texts)
 	var TextGeo = new THREE.TextGeometry(text, {
 		font:  'helvetiker'
 		,height:0
-		,size:0.2
+		,size:0.4
 		});
 	var textMaterial = new THREE.MeshPhongMaterial({
 	color: 0xdddddd
@@ -112,14 +112,16 @@ var textFaceCamera = function(texts)
 	}
 }
 
-var drawNumbers = function(startPoint, movingDirection, movingDistance,times,texts)
+var drawNumbers = function(startPoint, movingDirection, movingDistance,times,texts, max)
 {
+	var temp = 0;
+	var interval = max / (times-2); 
 	for(i = 0; i < times-1; i++)
 	{
-		var TextGeo = new THREE.TextGeometry( i, {
+		var TextGeo = new THREE.TextGeometry( temp.toFixed(2), {
 		font:  'helvetiker'
 		,height:0
-		,size:0.2
+		,size:0.3
 		});
 var textMaterial = new THREE.MeshPhongMaterial({
 	color: 0xdddddd
@@ -130,6 +132,7 @@ changePosition(tempNumber, startPoint.x, startPoint.y, startPoint.z);
 		texts.push(tempNumber);
 		scene.add(tempNumber);
 		meshes.push(tempNumber);
+	temp += interval;
 	}
 }
 
@@ -139,37 +142,41 @@ var flipText = function(object)
 	object.rotateOnAxis(new THREE.Vector3(0,1,0), Math.PI);
 }
 
-var createNode = function(geometry, material, x, y, z)
+var createNode = function(x, y, z, scales)
 {
-	var sphere = new THREE.Mesh( new THREE.SphereGeometry( 0.25, 32, 32 ), new THREE.MeshBasicMaterial( {color: 0xffff00} ));
+	console.log(getColor(x,y,z,scales).toString(16));
+	var sphere = new THREE.Mesh( new THREE.SphereGeometry( 0.1, 32, 32 ), new THREE.MeshBasicMaterial( {color: getColor(x,y,z,scales)} ));
 	sphere.position.set(x,y,z);
 	scene.add( sphere );
 	meshes.push(sphere);
 	targetlist.push(sphere);
 }
 
-var displayNodes = function(data,geometry,material, x, y, z)
-{
-	var temp;
-	var xScale = findMax(data, x);
-	var yScale = findMax(data, y);
-	var zScale = findMax(data, z);
-	// console.log("Maxx: "+xScale+" Maxy:"+yScale+" Maxz: "+zScale);
-	var _x = 0;
-	var _y = 0;
-	var _z = 0;
-	for(var i in data)
-	{
-		temp = data[i];
-		if(eval("temp."+x) != "NULL"){_x = eval("temp."+x)*5/xScale;}
-		if(eval("temp."+y) != "NULL"){_y = eval("temp."+y)*5/yScale;}
-		if(eval("temp."+z) != "NULL"){_z = eval("temp."+z)*5/zScale;}
-		createNode(geometry,material, _x, _y, _z);
-		// console.log("Before x: "+eval("temp."+x)+" y:"+eval("temp."+y)+" z: "+eval("temp."+z));
-		// console.log("After x: "+_x+" y:"+_y+" z: "+_z);
-	}
+var getColor = function(x,y,z,scales){
+	var xcolor = Math.floor(x*85/5);
+	var ycolor = Math.floor(y*85/5);
+	var zcolor = Math.floor(y*85/5);
+	var color = 255-(xcolor + ycolor + zcolor);
+
+	var hexcolor = color.toString(16);
+	return eval(rgbToHex(255,hexcolor,hexcolor));
 }
 
+var componentToHex = function(c) {
+    var hex = c.toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+}
+
+var  rgbToHex = function(r, g, b) {
+    return "0x" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+
+var findScales = function(scales, data, xname, yname, zname){
+	var xScale = findMax(data, xname);
+	var yScale = findMax(data, yname);
+	var zScale = findMax(data, zname);
+	scales.push(xScale); scales.push(yScale); scales.push(zScale);
+}
 
 var findMax = function(data, name)
 {
@@ -184,6 +191,28 @@ var findMax = function(data, name)
 	}
 	if(max == 0){max = 1;}
 	return max;
+}
+
+var displayNodes = function(data, x, y, z, scales)
+{
+	var temp;
+	var xScale = scales[0];
+	var yScale = scales[1];
+	var zScale = scales[2];
+	// console.log("Maxx: "+xScale+" Maxy:"+yScale+" Maxz: "+zScale);
+	var _x = 0;
+	var _y = 0;
+	var _z = 0;
+	for(var i in data)
+	{
+		temp = data[i];
+		if(eval("temp."+x) != "NULL"){_x = eval("temp."+x)*5/xScale;}
+		if(eval("temp."+y) != "NULL"){_y = eval("temp."+y)*5/yScale;}
+		if(eval("temp."+z) != "NULL"){_z = eval("temp."+z)*5/zScale;}
+		createNode(_x, _y, _z,scales);
+		// console.log("Before x: "+eval("temp."+x)+" y:"+eval("temp."+y)+" z: "+eval("temp."+z));
+		// console.log("After x: "+_x+" y:"+_y+" z: "+_z);
+	}
 }
 
 var setupScene = function()
@@ -203,9 +232,9 @@ var setupScene = function()
 	// controls.addEventListener( 'change', renderScatter );
 
 	var geometry = new THREE.PlaneGeometry( 5, 5);
-	var material = new THREE.MeshBasicMaterial( {color: 0xF0F0F0, side: THREE.DoubleSide} );
-	var material1 = new THREE.MeshBasicMaterial( {color: 0xC1C1C1, side: THREE.DoubleSide} );
-	var material2 = new THREE.MeshBasicMaterial( {color: 0x989898, side: THREE.DoubleSide} );
+	var material = new THREE.MeshBasicMaterial( {color: 0xF0F0F0, side: THREE.DoubleSide, transparent:true, opacity: 0.3} );
+	var material1 = new THREE.MeshBasicMaterial( {color: 0xC1C1C1, side: THREE.DoubleSide, transparent:true,opacity: 0.3} );
+	var material2 = new THREE.MeshBasicMaterial( {color: 0x989898, side: THREE.DoubleSide, transparent:true,opacity: 0.3} );
 	var plane = new THREE.Mesh(geometry, material);
 	var plane1 = new THREE.Mesh(geometry, material1);
 	var plane2 = new THREE.Mesh(geometry, material2);
