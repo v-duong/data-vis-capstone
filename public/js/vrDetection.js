@@ -76,6 +76,5 @@ function enterVRMode(){
 		camera.position.z = 800;
    		camera.position.y = 600;
   		camera.position.x = 600;
-  		camera.camera.lookAt(new THREE.Vector3(0, 0, 0));
 	}
 }

@@ -19,7 +19,21 @@ function init() {
   });
   document.addEventListener('mousedown', onDocumentMouseDown, false);
   $('.visual').append(renderer.domElement);
-  var msphere= new THREE.Mesh(new THREE.SphereGeometry(8,8,8), new THREE.MeshBasicMaterial({ color: 0xf9f9f9 }));
+  var msphere;
+  switch (graphType) {
+    case 'bar':
+      console.log("111");
+      msphere= new THREE.Mesh(new THREE.SphereGeometry(8,8,8), new THREE.MeshBasicMaterial({ color: 0xf9f9f9 }));
+      break;
+    case 'scatter':
+      console.log("222");
+      msphere= new THREE.Mesh(new THREE.SphereGeometry(0.1,32,32), new THREE.MeshBasicMaterial({ color: 0xf9f9f9 }));
+      break;
+    default:
+      console.log("333");
+      msphere= new THREE.Mesh(new THREE.SphereGeometry(8,8,8), new THREE.MeshBasicMaterial({ color: 0xf9f9f9 }));
+      break;
+  }
   scene.add(msphere);
   mouseSphere.push(msphere);
   sphereToggle = false;
@@ -111,12 +125,12 @@ function generateVisuals() {
   var tableSelected = $("#VisualList option:selected").val();
   switch (tableSelected) {
     case 'bar':
+      graphType = 'bar';
       generateBar();
-      graphType = 'bar'
       break;
     case 'scatter':
+      graphType = 'scatter';
       generateScatter();
-      graphType = 'scatter'
       break;
     default:
       break;
