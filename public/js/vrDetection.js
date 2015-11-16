@@ -40,7 +40,7 @@ See bars.js for reference.
 var vrModeIsOn = false;
 
 function fullScreenExitHandler(){
-    if ( !(document.webkitIsFullScreen || document.mozFullScreen || document.msfullscreen || document.fullscreen) ){
+    if ( !(document.webkitIsFullScreen || document.mozFullScreen || document.msFullScreen || document.fullScreen) ){
     	vrModeIsOn = false;
     	if (graphType === 'bar'){
 	 		var temp = hideCamera;
