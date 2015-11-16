@@ -6,8 +6,8 @@ bgcolor1 = #fff
 bgcolor2 = #ddd
 
 .top-bar, .top-bar-section li a, .top-bar .name h1 a, .top-bar expanded, .left-off-canvas-menu
-  background bgcolor1 !important
-  color color1 !important
+  background bgcolor1
+  color color1
 
 .top-bar .name h1 a
   font-size 1.65em
@@ -15,12 +15,16 @@ bgcolor2 = #ddd
   font-family 'Gudea', sans-serif
   position relative
 
-
+.top-bar
+  border-color color1
+  border-width 0
+  border-bottom 1px
+  border-style solid
 
 ul
   &.title-area
     background bgcolor1 !important
-  &.left
+  &.right
     li
       a
         font-size 0.875rem
@@ -30,26 +34,6 @@ ul
         font-weight 200
         letter-spacing 1px
         position relative
-        &:hover
-          color color1
-          &:before
-            visibility visible
-            -webkit-transform scaleX(1)
-            transform scaleX(1)
-            transition all .25s ease-in-out
-        &:before
-          position absolute
-          content ""
-          width 100%
-          height 2px
-          bottom 0px
-          left 0
-          background-color rgba(0, 0, 0, 0.8)
-          visibility hidden
-          -webkit-transform scaleX(0)
-          transform scaleX(0)
-          -webkit-transition all 0.2s ease-in-out 0s
-          transition all 0.2s ease-in-out 0s
   &.off-canvas-list
     li
       label
@@ -107,6 +91,8 @@ input
     background-color #666
 
 .hero
+  max-width 1280px
+  margin auto
   background-color bgcolor1
   height 32rem
   color color2
@@ -162,7 +148,7 @@ input
 .left-small
   border-right 0px
 
-@media only screen and (min-width: 800px)
+@media only screen and (min-width: 40.0625em)
   nav.top-bar
       overflow hidden
   .hero
@@ -183,3 +169,5 @@ input
   .top-bar-section
     ul
       margin-left 1em
+    li:not(.has-form) a:not(.button)
+      background bgcolor1
