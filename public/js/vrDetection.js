@@ -63,12 +63,22 @@ if (document.getElementsByClassName('visual')[0].addEventListener)
 function enterVRMode(){
 	vrModeIsOn = true;
 	var element = document.getElementsByClassName('visual')[0];
-	if ( navigator.userAgent.indexOf('Chrome') != -1 ){			//Chrome
-		element.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
-	}
-	else// if (navigator.userAgent.indexOf('Firefox') != -1){		//Firefox
+	// if ( navigator.userAgent.indexOf('Chrome') != -1 ){			//Chrome
+	// 	element.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+	// }
+	// else if (navigator.userAgent.indexOf('Firefox') != -1){		//Firefox
+	// 	element.mozRequestFullScreen();
+	// }
+
+	if (element.requestFullscreen) {
+		element.requestFullscreen();
+	} else if (element.webkitRequestFullscreen) {
+		element.webkitRequestFullscreen();
+	} else if (element.mozRequestFullScreen) {
 		element.mozRequestFullScreen();
-	//}
+	} else if (element.msRequestFullscreen) {
+		element.msRequestFullscreen();
+	}
 	if (graphType === 'bar'){
 	 	var temp = hideCamera;
 		hideCamera = camera;
