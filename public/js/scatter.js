@@ -144,7 +144,7 @@ var flipText = function(object)
 
 var createNode = function(x, y, z, scales)
 {
-	console.log(getColor(x,y,z,scales).toString(16));
+	//console.log(getColor(x,y,z,scales).toString(16));
 	var sphere = new THREE.Mesh( new THREE.SphereGeometry( 0.1, 32, 32 ), new THREE.MeshBasicMaterial( {color: getColor(x,y,z,scales)} ));
 	sphere.position.set(x,y,z);
 	scene.add( sphere );

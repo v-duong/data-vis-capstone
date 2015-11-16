@@ -91,11 +91,10 @@ input.button {
   background-color: #666;
 }
 .hero {
-  max-width: 1280px;
   margin: auto;
-  background-color: #fff;
+  background-color: #42c5fa;
   height: 32rem;
-  color: #000;
+  font-family: Gudea;
 }
 .hero .intro {
   padding: 2rem;
@@ -105,9 +104,9 @@ input.button {
   font-size: 2rem;
   line-height: 1.5em;
   letter-spacing: -0.025em;
-  font-weight: 600;
+  font-weight: 400;
   text-align: center;
-  color: #000;
+  font-family: inherit;
 }
 .hero p {
   line-height: 1.75em;
@@ -124,16 +123,15 @@ input.button {
   display: block;
   background-color: rgba(0,0,0,0);
   border-style: solid;
-  -webkit-border-radius: 0.4rem;
-  border-radius: 0.4rem;
   border-color: #000;
   border-width: 2px;
   font-size: 1rem;
   width: 10rem;
   color: #000;
+  font-family: inherit;
 }
 .hero a.button:hover {
-  background: #2c2c2c;
+  background: #000;
   color: #fff;
   -webkit-transition: all 0.3s ease-in-out;
   -moz-transition: all 0.3s ease-in-out;
@@ -141,23 +139,32 @@ input.button {
   -ms-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out;
 }
-.hero a.button,
-.hero input[type='submit'] {
-  margin: 0 auto;
-  display: block;
-  background-color: rgba(0,0,0,0);
-  border-style: solid;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
-  border-color: #000;
-  border-width: 2px;
-  font-size: 1rem;
-  width: 10rem;
-  color: #000;
-  padding: 1rem 2rem 1.0625rem 2rem;
-}
 .left-small {
   border-right: 0px;
+}
+.features {
+  margin-top: 10px;
+  text-align: center;
+}
+.features hr {
+  width: 25%;
+  margin: 1rem auto;
+}
+.features .round-icon {
+  background-color: #f99548;
+  -webkit-border-radius: 50%;
+  border-radius: 50%;
+  display: table;
+  height: 100px;
+  margin: -61px auto 1rem;
+  width: 100px;
+  font-size: 3rem;
+}
+.features .round-icon span {
+  color: #fff;
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
 }
 @media only screen and (min-width: 40.0625em) {
   nav.top-bar {
@@ -165,7 +172,7 @@ input.button {
   }
   .hero h1 {
     padding-top: 4.5rem;
-    font-size: 4rem;
+    font-size: 3.5rem;
     text-align: center;
   }
   .hero p {
@@ -173,8 +180,6 @@ input.button {
   }
   .hero a.button,
   .hero input[type='submit'] {
-    -webkit-border-radius: 3px;
-    border-radius: 3px;
     border-width: 2px;
     font-size: 1.3rem;
     width: 16rem;
@@ -188,5 +193,10 @@ input.button {
   }
   .top-bar-section li:not(.has-form) a:not(.button) {
     background: #fff;
+  }
+}
+@media only screen and (max-width: 40.0625em) {
+  .features .columns {
+    margin-bottom: 5rem;
   }
 }

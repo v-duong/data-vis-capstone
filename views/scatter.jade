@@ -26,20 +26,20 @@ block three
 		var xScale = findMax(query, '_price');
 		var yScale = findMax(query, 'height');
 		var zScale = findMax(query, 'width');
-		console.log("xScale: "+xScale+"  yScale: "+yScale+"  zScale: "+zScale);
+		//console.log("xScale: "+xScale+"  yScale: "+yScale+"  zScale: "+zScale);
 		for(var i in query)
 		{
 			//- x = x[i]._price;
 			//- y = x[i].height;
 			//- z = x[i].width;
-			console.log("x: "+query[i]._price+"  y: "+query[i].height+"  z: "+query[i].width);
+			//console.log("x: "+query[i]._price+"  y: "+query[i].height+"  z: "+query[i].width);
 			if(query[i]._price != "NULL"){x = query[i]._price *5 / xScale;}
 			if(query[i].height != "NULL"){y = query[i].height *5 / yScale;}
 			if(query[i].width != "NULL"){z = query[i].width *5 / zScale;}
 			//- x++;
 			//- y++;
 			//- z++;
-			console.log("_x: "+x+"  _y: "+y+"  _z: "+z);
+			//console.log("_x: "+x+"  _y: "+y+"  _z: "+z);
 			createNode(geometry, material, x, y, z);
 			//- console.log(x[i]._price);
 		}	
