@@ -13,7 +13,6 @@ var sphereToggle = false;
 var vector
 var sprite1;
 var canvas1,context1,texture1;
-var scatter_check = 0;
 
 function init(){
   scene = new THREE.Scene();
@@ -23,9 +22,6 @@ function init(){
   });
   document.addEventListener('mousedown', onDocumentMouseDown, false);
   $('.visual').append(renderer.domElement);
-  var msphere= new THREE.Mesh(new THREE.SphereGeometry(0,0,0), new THREE.MeshBasicMaterial({ color: 0xf9f9f9 }));
-  scene.add(msphere);
-  mouseSphere.push(msphere);
   sphereToggle = false;
 
     canvas1 = document.createElement('canvas'); //canvas for text popup
@@ -48,14 +44,12 @@ $("#sphere").change(function(){
 // table selected, time to show columns.. See what kind of Visualization was chosen first
 $("#TableList").change(function(){
 	var visualSelected =  $("#VisualList option:selected").val();
-	console.log(visualSelected);
 	switch(visualSelected){
 		case 'bar':
 		case 'scatter':
 			var tableSelected = $("#TableList option:selected").val();
 			var getColumnTypeQuery = "SELECT column_name ,data_type FROM information_schema.columns where table_name = '";
 			getColumnTypeQuery = getColumnTypeQuery.concat(tableSelected + "'");
-			console.log(getColumnTypeQuery);
 
 			$("#columnSelection.off-canvas-submenu").html("");
 			$.getJSON('/retrieveData', { myQuery : getColumnTypeQuery }, function(data){
@@ -69,9 +63,9 @@ $("#TableList").change(function(){
 				}
 
 				htmlStr = htmlStr.concat('</select></li>');
-				$("#columnSelection.off-canvas-submenu").append('<li>X: <select id="xColumn">' + htmlStr);
-				$("#columnSelection.off-canvas-submenu").append('<li>Y: <select id="yColumn">' + htmlStr);
-				$("#columnSelection.off-canvas-submenu").append('<li>Z: <select id="zColumn">' + htmlStr);
+				$("#columnSelection.off-canvas-submenu").append('<li><p>X:</p> <select id="xColumn">' + htmlStr);
+				$("#columnSelection.off-canvas-submenu").append('<li><p>Y:</p> <select id="yColumn">' + htmlStr);
+				$("#columnSelection.off-canvas-submenu").append('<li><p>Z:</p> <select id="zColumn">' + htmlStr);
 
 				//generateBarFilters();
 
@@ -93,13 +87,12 @@ $("#TableList").change(function(){
 $(document).on('change', '#xColumn', function(){
   switch (this.value){
     case 'double precision':
-      console.log("calling generateColumNFilter");
       generateColumnFilter('#xColumn');
       break;
     case 'text':
       break;
     default:
-      console.log("no " + this.value + " support yet");
+      break;
   }
 
 
@@ -108,13 +101,12 @@ $(document).on('change', '#xColumn', function(){
 $(document).on('change', '#yColumn', function(){
   switch (this.value){
     case 'double precision':
-      console.log("calling generateColumNFilter");
       generateColumnFilter('#yColumn');
       break;
     case 'text':
       break;
     default:
-      console.log("no " + this.value + " support yet");
+      break;
   }
 
 
@@ -122,13 +114,12 @@ $(document).on('change', '#yColumn', function(){
 $(document).on('change', '#zColumn', function(){
   switch (this.value){
     case 'double precision':
-      console.log("calling generateColumNFilter");
       generateColumnFilter('#zColumn');
       break;
     case 'text':
       break;
     default:
-      console.log("no " + this.value + " support yet");
+      break;
   }
 
 
@@ -139,7 +130,6 @@ function generateColumnFilter(colID){
 	var tableSelected = $("#TableList option:selected").val();
   var ColName = $(colID.concat(" option:selected")).text();
   var getMinMaxQuery = 'select max(' + ColName + '), min(' + ColName + ') FROM ' + tableSelected;
-  console.log(getMinMaxQuery);
 
   var slideName;
   var amountName;
@@ -159,10 +149,6 @@ function generateColumnFilter(colID){
   }
 
   $.getJSON('/retrieveData', { myQuery : getMinMaxQuery }, function(data){
-    console.log(data[0].min);
-    console.log(data[0].max);
-    console.log(slideName);
-    console.log(amountName);
     $( slideName ).slider({
     	range: true,
     	min: parseFloat(data[0].min),
@@ -212,14 +198,6 @@ function BarScatterFilterQuery(){
 
   var tempFrom;
   var tempTo;
-
-  console.log(tableSelected);
-  console.log(x);
-  console.log(y);
-  console.log(z);
-  console.log(xType);
-  console.log(yType);
-  console.log(zType);
 
   // start of query
   var getColumnTypeQuery = "SELECT " + x + ", " + y + ", " + z + " from " + tableSelected;
@@ -280,13 +258,13 @@ function generateScatter()
     INITIAL = true;
      //mouse sphere
     var msphere= new THREE.Mesh(new THREE.SphereGeometry(0.1,8,8), new THREE.MeshBasicMaterial({ color: 0xf9f9f9 }));
+    msphere.visible = false;
     scene.add(msphere);
     mouseSphere.push(msphere);
   }
   if (RENDERID != null)
     cancelAnimationFrame( RENDERID );
   camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
-  scatter_check=1; //used in branch statement to change pop-up parameters
   //add effect
   effect = new THREE.StereoEffect(renderer);
   effect.setSize(window.innerWidth, window.innerHeight);
@@ -309,8 +287,6 @@ var x = $("#xColumn option:selected").text();
 var y = $("#yColumn option:selected").text();
 var z = $("#zColumn option:selected").text();
   var getColumnTypeQuery = BarScatterFilterQuery();
-  console.log("Blah");
-  console.log(getColumnTypeQuery);
   // console.log("generateScatter: "+x+" "+y+" "+z);
   $.getJSON('/retrieveData', {
     myQuery: getColumnTypeQuery
@@ -325,7 +301,6 @@ var z = $("#zColumn option:selected").text();
   drawText(x, 6, 0, 0, texts);
   drawText(y, 0, 6, 0, texts);
   drawText(z, 0, 0, 6, texts);
-  window.addEventListener('resize', onWindowResize, false);
 
   renderScatter();
 }
@@ -339,6 +314,7 @@ function generateBar(){
     INITIAL = true;
      //mouse sphere
     var msphere= new THREE.Mesh(new THREE.SphereGeometry(8,8,8), new THREE.MeshBasicMaterial({ color: 0xf9f9f9 }));
+    msphere.visible = false;
     scene.add(msphere);
     mouseSphere.push(msphere);
 
@@ -360,8 +336,6 @@ function generateBar(){
   // generate bar/Scatter Query Based on Filters
 
   var displayQuery = BarScatterFilterQuery();
-  console.log("Blah");
-  console.log(displayQuery);
 
   //var getColumnTypeQuery = "SELECT " + x + ", " + y + ", " + z + " from " + tableSelected;
   //console.log(getColumnTypeQuery);
@@ -389,6 +363,10 @@ function onWindowResize() {
 	windowHalfY = window.innerHeight / 2;
 
 	camera.aspect = window.innerWidth / window.innerHeight;
+  camera.left = -1 * windowHalfX;
+  camera.right = windowHalfX;
+  camera.top = 	windowHalfY;
+  camera.bottom = -1 * 	windowHalfY;
 	camera.updateProjectionMatrix();
 
 	renderer.setSize( window.innerWidth, window.innerHeight );
@@ -462,7 +440,7 @@ function onWindowResize() {
       var spriteMaterial = new THREE.SpriteMaterial( { map: texture1, color: 0xffffff, fog: true } );
       sprite1 = new THREE.Sprite( spriteMaterial );
 
-      if (scatter_check == 0) { //check if scatter or bar, adjusts sprite parameters
+      if (graphType === 'bar') { //check if scatter or bar, adjusts sprite parameters
 
 
         //need to work on scaling so it is relative to bar size, dont know how to yet
@@ -500,7 +478,6 @@ function onWindowResize() {
     // POP UP TEXT, must create new sprite each time, updating did not work
       intersects[0].object.name = "X:"+resultx+ '\n'  + "Y:"+resulty+ '\n'  + "Z:"+resultz ;
       message = intersects[0].object.name; //new line dsnt work
-  console.log(message);
       canvas1 = document.createElement('canvas');
       context1.clearRect(0,0,100,100);
       context1=canvas1.getContext('2d');
@@ -525,7 +502,7 @@ function onWindowResize() {
 
 
 
-      if (scatter_check == 0) { //check if scatter or bar, adjusts sprite parameters
+      if (graphType === 'bar') { //check if scatter or bar, adjusts sprite parameters
 
         sprite1.scale.set(200,100,1)
         sprite1.position.set( 50, 50, 0 );

@@ -49,7 +49,7 @@ function addBar(x, y, z, size) {
   mesh.position.z = z;
   scene.add(mesh);
   var edges = new THREE.EdgesHelper(mesh, 0x000000);
-  edges.material.linewidth = 4;
+  edges.material.linewidth = 2;
   meshes.push(mesh);
   meshes.push(edges);
   targetlist.push(mesh);
@@ -76,8 +76,6 @@ function renderData(data) {
   var u_x = createDictionary(t_x)
   var u_y = createDictionary(t_y)
   var u_z = createDictionary(t_z)
-  console.log(u_x)
-  console.log(u_z)
 
   var min_y = _.min(u_y)
   var max_y = _.max(u_y)
