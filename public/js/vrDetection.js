@@ -58,6 +58,8 @@ if (document.getElementsByClassName('visual')[0].addEventListener)
 {
     document.getElementsByClassName('visual')[0].addEventListener('webkitfullscreenchange', fullScreenExitHandler, false);
 	document.addEventListener('mozfullscreenchange', fullScreenExitHandler, false);
+	document.addEventListener('fullscreenchange', fullScreenExitHandler, false);
+	document.addEventListener('msfullscreenchange', fullScreenExitHandler, false);
 }
 
 function enterVRMode(){
