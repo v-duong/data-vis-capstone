@@ -66,9 +66,9 @@ function enterVRMode(){
 	if ( navigator.userAgent.indexOf('Chrome') != -1 ){			//Chrome
 		element.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
 	}
-	else if (navigator.userAgent.indexOf('Firefox') != -1){		//Firefox
+	else// if (navigator.userAgent.indexOf('Firefox') != -1){		//Firefox
 		element.mozRequestFullScreen();
-	}
+	//}
 	if (graphType === 'bar'){
 	 	var temp = hideCamera;
 		hideCamera = camera;
