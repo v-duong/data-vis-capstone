@@ -69,9 +69,9 @@ $("#TableList").change(function(){
 				}
 
 				htmlStr = htmlStr.concat('</select></li>');
-				$("#columnSelection.off-canvas-submenu").append('<li>X: <select id="xColumn">' + htmlStr);
-				$("#columnSelection.off-canvas-submenu").append('<li>Y: <select id="yColumn">' + htmlStr);
-				$("#columnSelection.off-canvas-submenu").append('<li>Z: <select id="zColumn">' + htmlStr);
+				$("#columnSelection.off-canvas-submenu").append('<li><p>X:</p> <select id="xColumn">' + htmlStr);
+				$("#columnSelection.off-canvas-submenu").append('<li><p>Y:</p> <select id="yColumn">' + htmlStr);
+				$("#columnSelection.off-canvas-submenu").append('<li><p>Z:</p> <select id="zColumn">' + htmlStr);
 
 				//generateBarFilters();
 
