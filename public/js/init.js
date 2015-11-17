@@ -14,6 +14,8 @@ var vector
 var sprite1;
 var canvas1,context1,texture1;
 
+var FilterArray = [];
+
 function init(){
   scene = new THREE.Scene();
   window.addEventListener('resize', onWindowResize, false);
@@ -96,9 +98,10 @@ $("#TableList").change(function(){
 $(document).on('change', '#xColumn', function(){
   switch (this.value){
     case 'double precision':
-      generateColumnFilter('#xColumn');
+      generateNumericColumnFilter('#xColumn');
       break;
     case 'text':
+      generateTextColumnFilter('#xColumn');
       break;
     default:
       break;
@@ -110,9 +113,10 @@ $(document).on('change', '#xColumn', function(){
 $(document).on('change', '#yColumn', function(){
   switch (this.value){
     case 'double precision':
-      generateColumnFilter('#yColumn');
+      generateNumericColumnFilter('#yColumn');
       break;
     case 'text':
+      generateTextColumnFilter('#yColumn');
       break;
     default:
       break;
@@ -123,9 +127,10 @@ $(document).on('change', '#yColumn', function(){
 $(document).on('change', '#zColumn', function(){
   switch (this.value){
     case 'double precision':
-      generateColumnFilter('#zColumn');
+      generateNumericColumnFilter('#zColumn');
       break;
     case 'text':
+      generateTextColumnFilter('#zColumn');
       break;
     default:
       break;
@@ -134,42 +139,120 @@ $(document).on('change', '#zColumn', function(){
 
 });
 
+function generateTextColumnFilter(colID){
+  var tableSelected = $("#TableList option:selected").val();
+  var ColName = $(colID.concat(" option:selected")).text();
+  //var getMinMaxQuery = 'select max(' + ColName + '), min(' + ColName + ') FROM ' + tableSelected;
+  var getSelectionQuery = 'select distinct '+ColName+' from '+tableSelected+' where '+ColName+' is not null order by '+ColName;
+
+  var filterID;
+  var formID;
+  var amountName;
+
+  switch (colID){
+    case '#xColumn':
+      formID = "X";
+      filterID = "#filters1";
+      break;
+    case '#yColumn':
+      formID = "Y";
+      filterID = "#filters2";
+      break;
+    case '#zColumn':
+      formID = "Z";
+      filterID = "#filters3";
+      break;
+  }
+
+  // retrieve all items in column that's alphabeticalized. Then generate Check boxes.
+  $.getJSON('/retrieveData', { myQuery : getSelectionQuery }, function(data){
+    $(filterID).html("");
+    //$(filterID).append('<input id=' + amountName.substring(1) + ' type=text onkeypress=”return isNumber(event);” ></input>' + '<div id=' + slideName.substring(1) + '></div>');
+    var randomStr = '<form id='+ formID +'>'
+    //$(filterID).append('<form id='+ formID +'>');
+
+    for (var i = 0; i < data.length; i++){
+
+      randomStr = randomStr.concat('<div>\
+        <input type="checkbox" name="fruit" value="'+data[i][ColName]+'" id="'+formID+'">\
+        <p>'+data[i][ColName]+'</p>\
+      </div>');
+
+      /*$(filterID).append('<div>\
+        <input type="checkbox" name="fruit" value="orange" id="'+data[i][ColName]+'">\
+        <p>'+data[i][ColName]+'</p>\
+      </div>');
+      console.log(data[i].ColName);
+      */
+      //htmlStr = htmlStr.concat('<option value="' + data[i].data_type + '">' + data[i].column_name + '</option>');
+    }
+    randomStr = randomStr.concat('<div id="log"></div></form>');
+
+    //$(filterID).append('<div id="log"></div></form>');
+
+    $(filterID).append(randomStr);
+
+    /*'\
+        <div>\
+          <input type="checkbox" name="fruit" value="orange" id="orange">\
+          <p for="orange">orange</p>\
+        </div>\
+        <div>\
+          <input type="checkbox" name="fruit" value="apple" id="apple">\
+          <p for="apple">apple</p>\
+        </div>\
+        <div>\
+          <input type="checkbox" name="fruit" value="banana" id="banana">\
+          <p for="banana">banana</p>\
+        </div>\
+        <div id="log"></div>\
+      </form>'*/
+
+
+
+  });
+
+}
+
+
+
+
 // create a filter for
-function generateColumnFilter(colID){
+function generateNumericColumnFilter(colID){
 	var tableSelected = $("#TableList option:selected").val();
   var ColName = $(colID.concat(" option:selected")).text();
   var getMinMaxQuery = 'select max(' + ColName + '), min(' + ColName + ') FROM ' + tableSelected;
 
 
-	$("#columnSelection.off-canvas-submenu").html("");
-  var htmlTag;
+
+  var filterID;
   var slideName;
   var amountName;
   switch (colID){
     case '#xColumn':
       slideName = "#sliderX";
       amountName = "#amountX";
-      htmlTag = "#filter1.off-canvas-submenu";
-      $(htmlTag).html("");
-
+      filterID = "#filters1";
       break;
     case '#yColumn':
       slideName = "#sliderY";
       amountName = "#amountY";
+      filterID = "#filters2";
       break;
     case '#zColumn':
       slideName = "#sliderZ";
       amountName = "#amountZ";
+      filterID = "#filters3";
       break;
   }
 
   $.getJSON('/retrieveData', { myQuery : getMinMaxQuery }, function(data){
-    console.log(data[0].min);
-    console.log(data[0].max);
-    console.log(slideName);
-    console.log(amountName);
-    $(htmlTag).append('<li><input id=' + amountName.substring(1) + ' type=text onkeypress=”return isNumber(event);” style=”border:0; color:#f6931f; font-weight:bold;”></input>');
-    $(htmlTag).append('<div id=' + slideName.substring(1) + '></div></li>');
+    console.log(filterID)
+
+    $(filterID).html("");
+    $(filterID).append('<input id=' + amountName.substring(1) + ' type=text onkeypress=”return isNumber(event);” ></input>' + '<div id=' + slideName.substring(1) + '></div>');
+
+
 
     var stepValue = 1;
     var dataDiff = data[0].max - data[0].min;
