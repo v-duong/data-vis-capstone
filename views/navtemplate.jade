@@ -1,22 +1,26 @@
 head
-  title PROJECTNAME
+  title Reality
   link(rel='stylesheet', href='/css/foundation.css' type='text/css')
   link(rel='stylesheet', href='/css/style.css' type='text/css')
   link(href='https://cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/foundation-icons.css', rel='stylesheet')
   link(href='https://fonts.googleapis.com/css?family=Gudea:400,700', rel='stylesheet')
   body
     div
-      nav.navbar
-        .container
-          .nav-header
-            a(href='/') GraphiqReality
-          .subnav
-            ul.header-subnav
-              li
-                a(href='/') Upload
-              li
-                a(href='/visualize') Visualization
-              li
-                a(href='/') About
+      nav.top-bar(data-topbar role="navigation")
+        ul.title-area
+          li.name
+            h1
+              a(href='/') GraphiqReality
+          li.toggle-topbar.menu-icon
+            a(href='#')
+              span
+        section.top-bar-section
+          ul.right
+            li
+              a(href='/') Upload
+            li
+              a(href='/visualize') Visualization
+            li
+              a(href='/') About
     block maintext
       

@@ -5,9 +5,33 @@ block maintext
       .large-centered
         h1 Simple 3D Data Visualizations
         p
-          | Just upload a file and select what you want displayed.
+          | Just upload a file and customize.
         a.d(href='/uploadPage' class="button") Upload Now
-      
-        
+  .row.features
+    .medium-4.columns
+      .round-icon
+        span.fi-widget
+      h3 Customizable
+      hr
+      p
+        | See your data how you want it with options to customize colors, scaling, and filtering.
+    .medium-4.columns
+      .round-icon
+        span.fi-eye
+      h3 VR Integration
+      hr
+      p
+        | View your data in virtual reality to see it in a new perspective.
+    .medium-4.columns
+      .round-icon
+        span.fi-link
+      h3 Sharable
+      hr
+      p
+        | Easily share your data visualizations with a simple link.
 
-    
+  script(type='text/javascript', src='https://code.jquery.com/jquery-latest.min.js')
+  script(type='text/javascript', src='/js/foundation.min.js')
+  script.
+    $(document).foundation();
+      
