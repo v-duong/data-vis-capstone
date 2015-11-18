@@ -122,19 +122,20 @@ function generateTextColumnFilter(colID){
   $.getJSON('/retrieveData', { myQuery : getSelectionQuery }, function(data){
     $(filterID).html("");
     //$(filterID).append('<input id=' + amountName.substring(1) + ' type=text onkeypress=”return isNumber(event);” ></input>' + '<div id=' + slideName.substring(1) + '></div>');
-    var randomStr = formID + ':<br><form id='+ formID +' style="height:100px;width:230px;border:1px solid #ccc;font:16px/26px Georgia, Garamond, Serif;overflow-y:auto;overflow-x:auto;">'
+    var randomStr = formID + ':<form class="filterselect" id='+ formID + '><div class="fbox">'
     //$(filterID).append('<form id='+ formID +'>');
 
     for (var i = 0; i < data.length; i++){
 
-      randomStr = randomStr.concat('<div>\
-        <input type="checkbox" value="'+data[i][ColName]+'" id="'+formID+'">\
-        <p>'+data[i][ColName]+'</p>\
-      </div>');
+      randomStr = randomStr.concat('\
+        <input type="checkbox" value="'+data[i][ColName]+'" id="'+data[i][ColName]+'">\
+        <label class="flabel" for="'+data[i][ColName]+'">'+data[i][ColName]+'</label>\
+        <br>\
+        ');
 
 
     }
-    randomStr = randomStr.concat('<div id="log"></div></form><br>');
+    randomStr = randomStr.concat('</div></form>');
 
     //$(filterID).append('<div id="log"></div></form>');
 
@@ -182,7 +183,7 @@ function generateNumericColumnFilter(colID){
 
   $.getJSON('/retrieveData', { myQuery : getMinMaxQuery }, function(data){
     $(filterID).html("");
-    $(filterID).append(filterLabel + ':<input id=' + amountName.substring(1) + ' type=text onkeypress=”return isNumber(event);” ></input>' + '<div id=' + slideName.substring(1) + '></div><br>');
+    $(filterID).append(filterLabel + ':<input id=' + amountName.substring(1) + ' type=text onkeypress=”return isNumber(event);” ></input>' + '<div id=' + slideName.substring(1) + '></div>');
     var stepValue = 1;
     var dataDiff = data[0].max - data[0].min;
 
@@ -229,7 +230,7 @@ function BarScatterFilterQuery(){
 
   /*
   select manufacturer_pregen, model, cpu_speed, _price from tryagainsmartphone where _price >= 200 and _price <= 400 and (manufacturer_pregen = 'Samsung'or manufacturer_pregen = 'HTC');
-  $('input#X:checked')[0]
+  $('form#X input:checked')[0]
   */
 
   switch(xType){
@@ -247,11 +248,11 @@ function BarScatterFilterQuery(){
       break;
     case 'text':
       // checkboxes are selected
-      if ($('input#X:checked').length != 0) {
+      if ($('form#X input:checked').length != 0) {
         //and (manufacturer_pregen = 'Samsung'or manufacturer_pregen = 'HTC');
-        getColumnTypeQuery = getColumnTypeQuery.concat(startWord + " (" + x + " = '" + $('input#X:checked')[0].value + "'");
-        for (var i = 1; i < $('input#X:checked').length; i++){
-          getColumnTypeQuery = getColumnTypeQuery.concat(" or " + x + " = '" + $('input#X:checked')[i].value + "'");
+        getColumnTypeQuery = getColumnTypeQuery.concat(startWord + " (" + x + " = '" + $('form#X input:checked')[0].value + "'");
+        for (var i = 1; i < $('form#X input:checked').length; i++){
+          getColumnTypeQuery = getColumnTypeQuery.concat(" or " + x + " = '" + $('form#X input:checked')[i].value + "'");
         }
         getColumnTypeQuery = getColumnTypeQuery.concat(")");
         startWord = " and";
@@ -279,11 +280,11 @@ function BarScatterFilterQuery(){
       break;
     case 'text':
       // checkboxes are selected
-      if ($('input#Y:checked').length != 0) {
+      if ($('form#Y input:checked').length != 0) {
         //and (manufacturer_pregen = 'Samsung'or manufacturer_pregen = 'HTC');
-        getColumnTypeQuery = getColumnTypeQuery.concat(startWord + " (" + y + " = '" + $('input#Y:checked')[0].value + "'");
-        for (var i = 1; i < $('input#Y:checked').length; i++){
-          getColumnTypeQuery = getColumnTypeQuery.concat(" or " + y + " = '" + $('input#Y:checked')[i].value + "'");
+        getColumnTypeQuery = getColumnTypeQuery.concat(startWord + " (" + y + " = '" + $('form#Y input:checked')[0].value + "'");
+        for (var i = 1; i < $('form#Y input:checked').length; i++){
+          getColumnTypeQuery = getColumnTypeQuery.concat(" or " + y + " = '" + $('form#Y input:checked')[i].value + "'");
         }
         getColumnTypeQuery = getColumnTypeQuery.concat(")");
         startWord = " and";
@@ -308,11 +309,11 @@ function BarScatterFilterQuery(){
       break;
     case 'text':
       // checkboxes are selected
-      if ($('input#Z:checked').length != 0) {
+      if ($('form#Z input:checked').length != 0) {
         //and (manufacturer_pregen = 'Samsung'or manufacturer_pregen = 'HTC');
-        getColumnTypeQuery = getColumnTypeQuery.concat(startWord + " (" + z + " = '" + $('input#Z:checked')[0].value + "'");
-        for (var i = 1; i < $('input#Z:checked').length; i++){
-          getColumnTypeQuery = getColumnTypeQuery.concat(" or " + z + " = '" + $('input#Z:checked')[i].value + "'");
+        getColumnTypeQuery = getColumnTypeQuery.concat(startWord + " (" + z + " = '" + $('form#Z input:checked')[0].value + "'");
+        for (var i = 1; i < $('form#Z input:checked').length; i++){
+          getColumnTypeQuery = getColumnTypeQuery.concat(" or " + z + " = '" + $('form#Z input:checked')[i].value + "'");
         }
         getColumnTypeQuery = getColumnTypeQuery.concat(")");
         startWord = " and";

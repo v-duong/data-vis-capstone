@@ -35,6 +35,15 @@ ul.off-canvas-list li label {
   background-color: #ddd;
   color: #000;
 }
+ul.off-canvas-list li label.flabel {
+  text-transform: none;
+  font-weight: normal;
+  display: inline;
+  background-color: #fff;
+  font-size: 0.9rem;
+  padding: 0;
+  margin: 0;
+}
 ul.off-canvas-list li a {
   border: 0;
   color: #000;
@@ -89,6 +98,16 @@ ul.off-canvas-submenu {
 }
 input.button {
   background-color: #666;
+}
+form.filterselect {
+  max-height: 250px;
+  border: 1px solid #ccc;
+}
+.fbox {
+  overflow-y: auto;
+  overflow-x: auto;
+  white-space: nowrap;
+  max-height: inherit;
 }
 .hero {
   margin: auto;
