@@ -54,7 +54,7 @@ function generateVisuals() {
   }
 }
 
-//Xinglun Xu add generateScatter function here
+//generate objects on scatter plot and render 
 function generateScatter() {
   clearmeshes();
   if (RENDERID != null)
