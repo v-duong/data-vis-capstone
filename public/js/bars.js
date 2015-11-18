@@ -90,7 +90,7 @@ function renderData(data) {
   var dom_min, dom_max;
 
   if (min_y >= 0) {
-    dom_min = 0;
+    dom_min = Math.floor(min_y / 50) * 50;
   } else {
     dom_min = Math.floor(min_y / 50) * 50;
   }
@@ -100,7 +100,8 @@ function renderData(data) {
   } else {
     dom_max = Math.floor(max_y / 50) * 50;
   }
-
+  console.log(min_y + " - " + max_y)
+  console.log(dom_min + " - " + dom_max)
   var scale = d3.scale.linear()
     .domain([dom_min, dom_max])
     .range([1, size * ticks]);
@@ -135,24 +136,26 @@ function renderData(data) {
 }
 
 function createGrid(min_x, max_x, min_z, max_z, dom_min, dom_max, size, ticks, u_x, u_z) {
-  var divisions = (dom_max - dom_min) / ticks
+  var divisions = (dom_max - dom_min) / ticks / 2
     //x-axis lines
-  for (var i = 0; i <= (max_x - min_x); i++) {
+  for (var i = 0; i < u_x.length; i++) {
     v1 = new THREE.Vector3((i + 1 / 2) * size - (window.innerWidth * 0.25), 0, (-1 + 1 / 2) * size)
     v2 = new THREE.Vector3((i + 1 / 2) * size - (window.innerWidth * 0.25), 0, (max_z + 1 - min_z) * size)
     line = drawLine(v1, v2)
     scene.add(line)
     meshes.push(line)
-    createText((i + 1 / 2) * size - (window.innerWidth * 0.25) - size/2, 0, (max_z + 1 - min_z) * size + size/2, u_x[i], -1 * Math.PI / 2, 0 , Math.PI / 2);
+    if (u_x[i] != undefined)
+      createText((i + 1 / 2) * size - (window.innerWidth * 0.25) - size/2, 0, (max_z + 1 - min_z) * size + size/2, u_x[i], -1 * Math.PI / 2, 0 , Math.PI / 2);
   }
   //z-axis lines
   for (var i = 0; i <= (max_z - min_z); i++) {
     v1 = new THREE.Vector3(0 - (window.innerWidth * 0.25) - size / 2, 0, (i + 1 / 2) * size)
-    v2 = new THREE.Vector3((max_x - min_x + 1) * size - (window.innerWidth * 0.25), 0, (i + 1 / 2) * size)
+    v2 = new THREE.Vector3((u_x.length) * size - (window.innerWidth * 0.25), 0, (i + 1 / 2) * size)
     line = drawLine(v1, v2)
     scene.add(line)
     meshes.push(line)
-    createText((max_x - min_x + 1) * size - (window.innerWidth * 0.25), 0, (i + 1 / 2) * size, u_z[i], -1 * Math.PI / 2);
+    if (u_z[i] != undefined)
+      createText((u_x.length) * size - (window.innerWidth * 0.25), 0, (i + 1 / 2) * size, u_z[i], -1 * Math.PI / 2);
   }
   for (var i = 0; i <= ticks * 2; i++) {
     //z-lines for y
@@ -160,7 +163,7 @@ function createGrid(min_x, max_x, min_z, max_z, dom_min, dom_max, size, ticks, u
     v2 = new THREE.Vector3(0 - (window.innerWidth * 0.25) - size / 2, i * size / 2, (max_z - min_z + 1) * size)
       //x-lines for y
     v3 = new THREE.Vector3(0 - (window.innerWidth * 0.25) - size / 2, i * size / 2, 0 - size / 2)
-    v4 = new THREE.Vector3((max_x - min_x + 1) * size - (window.innerWidth * 0.25), i * size / 2, 0 - size / 2)
+    v4 = new THREE.Vector3((u_x.length) * size - (window.innerWidth * 0.25), i * size / 2, 0 - size / 2)
 
     if (i % 2 == 1) {
       line = drawLine(v1, v2, 0xbbbbbb)
@@ -168,7 +171,7 @@ function createGrid(min_x, max_x, min_z, max_z, dom_min, dom_max, size, ticks, u
     } else {
       line = drawLine(v1, v2)
       line2 = drawLine(v3, v4)
-      createText((max_x - min_x + 1) * size - (window.innerWidth * 0.25), i * size / 2 - size / 8, 0 - size / 2, divisions * i);
+      createText((u_x.length) * size - (window.innerWidth * 0.25), i * size / 2 - size / 8, 0 - size / 2, divisions * i + dom_min);
     }
 
     scene.add(line)
