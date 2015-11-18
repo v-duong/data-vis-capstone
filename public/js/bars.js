@@ -1,7 +1,7 @@
 function initbars() {
 
   hideCamera = new THREE.PerspectiveCamera( 85, window.innerWidth / window.innerHeight, 1, 10000 );
-  camera = new THREE.OrthographicCamera(window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, 1, 10000);
+  camera = new THREE.OrthographicCamera(window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, 1, 100000);
 
 
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -47,7 +47,7 @@ function addBar(x, y, z, size) {
   geometry.colorsNeedUpdate = true;
   var mesh = new THREE.Mesh(geometry, material);
   mesh.position.y = 1 + y/2;;
-  mesh.position.x = x - (window.innerWidth * 0.70)/2;
+  mesh.position.x = x - (window.innerWidth * 0.50)/2;
   mesh.position.z = z;
   scene.add(mesh);
   var edges = new THREE.EdgesHelper(mesh, 0x000000);
@@ -82,8 +82,8 @@ function renderData(data) {
   var min_y = _.min(u_y)
   var max_y = _.max(u_y)
 
-  var size = Math.floor((window.innerWidth*0.80) / u_x.length)
-  setCameraPosition(size*10);
+  var size = 50
+  setCameraPosition(500);
 
   var scale = d3.scale.linear()
                       .domain([min_y, max_y])
@@ -110,32 +110,33 @@ function renderData(data) {
       addBar(d[keys[0]] * size, scale(d[keys[1]]), d[keys[2]] * size, size);
     }
 */
-
-  for (var i = 0; i < u_x.length; i++) {
-    v1 = new THREE.Vector3((u_x[i] * size - (window.innerWidth * 0.70)/2) + size/2, 0, -1 * size)
-    v2 = new THREE.Vector3((u_x[i] * size - (window.innerWidth * 0.70)/2) + size/2, 0, 3 * size)
-    line = drawLine(v1,v2)
-    scene.add(line)
-    meshes.push(line)
-  }
   var min_x = _.min(u_x)
   var max_x = _.max(u_x)
   var min_z = _.min(u_z)
   var max_z = _.max(u_z)
-  for (var i = 0; i < u_z.length; i++) {
-    v1 = new THREE.Vector3((min_x * size - (window.innerWidth * 0.70)/2) - size*1, 0, u_z[i] * size + size/2)
-    v2 = new THREE.Vector3((max_x * size - (window.innerWidth * 0.70)/2) + size*1, 0, u_z[i] * size + size/2)
+  //x-axis lines
+  for (var i = 0; i <= (max_x - min_x); i++) {
+    v1 = new THREE.Vector3((i * size - (window.innerWidth * 0.50)/2) + size/2, 0, (min_z - 1) * size - min_z * size)
+    v2 = new THREE.Vector3((i * size - (window.innerWidth * 0.50)/2) + size/2, 0, (max_z + 1) * size - min_z * size)
+    line = drawLine(v1,v2)
+    scene.add(line)
+    meshes.push(line)
+  }
+  //z-axis lines
+  for (var i = 0; i <= (max_z - min_z); i++) {
+    v1 = new THREE.Vector3((min_x * size - (window.innerWidth * 0.50)/2) - size*1 - min_x * size, 0, i * size + size/2)
+    v2 = new THREE.Vector3((max_x * size - (window.innerWidth * 0.50)/2) + size*1 - min_x * size, 0, i * size + size/2 )
     line = drawLine(v1,v2)
     scene.add(line)
     meshes.push(line)
   }
   for (var i = 0; i < 6; i++) {
-    v1 = new THREE.Vector3((min_x * size - (window.innerWidth * 0.70)/2) - size/2, i * size, -1 * size)
-    v2 = new THREE.Vector3((min_x * size - (window.innerWidth * 0.70)/2) - size/2, i * size, 3 * size)
+    v1 = new THREE.Vector3((min_x * size - (window.innerWidth * 0.50)/2) - size/2 - min_x * size, i * size, (min_z - 1) * size - min_z * size)
+    v2 = new THREE.Vector3((min_x * size - (window.innerWidth * 0.50)/2) - size/2 - min_x * size, i * size, (max_z + 1) * size - min_z * size)
     line = drawLine(v1,v2)
     scene.add(line)
-    v2 = new THREE.Vector3((min_x * size - (window.innerWidth * 0.70)/2) - size*1, i * size, min_z * size - size/2)
-    v3 = new THREE.Vector3((max_x * size - (window.innerWidth * 0.70)/2) + size*1, i * size, min_z * size - size/2)
+    v2 = new THREE.Vector3((min_x * size - (window.innerWidth * 0.50)/2) - size*1 - min_x * size, i * size, min_z * size - size/2 - min_z * size)
+    v3 = new THREE.Vector3((max_x * size - (window.innerWidth * 0.50)/2) + size*1 - min_x * size, i * size, min_z * size - size/2 - min_z * size)
     line2 = drawLine(v2,v3)
     scene.add(line2)
     meshes.push(line)

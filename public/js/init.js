@@ -227,13 +227,8 @@ function generateNumericColumnFilter(colID){
   }
 
   $.getJSON('/retrieveData', { myQuery : getMinMaxQuery }, function(data){
-    console.log(filterID)
-
     $(filterID).html("");
     $(filterID).append(filterLabel + ':<input id=' + amountName.substring(1) + ' type=text onkeypress=”return isNumber(event);” ></input>' + '<div id=' + slideName.substring(1) + '></div><br>');
-
-
-
     var stepValue = 1;
     var dataDiff = data[0].max - data[0].min;
 
@@ -243,7 +238,6 @@ function generateNumericColumnFilter(colID){
           stepValue = stepValue/10;
         }
     }
-    console.log(stepValue);
     $( slideName ).slider({
     	range: true,
     	min: parseFloat(data[0].min),
@@ -331,7 +325,6 @@ function BarScatterFilterQuery(){
       }
       break;
     default:
-      console.log("Does not support Date yet");
       break;
 
 
@@ -364,7 +357,6 @@ function BarScatterFilterQuery(){
       }
       break;
     default:
-      console.log("Does not support this type yet");
       break;
   }
 
@@ -394,11 +386,9 @@ function BarScatterFilterQuery(){
       }
       break;
     default:
-      console.log("does not support this feature yet");
       break;
   }
 
-  console.log(getColumnTypeQuery);
   return getColumnTypeQuery;
 
 }
@@ -429,14 +419,6 @@ function generateScatter()
   var scales = [];
   setupScene();
   var normalMaterial = new THREE.MeshNormalMaterial();
-/*
-  var tableSelected = $("#TableList option:selected").val();
-  var x = $("#xColumn option:selected").text();
-  var y = $("#yColumn option:selected").text();
-  var z = $("#zColumn option:selected").text();
-  var getColumnTypeQuery = "SELECT " + x + ", " + y + ", " + z + " from " + tableSelected;
-  console.log(getColumnTypeQuery);
-*/
 var x = $("#xColumn option:selected").text();
 var y = $("#yColumn option:selected").text();
 var z = $("#zColumn option:selected").text();
