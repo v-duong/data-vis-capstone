@@ -40,7 +40,7 @@ See bars.js for reference.
 var vrModeIsOn = false;
 
 function fullScreenExitHandler(){
-    if ( !(document.webkitIsFullScreen || document.mozFullScreen) ){
+    if ( !(document.webkitIsFullScreen || document.mozFullScreen || document.msFullScreen || document.fullScreen) ){
     	vrModeIsOn = false;
     	if (graphType === 'bar'){
 	 		var temp = hideCamera;
@@ -58,6 +58,8 @@ if (document.getElementsByClassName('visual')[0].addEventListener)
 {
     document.getElementsByClassName('visual')[0].addEventListener('webkitfullscreenchange', fullScreenExitHandler, false);
 	document.addEventListener('mozfullscreenchange', fullScreenExitHandler, false);
+	document.addEventListener('fullscreenchange', fullScreenExitHandler, false);
+	document.addEventListener('msfullscreenchange', fullScreenExitHandler, false);
 }
 
 function enterVRMode(){
@@ -69,6 +71,15 @@ function enterVRMode(){
 	else if (navigator.userAgent.indexOf('Firefox') != -1){		//Firefox
 		element.mozRequestFullScreen();
 	}
+	else if (element.requestFullscreen) {
+		element.requestFullscreen();
+	} else if (element.webkitRequestFullscreen) {
+		element.webkitRequestFullscreen();
+	} else if (element.mozRequestFullScreen) {
+		element.mozRequestFullScreen();
+	} else if (element.msRequestFullscreen) {
+		element.msRequestFullscreen();
+	}
 	if (graphType === 'bar'){
 	 	var temp = hideCamera;
 		hideCamera = camera;
@@ -76,6 +87,5 @@ function enterVRMode(){
 		camera.position.z = 800;
    		camera.position.y = 600;
   		camera.position.x = 600;
-  		camera.camera.lookAt(new THREE.Vector3(0, 0, 0));
 	}
 }
