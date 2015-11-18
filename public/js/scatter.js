@@ -24,10 +24,11 @@ var changePosition = function(object, x, y, z)
 	object.position.z = z;
 };
 
-var drawLine = function(v1, v2)
+var drawLine = function(v1, v2, color)
 {
+  color = color || 0x000000;
 	var material = new THREE.LineBasicMaterial({
-	color: 0x000000
+	color: color
 	});
 	material.linewidth = 1;
 

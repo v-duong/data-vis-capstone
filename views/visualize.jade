@@ -15,38 +15,25 @@ block sidelist
 				option(value='' selected='selected' disabled="disabled") Choose Table
 				each item in tables
 					option(value=item.table_name) #{item.table_name}
-
-
 		li
 			a.off-canvas-submenu-call(href='#')
 				| Column Selection
 				span.right +
-
 		ul#columnSelection.off-canvas-submenu
-
 		li
 			a.off-canvas-submenu-call(href='#')
 				| Filters
 				span.right +
-
 		ul#filters.off-canvas-submenu
 			li#filters1
 			li#filters2
 			li#filters3
-			
-
-			
-
-
-
 		li
 			input.button(type='button', value='Apply', onclick='generateVisuals()')
 			input.button(type='button', value='Enter VR', onclick='enterVRMode()')
 		li
 			input(id="sphere" type='checkbox', checked=false)
 			p Sphere Toggle
-
-
 block scripts
 	script(src='static/js/lib/three.min.js')
 	script(src='static/js/lib/TextGeometry.js')
@@ -56,8 +43,9 @@ block scripts
 	script(src='static/js/lib/lodash.min.js')
 	script(src='static/js/lib/d3.min.js')
 	script(src='static/js/lib/StereoEffect.js')
-	script(src='static/js/scatter.js')
+	script(src='static/js/filters.js')
 	script(src='static/js/init.js')
+	script(src='static/js/scatter.js')
 	script(src='static/js/vrDetection.js')
 	script(src='static/js/bars.js')
 	link(rel='stylesheet', href='//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css')

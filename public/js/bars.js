@@ -64,6 +64,7 @@ function createDictionary(data) {
 }
 
 function renderData(data) {
+  var ticks = 5;
   var keys = _.keys(data[0]);
   var t_x = []
   var t_y = []
@@ -87,7 +88,7 @@ function renderData(data) {
 
   var scale = d3.scale.linear()
                       .domain([min_y, max_y])
-                      .range([1, size*5]);
+                      .range([1, size*ticks]);
   //if ( ($("#z option:selected").val() === 'text') && ($("#x option:selected").val() === 'text'))
     for (var i = 0; i < data.length; i++) {
       d = data[i];
@@ -130,13 +131,13 @@ function renderData(data) {
     scene.add(line)
     meshes.push(line)
   }
-  for (var i = 0; i < 6; i++) {
-    v1 = new THREE.Vector3((min_x * size - (window.innerWidth * 0.50)/2) - size/2 - min_x * size, i * size, (min_z - 1) * size - min_z * size)
-    v2 = new THREE.Vector3((min_x * size - (window.innerWidth * 0.50)/2) - size/2 - min_x * size, i * size, (max_z + 1) * size - min_z * size)
+  for (var i = 0; i <= ticks*2; i++) {
+    v1 = new THREE.Vector3((min_x * size - (window.innerWidth * 0.50)/2) - size/2 - min_x * size, i * size/2, (min_z - 1) * size - min_z * size)
+    v2 = new THREE.Vector3((min_x * size - (window.innerWidth * 0.50)/2) - size/2 - min_x * size, i * size/2, (max_z + 1) * size - min_z * size)
     line = drawLine(v1,v2)
     scene.add(line)
-    v2 = new THREE.Vector3((min_x * size - (window.innerWidth * 0.50)/2) - size*1 - min_x * size, i * size, min_z * size - size/2 - min_z * size)
-    v3 = new THREE.Vector3((max_x * size - (window.innerWidth * 0.50)/2) + size*1 - min_x * size, i * size, min_z * size - size/2 - min_z * size)
+    v2 = new THREE.Vector3((min_x * size - (window.innerWidth * 0.50)/2) - size*1 - min_x * size, i * size/2, min_z * size - size/2 - min_z * size)
+    v3 = new THREE.Vector3((max_x * size - (window.innerWidth * 0.50)/2) + size*1 - min_x * size, i * size/2, min_z * size - size/2 - min_z * size)
     line2 = drawLine(v2,v3)
     scene.add(line2)
     meshes.push(line)
