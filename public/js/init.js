@@ -168,25 +168,19 @@ function generateTextColumnFilter(colID){
   $.getJSON('/retrieveData', { myQuery : getSelectionQuery }, function(data){
     $(filterID).html("");
     //$(filterID).append('<input id=' + amountName.substring(1) + ' type=text onkeypress=”return isNumber(event);” ></input>' + '<div id=' + slideName.substring(1) + '></div>');
-    var randomStr = '<form id='+ formID +'>'
+    var randomStr = formID + ':<br><form id='+ formID +' style="height:100px;width:230px;border:1px solid #ccc;font:16px/26px Georgia, Garamond, Serif;overflow-y:auto;overflow-x:auto;">'
     //$(filterID).append('<form id='+ formID +'>');
 
     for (var i = 0; i < data.length; i++){
 
       randomStr = randomStr.concat('<div>\
-        <input type="checkbox" name="fruit" value="'+data[i][ColName]+'" id="'+formID+'">\
+        <input type="checkbox" value="'+data[i][ColName]+'" id="'+formID+'">\
         <p>'+data[i][ColName]+'</p>\
       </div>');
 
-      /*$(filterID).append('<div>\
-        <input type="checkbox" name="fruit" value="orange" id="'+data[i][ColName]+'">\
-        <p>'+data[i][ColName]+'</p>\
-      </div>');
-      console.log(data[i].ColName);
-      */
-      //htmlStr = htmlStr.concat('<option value="' + data[i].data_type + '">' + data[i].column_name + '</option>');
+
     }
-    randomStr = randomStr.concat('<div id="log"></div></form>');
+    randomStr = randomStr.concat('<div id="log"></div></form><br>');
 
     //$(filterID).append('<div id="log"></div></form>');
 
@@ -210,21 +204,25 @@ function generateNumericColumnFilter(colID){
   var filterID;
   var slideName;
   var amountName;
+  var filterLabel;
   switch (colID){
     case '#xColumn':
       slideName = "#sliderX";
       amountName = "#amountX";
       filterID = "#filters1";
+      filterLabel = "X";
       break;
     case '#yColumn':
       slideName = "#sliderY";
       amountName = "#amountY";
       filterID = "#filters2";
+      filterLabel = "Y";
       break;
     case '#zColumn':
       slideName = "#sliderZ";
       amountName = "#amountZ";
       filterID = "#filters3";
+      filterLabel = "Z";
       break;
   }
 
@@ -232,7 +230,7 @@ function generateNumericColumnFilter(colID){
     console.log(filterID)
 
     $(filterID).html("");
-    $(filterID).append('<input id=' + amountName.substring(1) + ' type=text onkeypress=”return isNumber(event);” ></input>' + '<div id=' + slideName.substring(1) + '></div>');
+    $(filterID).append(filterLabel + ':<input id=' + amountName.substring(1) + ' type=text onkeypress=”return isNumber(event);” ></input>' + '<div id=' + slideName.substring(1) + '></div><br>');
 
 
 
