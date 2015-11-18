@@ -1,21 +1,23 @@
 function initbars() {
 
-  hideCamera = new THREE.PerspectiveCamera( 85, window.innerWidth / window.innerHeight, 1, 10000 );
-  camera = new THREE.OrthographicCamera(window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, 1, 10000);
+  hideCamera = new THREE.PerspectiveCamera(85, window.innerWidth / window.innerHeight, 1, 10000);
+  camera = new THREE.OrthographicCamera(window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, 1, 100000);
 
 
   renderer.setSize(window.innerWidth, window.innerHeight);
 
   //add effect
   effect = new THREE.StereoEffect(renderer);
-  effect.setSize( window.innerWidth, window.innerHeight );
+  effect.setSize(window.innerWidth, window.innerHeight);
 
   controls = new THREE.OrbitControls(camera, renderer.domElement);
   //        controls.damping = 0.2;
-  controls.addEventListener('change', render);
   hidecontrols = new THREE.OrbitControls(hideCamera, renderer.domElement);
   //        controls.damping = 0.2;
-  hidecontrols.addEventListener('change', render);
+  if (!INITIAL) {
+    controls.addEventListener('change', render);
+    hidecontrols.addEventListener('change', render);
+  }
 }
 
 function animate() {
@@ -26,8 +28,7 @@ function animate() {
 function render() {
   if (vrModeIsOn) {
     effect.render(scene, camera);
-  }
-  else {
+  } else {
     renderer.render(scene, camera);
   }
 }
@@ -35,17 +36,17 @@ function render() {
 
 function addBar(x, y, z, size) {
   var frequency = 0.4;
-  var geometry = new THREE.BoxGeometry(size * 0.8, y, size  * 0.8);
+  var geometry = new THREE.BoxGeometry(size * 0.8, y, size * 0.8);
   //geometry.computeFaceNormals();
   //geometry.computeVertexNormals();
-  var gcolor = new THREE.Color(Math.sin(x/size * frequency), Math.sin(x/size * frequency + 2 ), Math.sin(x/size * frequency  + 4 ));
+  var gcolor = new THREE.Color(Math.sin(x / size * frequency), Math.sin(x / size * frequency + 2), Math.sin(x / size * frequency + 4));
   var material = new THREE.MeshBasicMaterial({
     color: gcolor
   });
   geometry.colorsNeedUpdate = true;
   var mesh = new THREE.Mesh(geometry, material);
-  mesh.position.y = 1 + y/2;;
-  mesh.position.x = x - (window.innerWidth * 0.70)/2;
+  mesh.position.y = 1 + y / 2;;
+  mesh.position.x = x - (window.innerWidth * 0.50) / 2;
   mesh.position.z = z;
   scene.add(mesh);
   var edges = new THREE.EdgesHelper(mesh, 0x000000);
@@ -62,12 +63,15 @@ function createDictionary(data) {
 }
 
 function renderData(data) {
+  var ticks = 5;
+  var size = 50;
+
   var keys = _.keys(data[0]);
   var t_x = []
   var t_y = []
   var t_z = []
 
-  for (var i = 0; i < data.length; i++){
+  for (var i = 0; i < data.length; i++) {
     t_x.push(data[i][keys[0]]);
     t_y.push(data[i][keys[1]]);
     t_z.push(data[i][keys[2]]);
@@ -80,18 +84,33 @@ function renderData(data) {
   var min_y = _.min(u_y)
   var max_y = _.max(u_y)
 
-  var size = Math.floor((window.innerWidth*0.80) / u_x.length)
-  setCameraPosition(size*10);
+  setCameraPosition(500);
 
+
+  var dom_min, dom_max;
+
+  if (min_y >= 0) {
+    dom_min = Math.floor(min_y / 50) * 50;
+  } else {
+    dom_min = Math.floor(min_y / 50) * 50;
+  }
+
+  if (max_y >= 0) {
+    dom_max = Math.ceil(max_y / 50) * 50;
+  } else {
+    dom_max = Math.floor(max_y / 50) * 50;
+  }
+  console.log(min_y + " - " + max_y)
+  console.log(dom_min + " - " + dom_max)
   var scale = d3.scale.linear()
-                      .domain([min_y, max_y])
-                      .range([1, size*5]);
+    .domain([dom_min, dom_max])
+    .range([1, size * ticks]);
   //if ( ($("#z option:selected").val() === 'text') && ($("#x option:selected").val() === 'text'))
-    for (var i = 0; i < data.length; i++) {
-      d = data[i];
-      addBar(_.indexOf(u_x,d[keys[0]]) * size, scale(d[keys[1]]),  _.indexOf(u_z,d[keys[2]]) * size, size);
-    }
-    /*   For now we just use that top one. rest will be used when I can fix the cases.
+  for (var i = 0; i < data.length; i++) {
+    d = data[i];
+    addBar(_.indexOf(u_x, d[keys[0]]) * size, scale(d[keys[1]]), _.indexOf(u_z, d[keys[2]]) * size, size);
+  }
+  /*   For now we just use that top one. rest will be used when I can fix the cases.
   else if ($("#x option:selected").val() === 'text')
     for (var i = 0; i < data.length; i++) {
       d = data[i];
@@ -108,40 +127,61 @@ function renderData(data) {
       addBar(d[keys[0]] * size, scale(d[keys[1]]), d[keys[2]] * size, size);
     }
 */
-
-  for (var i = 0; i < u_x.length; i++) {
-    v1 = new THREE.Vector3((u_x[i] * size - (window.innerWidth * 0.70)/2) + size/2, 0, -1 * size)
-    v2 = new THREE.Vector3((u_x[i] * size - (window.innerWidth * 0.70)/2) + size/2, 0, 3 * size)
-    line = drawLine(v1,v2)
-    scene.add(line)
-    meshes.push(line)
-  }
   var min_x = _.min(u_x)
   var max_x = _.max(u_x)
   var min_z = _.min(u_z)
   var max_z = _.max(u_z)
-  for (var i = 0; i < u_z.length; i++) {
-    v1 = new THREE.Vector3((min_x * size - (window.innerWidth * 0.70)/2) - size*1, 0, u_z[i] * size + size/2)
-    v2 = new THREE.Vector3((max_x * size - (window.innerWidth * 0.70)/2) + size*1, 0, u_z[i] * size + size/2)
-    line = drawLine(v1,v2)
+
+  createGrid(min_x, max_x, min_z, max_z, dom_min, dom_max, size, ticks, u_x, u_z)
+}
+
+function createGrid(min_x, max_x, min_z, max_z, dom_min, dom_max, size, ticks, u_x, u_z) {
+  var divisions = (dom_max - dom_min) / ticks / 2
+    //x-axis lines
+  for (var i = 0; i < u_x.length; i++) {
+    v1 = new THREE.Vector3((i + 1 / 2) * size - (window.innerWidth * 0.25), 0, (-1 + 1 / 2) * size)
+    v2 = new THREE.Vector3((i + 1 / 2) * size - (window.innerWidth * 0.25), 0, (max_z + 1 - min_z) * size)
+    line = drawLine(v1, v2)
     scene.add(line)
     meshes.push(line)
+    if (u_x[i] != undefined)
+      createText((i + 1 / 2) * size - (window.innerWidth * 0.25) - size/2, 0, (max_z + 1 - min_z) * size + size/2, u_x[i], -1 * Math.PI / 2, 0 , Math.PI / 2);
   }
-  for (var i = 0; i < 6; i++) {
-    v1 = new THREE.Vector3((min_x * size - (window.innerWidth * 0.70)/2) - size/2, i * size, -1 * size)
-    v2 = new THREE.Vector3((min_x * size - (window.innerWidth * 0.70)/2) - size/2, i * size, 3 * size)
-    line = drawLine(v1,v2)
+  //z-axis lines
+  for (var i = 0; i <= (max_z - min_z); i++) {
+    v1 = new THREE.Vector3(0 - (window.innerWidth * 0.25) - size / 2, 0, (i + 1 / 2) * size)
+    v2 = new THREE.Vector3((u_x.length) * size - (window.innerWidth * 0.25), 0, (i + 1 / 2) * size)
+    line = drawLine(v1, v2)
     scene.add(line)
-    v2 = new THREE.Vector3((min_x * size - (window.innerWidth * 0.70)/2) - size*1, i * size, min_z * size - size/2)
-    v3 = new THREE.Vector3((max_x * size - (window.innerWidth * 0.70)/2) + size*1, i * size, min_z * size - size/2)
-    line2 = drawLine(v2,v3)
+    meshes.push(line)
+    if (u_z[i] != undefined)
+      createText((u_x.length) * size - (window.innerWidth * 0.25), 0, (i + 1 / 2) * size, u_z[i], -1 * Math.PI / 2);
+  }
+  for (var i = 0; i <= ticks * 2; i++) {
+    //z-lines for y
+    v1 = new THREE.Vector3(0 - (window.innerWidth * 0.25) - size / 2, i * size / 2, -1 / 2 * size)
+    v2 = new THREE.Vector3(0 - (window.innerWidth * 0.25) - size / 2, i * size / 2, (max_z - min_z + 1) * size)
+      //x-lines for y
+    v3 = new THREE.Vector3(0 - (window.innerWidth * 0.25) - size / 2, i * size / 2, 0 - size / 2)
+    v4 = new THREE.Vector3((u_x.length) * size - (window.innerWidth * 0.25), i * size / 2, 0 - size / 2)
+
+    if (i % 2 == 1) {
+      line = drawLine(v1, v2, 0xbbbbbb)
+      line2 = drawLine(v3, v4, 0xbbbbbb)
+    } else {
+      line = drawLine(v1, v2)
+      line2 = drawLine(v3, v4)
+      createText((u_x.length) * size - (window.innerWidth * 0.25), i * size / 2 - size / 8, 0 - size / 2, divisions * i + dom_min);
+    }
+
+    scene.add(line)
     scene.add(line2)
     meshes.push(line)
     meshes.push(line2)
   }
 }
 
-function setCameraPosition(num){
+function setCameraPosition(num) {
   camera.position.z = num;
   camera.position.y = num;
   camera.position.x = num;
@@ -150,4 +190,33 @@ function setCameraPosition(num){
   hideCamera.position.y = num;
   hideCamera.position.x = num;
   hideCamera.lookAt(new THREE.Vector3(0, 0, 0));
+}
+
+function createText(x, y, z, string, rotx, roty, rotz) {
+  rotx = rotx || false;
+  roty = roty || false;
+  rotz = rotz || false;
+  var TextGeo = new THREE.TextGeometry(string, {
+    font: 'helvetiker',
+    height: 1,
+    size: 15
+  });
+  var textMaterial = new THREE.MeshPhongMaterial({
+    color: 0xdddddd
+  });
+
+  var text = new THREE.Mesh(TextGeo, textMaterial);
+  text.position.set(x, y, z);
+
+  if (rotx){
+    text.rotation.x = rotx;
+  }
+  if (roty){
+    text.rotation.y = roty;
+  }
+  if (rotz){
+    text.rotation.z = rotz;
+  }
+  scene.add(text);
+  meshes.push(text);
 }
