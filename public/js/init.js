@@ -14,6 +14,8 @@ var vector
 var sprite1;
 var canvas1,context1,texture1;
 
+var FilterArray = [];
+
 function init(){
   scene = new THREE.Scene();
   window.addEventListener('resize', onWindowResize, false);
@@ -29,6 +31,15 @@ function init(){
 
     texture1 = new THREE.Texture(canvas1); //texture for canvas
     texture1.needsUpdate = true;
+}
+
+function isNumber(evt) {
+    evt = (evt) ? evt : window.event;
+    var charCode = (evt.which) ? evt.which : evt.keyCode;
+    if (charCode > 31 && charCode != 46 && (charCode < 48 || charCode > 57)) {
+        return false;
+    }
+    return true;
 }
 
 $("#sphere").change(function(){
@@ -87,9 +98,10 @@ $("#TableList").change(function(){
 $(document).on('change', '#xColumn', function(){
   switch (this.value){
     case 'double precision':
-      generateColumnFilter('#xColumn');
+      generateNumericColumnFilter('#xColumn');
       break;
     case 'text':
+      generateTextColumnFilter('#xColumn');
       break;
     default:
       break;
@@ -101,9 +113,10 @@ $(document).on('change', '#xColumn', function(){
 $(document).on('change', '#yColumn', function(){
   switch (this.value){
     case 'double precision':
-      generateColumnFilter('#yColumn');
+      generateNumericColumnFilter('#yColumn');
       break;
     case 'text':
+      generateTextColumnFilter('#yColumn');
       break;
     default:
       break;
@@ -114,9 +127,10 @@ $(document).on('change', '#yColumn', function(){
 $(document).on('change', '#zColumn', function(){
   switch (this.value){
     case 'double precision':
-      generateColumnFilter('#zColumn');
+      generateNumericColumnFilter('#zColumn');
       break;
     case 'text':
+      generateTextColumnFilter('#zColumn');
       break;
     default:
       break;
@@ -125,35 +139,117 @@ $(document).on('change', '#zColumn', function(){
 
 });
 
+function generateTextColumnFilter(colID){
+  var tableSelected = $("#TableList option:selected").val();
+  var ColName = $(colID.concat(" option:selected")).text();
+  //var getMinMaxQuery = 'select max(' + ColName + '), min(' + ColName + ') FROM ' + tableSelected;
+  var getSelectionQuery = 'select distinct '+ColName+' from '+tableSelected+' where '+ColName+' is not null order by '+ColName;
+
+  var filterID;
+  var formID;
+  var amountName;
+
+  switch (colID){
+    case '#xColumn':
+      formID = "X";
+      filterID = "#filters1";
+      break;
+    case '#yColumn':
+      formID = "Y";
+      filterID = "#filters2";
+      break;
+    case '#zColumn':
+      formID = "Z";
+      filterID = "#filters3";
+      break;
+  }
+
+  // retrieve all items in column that's alphabeticalized. Then generate Check boxes.
+  $.getJSON('/retrieveData', { myQuery : getSelectionQuery }, function(data){
+    $(filterID).html("");
+    //$(filterID).append('<input id=' + amountName.substring(1) + ' type=text onkeypress=”return isNumber(event);” ></input>' + '<div id=' + slideName.substring(1) + '></div>');
+    var randomStr = formID + ':<br><form id='+ formID +' style="height:100px;width:230px;border:1px solid #ccc;font:16px/26px Georgia, Garamond, Serif;overflow-y:auto;overflow-x:auto;">'
+    //$(filterID).append('<form id='+ formID +'>');
+
+    for (var i = 0; i < data.length; i++){
+
+      randomStr = randomStr.concat('<div>\
+        <input type="checkbox" value="'+data[i][ColName]+'" id="'+formID+'">\
+        <p>'+data[i][ColName]+'</p>\
+      </div>');
+
+
+    }
+    randomStr = randomStr.concat('<div id="log"></div></form><br>');
+
+    //$(filterID).append('<div id="log"></div></form>');
+
+    $(filterID).append(randomStr);
+
+  });
+
+}
+
+
+
+
 // create a filter for
-function generateColumnFilter(colID){
+function generateNumericColumnFilter(colID){
 	var tableSelected = $("#TableList option:selected").val();
   var ColName = $(colID.concat(" option:selected")).text();
   var getMinMaxQuery = 'select max(' + ColName + '), min(' + ColName + ') FROM ' + tableSelected;
 
+
+
+  var filterID;
   var slideName;
   var amountName;
+  var filterLabel;
   switch (colID){
     case '#xColumn':
       slideName = "#sliderX";
       amountName = "#amountX";
+      filterID = "#filters1";
+      filterLabel = "X";
       break;
     case '#yColumn':
       slideName = "#sliderY";
       amountName = "#amountY";
+      filterID = "#filters2";
+      filterLabel = "Y";
       break;
     case '#zColumn':
       slideName = "#sliderZ";
       amountName = "#amountZ";
+      filterID = "#filters3";
+      filterLabel = "Z";
       break;
   }
 
   $.getJSON('/retrieveData', { myQuery : getMinMaxQuery }, function(data){
+    console.log(filterID)
+
+    $(filterID).html("");
+    $(filterID).append(filterLabel + ':<input id=' + amountName.substring(1) + ' type=text onkeypress=”return isNumber(event);” ></input>' + '<div id=' + slideName.substring(1) + '></div><br>');
+
+
+
+    var stepValue = 1;
+    var dataDiff = data[0].max - data[0].min;
+
+    if (dataDiff < 100){
+        while(dataDiff  < 100 ){
+          dataDiff = dataDiff * 10;
+          stepValue = stepValue/10;
+        }
+    }
+    console.log(stepValue);
     $( slideName ).slider({
     	range: true,
     	min: parseFloat(data[0].min),
     	max: parseFloat(data[0].max),
     	values: [ data[0].min, data[0].max ],
+      step: stepValue,
     	slide: function( event, ui ) {
     		$( amountName ).val(  ui.values[ 0 ] + " - " + ui.values[ 1 ] );
     	}
@@ -204,47 +300,105 @@ function BarScatterFilterQuery(){
 
   var startWord = " where";
 
-  if (xType == 'double precision'){
-  	tempFrom = $( "#sliderX" ).slider( "values", 0 );
-  	tempTo = $( "#sliderX" ).slider( "values", 1 );
-  	if(tempFrom!=""){
-  	 	getColumnTypeQuery = getColumnTypeQuery.concat(" where "+x+" >= " + tempFrom);
-      startWord = " and";
-    }
-    if(tempTo!=""){
-  		getColumnTypeQuery = getColumnTypeQuery.concat(startWord + " "+x+" <= " + tempTo);
-      startWord = " and";
-    }
+  /*
+  select manufacturer_pregen, model, cpu_speed, _price from tryagainsmartphone where _price >= 200 and _price <= 400 and (manufacturer_pregen = 'Samsung'or manufacturer_pregen = 'HTC');
+  $('input#X:checked')[0]
+  */
+
+  switch(xType){
+    case 'double precision':
+      tempFrom = $( "#sliderX" ).slider( "values", 0 );
+    	tempTo = $( "#sliderX" ).slider( "values", 1 );
+    	if(tempFrom!=""){
+    	 	getColumnTypeQuery = getColumnTypeQuery.concat(" where "+x+" >= " + tempFrom);
+        startWord = " and";
+      }
+      if(tempTo!=""){
+    		getColumnTypeQuery = getColumnTypeQuery.concat(startWord + " "+x+" <= " + tempTo);
+        startWord = " and";
+      }
+      break;
+    case 'text':
+      // checkboxes are selected
+      if ($('input#X:checked').length != 0) {
+        //and (manufacturer_pregen = 'Samsung'or manufacturer_pregen = 'HTC');
+        getColumnTypeQuery = getColumnTypeQuery.concat(startWord + " (" + x + " = '" + $('input#X:checked')[0].value + "'");
+        for (var i = 1; i < $('input#X:checked').length; i++){
+          getColumnTypeQuery = getColumnTypeQuery.concat(" or " + x + " = '" + $('input#X:checked')[i].value + "'");
+        }
+        getColumnTypeQuery = getColumnTypeQuery.concat(")");
+        startWord = " and";
+      }
+      break;
+    default:
+      console.log("Does not support Date yet");
+      break;
+
+
   }
 
-  if (yType == 'double precision'){
-  	tempFrom = $( "#sliderY" ).slider( "values", 0 );
-  	tempTo = $( "#sliderY" ).slider( "values", 1 );
-  	if(tempFrom!=""){
-  	 	getColumnTypeQuery = getColumnTypeQuery.concat(startWord +" "+y+" >= " + tempFrom);
-      startWord = " and";
-    }
-    if(tempTo!=""){
-  		getColumnTypeQuery = getColumnTypeQuery.concat(startWord +" "+y+" <= " + tempTo);
-      startWord = " and";
-    }
+
+  switch(yType){
+    case 'double precision':
+      tempFrom = $( "#sliderY" ).slider( "values", 0 );
+      tempTo = $( "#sliderY" ).slider( "values", 1 );
+      if(tempFrom!=""){
+        getColumnTypeQuery = getColumnTypeQuery.concat(startWord +" "+y+" >= " + tempFrom);
+        startWord = " and";
+      }
+      if(tempTo!=""){
+        getColumnTypeQuery = getColumnTypeQuery.concat(startWord +" "+y+" <= " + tempTo);
+        startWord = " and";
+      }
+      break;
+    case 'text':
+      // checkboxes are selected
+      if ($('input#Y:checked').length != 0) {
+        //and (manufacturer_pregen = 'Samsung'or manufacturer_pregen = 'HTC');
+        getColumnTypeQuery = getColumnTypeQuery.concat(startWord + " (" + y + " = '" + $('input#Y:checked')[0].value + "'");
+        for (var i = 1; i < $('input#Y:checked').length; i++){
+          getColumnTypeQuery = getColumnTypeQuery.concat(" or " + y + " = '" + $('input#Y:checked')[i].value + "'");
+        }
+        getColumnTypeQuery = getColumnTypeQuery.concat(")");
+        startWord = " and";
+      }
+      break;
+    default:
+      console.log("Does not support this type yet");
+      break;
   }
 
-  if (zType == 'double precision'){
-	tempFrom = $( "#sliderZ" ).slider( "values", 0 );
-  	tempTo = $( "#sliderZ" ).slider( "values", 1 );
-  	if(tempFrom!=""){
-  	 	getColumnTypeQuery = getColumnTypeQuery.concat(startWord +" "+z+" >= " + tempFrom);
-      startWord = " and";
-    }
-  	if(tempTo!=""){
-  		getColumnTypeQuery = getColumnTypeQuery.concat(startWord +" "+z+" <= " + tempTo);
-      startWord = " and";
-    }
+  switch(zType){
+    case 'double precision':
+      tempFrom = $( "#sliderZ" ).slider( "values", 0 );
+      tempTo = $( "#sliderZ" ).slider( "values", 1 );
+      if(tempFrom!=""){
+        getColumnTypeQuery = getColumnTypeQuery.concat(startWord +" "+z+" >= " + tempFrom);
+        startWord = " and";
+      }
+      if(tempTo!=""){
+        getColumnTypeQuery = getColumnTypeQuery.concat(startWord +" "+z+" <= " + tempTo);
+        startWord = " and";
+      }
+      break;
+    case 'text':
+      // checkboxes are selected
+      if ($('input#Z:checked').length != 0) {
+        //and (manufacturer_pregen = 'Samsung'or manufacturer_pregen = 'HTC');
+        getColumnTypeQuery = getColumnTypeQuery.concat(startWord + " (" + z + " = '" + $('input#Z:checked')[0].value + "'");
+        for (var i = 1; i < $('input#Z:checked').length; i++){
+          getColumnTypeQuery = getColumnTypeQuery.concat(" or " + z + " = '" + $('input#Z:checked')[i].value + "'");
+        }
+        getColumnTypeQuery = getColumnTypeQuery.concat(")");
+        startWord = " and";
+      }
+      break;
+    default:
+      console.log("does not support this feature yet");
+      break;
   }
 
-
-
+  console.log(getColumnTypeQuery);
   return getColumnTypeQuery;
 
 }
