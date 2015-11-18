@@ -253,6 +253,8 @@ function BarScatterFilterQuery(){
 function generateScatter()
 {
   clearmeshes();
+  if (RENDERID != null)
+    cancelAnimationFrame( RENDERID );
   if (!INITIAL) {
     init();
     INITIAL = true;
@@ -262,8 +264,6 @@ function generateScatter()
     scene.add(msphere);
     mouseSphere.push(msphere);
   }
-  if (RENDERID != null)
-    cancelAnimationFrame( RENDERID );
   camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
   //add effect
   effect = new THREE.StereoEffect(renderer);
@@ -308,6 +308,8 @@ var z = $("#zColumn option:selected").text();
 
 function generateBar(){
   clearmeshes();
+  if (RENDERID != null)
+    cancelAnimationFrame( RENDERID );
 
   if (!INITIAL) {
     init();
@@ -319,8 +321,6 @@ function generateBar(){
     mouseSphere.push(msphere);
 
   }
-  if (RENDERID != null)
-    cancelAnimationFrame( RENDERID );
   initbars();
   animate();
 

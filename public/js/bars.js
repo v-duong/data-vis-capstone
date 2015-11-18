@@ -12,10 +12,12 @@ function initbars() {
 
   controls = new THREE.OrbitControls(camera, renderer.domElement);
   //        controls.damping = 0.2;
-  controls.addEventListener('change', render);
   hidecontrols = new THREE.OrbitControls(hideCamera, renderer.domElement);
   //        controls.damping = 0.2;
-  hidecontrols.addEventListener('change', render);
+  if (!INITIAL) {
+    controls.addEventListener('change', render);
+    hidecontrols.addEventListener('change', render);
+  }
 }
 
 function animate() {
