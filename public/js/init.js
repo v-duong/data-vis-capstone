@@ -192,24 +192,6 @@ function generateTextColumnFilter(colID){
 
     $(filterID).append(randomStr);
 
-    /*'\
-        <div>\
-          <input type="checkbox" name="fruit" value="orange" id="orange">\
-          <p for="orange">orange</p>\
-        </div>\
-        <div>\
-          <input type="checkbox" name="fruit" value="apple" id="apple">\
-          <p for="apple">apple</p>\
-        </div>\
-        <div>\
-          <input type="checkbox" name="fruit" value="banana" id="banana">\
-          <p for="banana">banana</p>\
-        </div>\
-        <div id="log"></div>\
-      </form>'*/
-
-
-
   });
 
 }
@@ -320,47 +302,105 @@ function BarScatterFilterQuery(){
 
   var startWord = " where";
 
-  if (xType == 'double precision'){
-  	tempFrom = $( "#sliderX" ).slider( "values", 0 );
-  	tempTo = $( "#sliderX" ).slider( "values", 1 );
-  	if(tempFrom!=""){
-  	 	getColumnTypeQuery = getColumnTypeQuery.concat(" where "+x+" >= " + tempFrom);
-      startWord = " and";
-    }
-    if(tempTo!=""){
-  		getColumnTypeQuery = getColumnTypeQuery.concat(startWord + " "+x+" <= " + tempTo);
-      startWord = " and";
-    }
+  /*
+  select manufacturer_pregen, model, cpu_speed, _price from tryagainsmartphone where _price >= 200 and _price <= 400 and (manufacturer_pregen = 'Samsung'or manufacturer_pregen = 'HTC');
+  $('input#X:checked')[0]
+  */
+
+  switch(xType){
+    case 'double precision':
+      tempFrom = $( "#sliderX" ).slider( "values", 0 );
+    	tempTo = $( "#sliderX" ).slider( "values", 1 );
+    	if(tempFrom!=""){
+    	 	getColumnTypeQuery = getColumnTypeQuery.concat(" where "+x+" >= " + tempFrom);
+        startWord = " and";
+      }
+      if(tempTo!=""){
+    		getColumnTypeQuery = getColumnTypeQuery.concat(startWord + " "+x+" <= " + tempTo);
+        startWord = " and";
+      }
+      break;
+    case 'text':
+      // checkboxes are selected
+      if ($('input#X:checked').length != 0) {
+        //and (manufacturer_pregen = 'Samsung'or manufacturer_pregen = 'HTC');
+        getColumnTypeQuery = getColumnTypeQuery.concat(startWord + " (" + x + " = '" + $('input#X:checked')[0].value + "'");
+        for (var i = 1; i < $('input#X:checked').length; i++){
+          getColumnTypeQuery = getColumnTypeQuery.concat(" or " + x + " = '" + $('input#X:checked')[i].value + "'");
+        }
+        getColumnTypeQuery = getColumnTypeQuery.concat(")");
+        startWord = " and";
+      }
+      break;
+    default:
+      console.log("Does not support Date yet");
+      break;
+
+
   }
 
-  if (yType == 'double precision'){
-  	tempFrom = $( "#sliderY" ).slider( "values", 0 );
-  	tempTo = $( "#sliderY" ).slider( "values", 1 );
-  	if(tempFrom!=""){
-  	 	getColumnTypeQuery = getColumnTypeQuery.concat(startWord +" "+y+" >= " + tempFrom);
-      startWord = " and";
-    }
-    if(tempTo!=""){
-  		getColumnTypeQuery = getColumnTypeQuery.concat(startWord +" "+y+" <= " + tempTo);
-      startWord = " and";
-    }
+
+  switch(yType){
+    case 'double precision':
+      tempFrom = $( "#sliderY" ).slider( "values", 0 );
+      tempTo = $( "#sliderY" ).slider( "values", 1 );
+      if(tempFrom!=""){
+        getColumnTypeQuery = getColumnTypeQuery.concat(startWord +" "+y+" >= " + tempFrom);
+        startWord = " and";
+      }
+      if(tempTo!=""){
+        getColumnTypeQuery = getColumnTypeQuery.concat(startWord +" "+y+" <= " + tempTo);
+        startWord = " and";
+      }
+      break;
+    case 'text':
+      // checkboxes are selected
+      if ($('input#Y:checked').length != 0) {
+        //and (manufacturer_pregen = 'Samsung'or manufacturer_pregen = 'HTC');
+        getColumnTypeQuery = getColumnTypeQuery.concat(startWord + " (" + y + " = '" + $('input#Y:checked')[0].value + "'");
+        for (var i = 1; i < $('input#Y:checked').length; i++){
+          getColumnTypeQuery = getColumnTypeQuery.concat(" or " + y + " = '" + $('input#Y:checked')[i].value + "'");
+        }
+        getColumnTypeQuery = getColumnTypeQuery.concat(")");
+        startWord = " and";
+      }
+      break;
+    default:
+      console.log("Does not support this type yet");
+      break;
   }
 
-  if (zType == 'double precision'){
-	tempFrom = $( "#sliderZ" ).slider( "values", 0 );
-  	tempTo = $( "#sliderZ" ).slider( "values", 1 );
-  	if(tempFrom!=""){
-  	 	getColumnTypeQuery = getColumnTypeQuery.concat(startWord +" "+z+" >= " + tempFrom);
-      startWord = " and";
-    }
-  	if(tempTo!=""){
-  		getColumnTypeQuery = getColumnTypeQuery.concat(startWord +" "+z+" <= " + tempTo);
-      startWord = " and";
-    }
+  switch(zType){
+    case 'double precision':
+      tempFrom = $( "#sliderZ" ).slider( "values", 0 );
+      tempTo = $( "#sliderZ" ).slider( "values", 1 );
+      if(tempFrom!=""){
+        getColumnTypeQuery = getColumnTypeQuery.concat(startWord +" "+z+" >= " + tempFrom);
+        startWord = " and";
+      }
+      if(tempTo!=""){
+        getColumnTypeQuery = getColumnTypeQuery.concat(startWord +" "+z+" <= " + tempTo);
+        startWord = " and";
+      }
+      break;
+    case 'text':
+      // checkboxes are selected
+      if ($('input#Z:checked').length != 0) {
+        //and (manufacturer_pregen = 'Samsung'or manufacturer_pregen = 'HTC');
+        getColumnTypeQuery = getColumnTypeQuery.concat(startWord + " (" + z + " = '" + $('input#Z:checked')[0].value + "'");
+        for (var i = 1; i < $('input#Z:checked').length; i++){
+          getColumnTypeQuery = getColumnTypeQuery.concat(" or " + z + " = '" + $('input#Z:checked')[i].value + "'");
+        }
+        getColumnTypeQuery = getColumnTypeQuery.concat(")");
+        startWord = " and";
+      }
+      break;
+    default:
+      console.log("does not support this feature yet");
+      break;
   }
 
-
-
+  console.log(getColumnTypeQuery);
   return getColumnTypeQuery;
 
 }
