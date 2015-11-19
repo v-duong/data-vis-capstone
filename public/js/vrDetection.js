@@ -42,6 +42,7 @@ var vrModeIsOn = false;
 function fullScreenExitHandler(){
     if ( !(document.webkitIsFullScreen || document.mozFullScreen || document.msFullScreen || document.fullScreen) ){
     	vrModeIsOn = false;
+    	hidecontrols.disconnect();
     	if (graphType === 'bar'){
 	 		var temp = hideCamera;
 			hideCamera = camera;
@@ -64,6 +65,8 @@ if (document.getElementsByClassName('visual')[0].addEventListener)
 
 function enterVRMode(){
 	vrModeIsOn = true;
+	hidecontrols = new THREE.DeviceOrientationControls(hideCamera);
+	
 	var element = document.getElementsByClassName('visual')[0];
 	if ( navigator.userAgent.indexOf('Chrome') != -1 ){			//Chrome
 		element.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);

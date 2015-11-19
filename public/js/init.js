@@ -38,6 +38,18 @@ $("#sphere").change(function() {
   }
 })
 
+function setOrientationControls(e) {
+        if (!e.alpha) {
+          return;
+        }
+
+        hidecontrols.connect();
+        hidecontrols.update();
+        
+        window.removeEventListener('deviceorientation', setOrientationControls);
+      }
+      window.addEventListener('deviceorientation', setOrientationControls, true);
+
 function generateVisuals() {
   var tableSelected = $("#VisualList option:selected").val();
   switch (tableSelected) {
