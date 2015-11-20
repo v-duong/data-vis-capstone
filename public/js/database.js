@@ -60,12 +60,12 @@ exports.deleteTable = function(tableName, callback){
 
 function isADate(dateStr){
 
-	var formats = ["MM/DD/YY H:mm", "MM/DD/YY HH:mm", "M/DD/YY H:mm", "M/D/YY H:mm", "MM/D/YY H:mm"];
+	var formats = ["MM/DD/YY H:mm", "YYYY-MM-DD", "MM/DD/YY HH:mm", "M/DD/YY H:mm", "M/D/YY H:mm", "MM/D/YY H:mm"];
 	if (moment(dateStr, formats, true).isValid()){
 		return true;
 	}
 	return false;
-	
+
 
 }
 
@@ -78,7 +78,7 @@ function findType(dataSet, colNum){
 		curRow = dataSet[i].split(",");
 		// ignore NULL or empty
 		if ((curRow[colNum]) == "" || (curRow[colNum] == "NULL")){
-			continue; 
+			continue;
 		}
 
 		// if a date is found, and its the first .. assume column will contain date
@@ -89,14 +89,14 @@ function findType(dataSet, colNum){
 			}
 
 		}
-		
+
 		if (isNaN(curRow[colNum]))  // found a non numerical number. Column will be text
 			return 0;
-		
+
 		retVal = 2;
 	}
-			
-	
+
+
 	return retVal;
 }
 
@@ -111,7 +111,7 @@ exports.insertTable = function(tableName, dataSet, callback){
 
 	tableName = tableName.substr(0, tableName.length-4);
 	tableName = tableName.replace(/ /g, "_");  // table name can't have spaces
-	
+
 	dataSet = dataSet.split("\r");
 	//console.log(dataSet[0]);
 	var columnNames = dataSet[0].split(",");
@@ -140,9 +140,9 @@ exports.insertTable = function(tableName, dataSet, callback){
 			default:
 				break;
 		}
-		
+
 		insertBaseQuery = insertBaseQuery.concat(columnNames[i] + ",");
-		
+
 	}
 
 	// adding last column name
@@ -160,7 +160,7 @@ exports.insertTable = function(tableName, dataSet, callback){
 		default:
 			break;
 	}
-	
+
 	insertBaseQuery = insertBaseQuery.concat(columnNames[i] + ") values (");
 
 	//console.log(createTableQuery);
@@ -180,7 +180,7 @@ exports.insertTable = function(tableName, dataSet, callback){
 				var tempRow = dataSet[i].split(",");
 				insertQuery = insertQuery.concat(insertBaseQuery);
 				for (j = 0; j < columnNames.length-1; j++){
-					
+
 					if ((j >= tempRow.length) || (tempRow[j] == "NULL") || (tempRow[j] == "")){
 						insertQuery = insertQuery.concat('null,');
 					}
@@ -192,21 +192,21 @@ exports.insertTable = function(tableName, dataSet, callback){
 							case 2:
 								insertQuery = insertQuery.concat(tempRow[j] + ',');
 								break;
-							case 3: 
+							case 3:
 								insertQuery = insertQuery.concat("timestamp '" + tempRow[j] + "'," );
 								break;
 							default:
 								break;
 						}
-						
+
 					}
-					
+
 
 				}
 
 				if ((j >= tempRow.length) || (tempRow[j] == "NULL") || (tempRow[j] == ""))
 					insertQuery = insertQuery.concat('null)');
-			
+
 				else{
 					switch (colTypes[j]){
 							case 0:
@@ -215,7 +215,7 @@ exports.insertTable = function(tableName, dataSet, callback){
 							case 2:
 								insertQuery = insertQuery.concat(tempRow[j] + ')');
 								break;
-								case 3: 
+								case 3:
 								insertQuery = insertQuery.concat("timestamp '" + tempRow[j] + "')" );
 								break;
 							default:
@@ -223,7 +223,7 @@ exports.insertTable = function(tableName, dataSet, callback){
 						}
 				}
 
-				
+
 				client.query(insertQuery, function(err, rows){
 
 					if (err){
