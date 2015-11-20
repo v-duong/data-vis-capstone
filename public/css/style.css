@@ -185,6 +185,16 @@ form.filterselect {
   text-align: center;
   vertical-align: middle;
 }
+form.uploader {
+  margin: 10px;
+}
+form.uploader input.file-input {
+  top: 0;
+  right: 0;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+}
 @media only screen and (min-width: 40.0625em) {
   nav.top-bar {
     overflow: hidden;
