@@ -2,7 +2,7 @@ extend navtemplate
 block maintext
   .row
     .large-centered
-      form.uploader(action="/file-upload", method="post", enctype="multipart/form-data")
+      form.uploader(action="/files", method="post", enctype="multipart/form-data")
         .large-6.columns
           input.file-input(type="file" accept=".csv", name="datafile")
         .large-6.columns
@@ -14,18 +14,8 @@ block maintext
         tr
           th File
           th Options
-  script(src='http://code.jquery.com/jquery-2.1.4.min.js')
+  script(src='https://code.jquery.com/jquery-2.1.4.min.js')
   script.
-    function openFunc(btnID) {
-      console.log("clicked open!");
-      var index = btnID.substring(10);
-      var tableName = fileListings[parseInt(index)];
-      var loc = '/displayData?filename=';
-      loc = loc.concat(tableName);
-      console.log(loc);
-      window.location.href = loc;
-      // Enter Code here
-    }
     function deleteFunc(btnID){
       var fileName = btnID;
       $.post('/delData', { tName: fileName }, function(data){
