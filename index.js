@@ -77,7 +77,7 @@ var file_uploaded = multer({
   storage: storage
 });
 
-app.post('/file-upload', file_uploaded.single('datafile'), function(req, res) {
+app.post('/files', file_uploaded.single('datafile'), function(req, res) {
   if (req.file == null) {
     return;
   }
@@ -91,8 +91,6 @@ app.post('/file-upload', file_uploaded.single('datafile'), function(req, res) {
     textBuff = textBuff.concat(fileData.toString());
   });
 
-
-
   // uploaded successfully
   src.on('end', function() {
     // add textBuff into DB
@@ -105,27 +103,20 @@ app.post('/file-upload', file_uploaded.single('datafile'), function(req, res) {
         console.log("insert success");
         // delete the physical file
 
-        res.render('uploadPage', {
-          "fileData": textBuff
-        });
+        res.render('files');
 
       } else {
         console.log("insert fail");
         textBuff = "Upload Failed";
-        res.render('uploadPage', {
-          "fileData": textBuff
-        });
+        res.render('files');
 
       }
       fs.unlinkSync(target_path);
 
     });
   });
-
-
-  // failed to upload
   src.on('error', function(err) {
-    res.render('back');
+    res.render('files');
   });
 
 });
