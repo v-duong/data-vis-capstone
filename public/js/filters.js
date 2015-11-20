@@ -19,6 +19,7 @@ $("#TableList").change(function(){
 			var tableSelected = $("#TableList option:selected").val();
 			var getColumnTypeQuery = "SELECT column_name ,data_type FROM information_schema.columns where table_name = '";
 			getColumnTypeQuery = getColumnTypeQuery.concat(tableSelected + "'");
+      getColumnTypeQuery = getColumnTypeQuery.concat(" and data_type = 'double precision'");
 
 			$("#columnSelection.off-canvas-submenu").html("");
 			$.getJSON('/retrieveData', { myQuery : getColumnTypeQuery }, function(data){
