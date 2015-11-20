@@ -163,7 +163,7 @@ exports.insertTable = function(tableName, dataSet, callback){
 
 	insertBaseQuery = insertBaseQuery.concat(columnNames[i] + ") values (");
 
-	//console.log(createTableQuery);
+
 
 	client.query(createTableQuery, function(err, rows){
 		if (err){

@@ -223,11 +223,13 @@ function generateNumericColumnFilter(colID){
           stepValue = stepValue/10;
         }
     }
+
+  
     $( slideName ).slider({
     	range: true,
-    	min: parseFloat(data[0].min),
-    	max: parseFloat(data[0].max),
-    	values: [ data[0].min, data[0].max ],
+    	min: Math.floor(parseFloat(data[0].min)),
+    	max: Math.ceil(parseFloat(data[0].max)),
+    	values: [ Math.floor(parseFloat(data[0].min)), Math.ceil(parseFloat(data[0].max)) ],
       step: stepValue,
     	slide: function( event, ui ) {
     		$( amountName ).val(  ui.values[ 0 ] + " - " + ui.values[ 1 ] );

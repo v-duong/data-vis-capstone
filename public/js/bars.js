@@ -63,6 +63,7 @@ function createDictionary(data) {
 }
 
 function renderData(data) {
+  console.log(data);
   var ticks = 5;
   var size = 50;
 
