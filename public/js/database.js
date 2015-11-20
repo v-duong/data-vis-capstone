@@ -17,45 +17,44 @@ var connectionString = "postgres://aaojwaabmvczuq:aHR5JA0-K0wmk6Q6k6VXXfhChO@ec2
 
 
 var client = new pg.Client(connectionString);
-client.connect(function(err){
+client.connect(function(err) {
   if (err)
     console.log("DB ERROR");
-    //console.log("Set dbClient to NULL")
+  //console.log("Set dbClient to NULL")
 });
 
-exports.queryDB = function(queryStr, callback){
-	client.query(queryStr , function(err, rows){
-      if (err){
-        console.log("DB FAILED");
-        //return null;
-        callback(null);
-        return;
-      }
-      else{
-      	callback(rows.rows);
-      	return;
+exports.queryDB = function(queryStr, callback) {
+  client.query(queryStr, function(err, rows) {
+    if (err) {
+      console.log("DB FAILED");
+      //return null;
+      callback(null);
+      return;
+    } else {
+      callback(rows.rows);
+      return;
 
-      }
-    });
+    }
+  });
+
+}
+
+exports.deleteTable = function(tableName, callback) {
+  //drop table firsttest
+  var dropQuery = "drop table ".concat(tableName);
+  client.query(dropQuery, function(err, rows) {
+    if (err) {
+      console.log("Could not drop table");
+      callback(false);
+      return;
+    } else {
+      callback(true);
+      return;
+    }
+  });
 
 }
 
-exports.deleteTable = function(tableName, callback){
-	//drop table firsttest
-	var dropQuery = "drop table ".concat(tableName);
-	client.query(dropQuery, function(err, rows){
-		if (err){
-			console.log("Could not drop table");
-			callback(false);
-			return;
-		}
-		else{
-			callback(true);
-			return;
-		}
-	});
-
-}
 
 
 function isADate(dateStr){

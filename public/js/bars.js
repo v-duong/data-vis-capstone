@@ -34,14 +34,12 @@ function render() {
 }
 
 
-function addBar(x, y, z, size, xoffset, zoffset) {
-  var frequency = 0.4;
+function addBar(x, y, z, size, xoffset, zoffset, c) {
   var geometry = new THREE.BoxGeometry(size * 0.8, y, size * 0.8);
   //geometry.computeFaceNormals();
   //geometry.computeVertexNormals();
-  var gcolor = new THREE.Color(Math.sin(x / size * frequency), Math.sin(x / size * frequency + 2), Math.sin(x / size * frequency + 4));
   var material = new THREE.MeshBasicMaterial({
-    color: gcolor
+    color: new THREE.Color(c)
   });
   geometry.colorsNeedUpdate = true;
   var mesh = new THREE.Mesh(geometry, material);
@@ -90,29 +88,36 @@ function renderData(data) {
 
   var dom_min, dom_max;
 
-  if (min_y >= 0) {
-    dom_min = Math.floor(min_y / 50) * 50;
+  if (max_y >= 0) {
+    dom_max = Math.ceil(max_y / 10) * 10;
   } else {
-    dom_min = Math.floor(min_y / 50) * 50;
+    dom_max = Math.floor(max_y / 10) * 10;
+  }
+  if (min_y >= 0) {
+    dom_min = 0;
+    var scale = d3.scale.linear()
+      .domain([dom_min, dom_max])
+      .range([1, size * ticks]);
+  } else {
+    dom_min = Math.floor(min_y / 10) * 10;
+    var scale = d3.scale.linear()
+      .domain([-dom_max, dom_max])
+      .range([-1 * size * ticks, size * ticks])
+      .nice();
   }
 
-  if (max_y >= 0) {
-    dom_max = Math.ceil(max_y / 50) * 50;
-  } else {
-    dom_max = Math.floor(max_y / 50) * 50;
-  }
-  console.log(min_y + " - " + max_y)
-  console.log(dom_min + " - " + dom_max)
-  var scale = d3.scale.linear()
-    .domain([dom_min, dom_max])
-    .range([1, size * ticks]);
-  //if ( ($("#z option:selected").val() === 'text') && ($("#x option:selected").val() === 'text'))
+  var c1 = $('input#freq').val();
+  var c2 = $('input#offset').val();
+
+  var cscale = d3.scale.linear()
+              .domain([min_y, max_y])
+              .range([c1, c2]);
 
   var xoffset = u_x.length / 2 * size;
   var zoffset = u_z.length / 2 * size;
   for (var i = 0; i < data.length; i++) {
     d = data[i];
-    addBar(_.indexOf(u_x, d[keys[0]]) * size, scale(d[keys[1]]), _.indexOf(u_z, d[keys[2]]) * size, size, xoffset, zoffset);
+    addBar(_.indexOf(u_x, d[keys[0]]) * size, scale(d[keys[1]]), _.indexOf(u_z, d[keys[2]]) * size, size, xoffset, zoffset, cscale(d[keys[1]]));
   }
   /*   For now we just use that top one. rest will be used when I can fix the cases.
   else if ($("#x option:selected").val() === 'text')
@@ -140,8 +145,11 @@ function renderData(data) {
 }
 
 function createGrid(min_x, max_x, min_z, max_z, dom_min, dom_max, size, ticks, u_x, u_z, xoffset, zoffset) {
-  var divisions = (dom_max - dom_min) / ticks / 2
-    //x-axis lines
+  if (dom_min < 0)
+    var divisions = dom_max / ticks / 2
+  else
+    var divisions = (dom_max - dom_min) / ticks / 2
+      //x-axis lines
   for (var i = 0; i < u_x.length; i++) {
     v1 = new THREE.Vector3((i + 1 / 2) * size - xoffset, 0, (-1 + 1 / 2) * size - zoffset)
     v2 = new THREE.Vector3((i + 1 / 2) * size - xoffset, 0, (u_z.length) * size - zoffset)
@@ -149,39 +157,80 @@ function createGrid(min_x, max_x, min_z, max_z, dom_min, dom_max, size, ticks, u
     scene.add(line)
     meshes.push(line)
     if (u_x[i] != undefined)
-      createText( i * size - xoffset, 0, (u_z.length) * size + size/2 + u_x[i].toString().length * 10  - zoffset, u_x[i], -1 * Math.PI / 2, 0 , Math.PI / 2);
+      createText(i * size - xoffset, 0, (u_z.length) * size + size / 2 + u_x[i].toString().length * 10 - zoffset, u_x[i], -1 * Math.PI / 2, 0, Math.PI / 2);
   }
   //z-axis lines
   for (var i = 0; i < u_z.length; i++) {
-    v1 = new THREE.Vector3(0 - xoffset - size / 2, 0, (i + 1 / 2) * size  - zoffset)
-    v2 = new THREE.Vector3((u_x.length) * size - xoffset, 0, (i + 1 / 2) * size  - zoffset)
+    v1 = new THREE.Vector3(0 - xoffset - size / 2, 0, (i + 1 / 2) * size - zoffset)
+    v2 = new THREE.Vector3((u_x.length) * size - xoffset, 0, (i + 1 / 2) * size - zoffset)
     line = drawLine(v1, v2)
     scene.add(line)
     meshes.push(line)
     if (u_z[i] != undefined)
-      createText((u_x.length) * size - xoffset, 0, (i + 1 / 4) * size  - zoffset, u_z[i], -1 * Math.PI / 2);
+      createText((u_x.length) * size - xoffset, 0, (i + 1 / 4) * size - zoffset, u_z[i], -1 * Math.PI / 2);
   }
-  for (var i = 0; i <= ticks * 2; i++) {
-    //z-lines for y
-    v1 = new THREE.Vector3(0 - xoffset - size / 2, i * size / 2, -1 / 2 * size  - zoffset)
-    v2 = new THREE.Vector3(0 - xoffset - size / 2, i * size / 2, (u_z.length) * size  - zoffset)
-      //x-lines for y
-    v3 = new THREE.Vector3(0 - xoffset - size / 2, i * size / 2, 0 - size / 2  - zoffset)
-    v4 = new THREE.Vector3((u_x.length) * size - xoffset, i * size / 2, 0 - size / 2  - zoffset)
+  if (dom_min >= 0) {
+    for (var i = 0; i <= ticks * 2; i++) {
+      //z-lines for y
+      v1 = new THREE.Vector3(0 - xoffset - size / 2, i * size / 2, -1 / 2 * size - zoffset)
+      v2 = new THREE.Vector3(0 - xoffset - size / 2, i * size / 2, (u_z.length) * size - zoffset)
+        //x-lines for y
+      v3 = new THREE.Vector3(0 - xoffset - size / 2, i * size / 2, 0 - size / 2 - zoffset)
+      v4 = new THREE.Vector3((u_x.length) * size - xoffset, i * size / 2, 0 - size / 2 - zoffset)
 
-    if (i % 2 == 1) {
-      line = drawLine(v1, v2, 0xbbbbbb)
-      line2 = drawLine(v3, v4, 0xbbbbbb)
-    } else {
-      line = drawLine(v1, v2)
-      line2 = drawLine(v3, v4)
-      createText((u_x.length) * size - xoffset, i * size / 2 - size / 8, 0 - size / 2  - zoffset, divisions * i + dom_min);
+      if (i % 2 == 1) {
+        line = drawLine(v1, v2, 0xbbbbbb)
+        line2 = drawLine(v3, v4, 0xbbbbbb)
+      } else {
+        line = drawLine(v1, v2)
+        line2 = drawLine(v3, v4)
+        createText((u_x.length) * size - xoffset, i * size / 2 - size / 8, 0 - size / 2 - zoffset, divisions * i + dom_min);
+      }
+
+      scene.add(line)
+      scene.add(line2)
+      meshes.push(line)
+      meshes.push(line2)
     }
+  } else {
+    for (var i = 0; i <= ticks * 2; i++) {
+      //z-lines for y
+      v1 = new THREE.Vector3(0 - xoffset - size / 2, i * size / 2, -1 / 2 * size - zoffset)
+      v2 = new THREE.Vector3(0 - xoffset - size / 2, i * size / 2, (u_z.length) * size - zoffset)
+        //x-lines for y
+      v3 = new THREE.Vector3(0 - xoffset - size / 2, i * size / 2, 0 - size / 2 - zoffset)
+      v4 = new THREE.Vector3((u_x.length) * size - xoffset, i * size / 2, 0 - size / 2 - zoffset)
+      //neg z-lines for y
+      v5 = new THREE.Vector3(0 - xoffset - size / 2, -i * size / 2, -1 / 2 * size - zoffset)
+      v6 = new THREE.Vector3(0 - xoffset - size / 2, -i * size / 2, (u_z.length) * size - zoffset)
+         //neg x-lines for y
+      v7 = new THREE.Vector3(0 - xoffset - size / 2, -i * size / 2, 0 - size / 2 - zoffset)
+      v8 = new THREE.Vector3((u_x.length) * size - xoffset, -i * size / 2, 0 - size / 2 - zoffset)
 
-    scene.add(line)
-    scene.add(line2)
-    meshes.push(line)
-    meshes.push(line2)
+      if (i % 2 == 1) {
+        line = drawLine(v1, v2, 0xbbbbbb)
+        line2 = drawLine(v3, v4, 0xbbbbbb)
+        line3 = drawLine(v5, v6, 0xbbbbbb)
+        line4 = drawLine(v7, v8, 0xbbbbbb)
+      } else {
+        line = drawLine(v1, v2)
+        line2 = drawLine(v3, v4)
+        line3 = drawLine(v5, v6)
+        line4 = drawLine(v7, v8)
+        if ( i != 0)
+          createText((u_x.length) * size - xoffset, -i * size / 2 - size / 8, 0 - size / 2 - zoffset, -divisions * i);
+        createText((u_x.length) * size - xoffset, i * size / 2 - size / 8, 0 - size / 2 - zoffset, divisions * i);
+      }
+
+      scene.add(line)
+      scene.add(line2)
+      scene.add(line3)
+      scene.add(line4)
+      meshes.push(line)
+      meshes.push(line2)
+      meshes.push(line3)
+      meshes.push(line4)
+    }
   }
 }
 
@@ -212,13 +261,13 @@ function createText(x, y, z, string, rotx, roty, rotz) {
   var text = new THREE.Mesh(TextGeo, textMaterial);
   text.position.set(x, y, z);
 
-  if (rotx){
+  if (rotx) {
     text.rotation.x = rotx;
   }
-  if (roty){
+  if (roty) {
     text.rotation.y = roty;
   }
-  if (rotz){
+  if (rotz) {
     text.rotation.z = rotz;
   }
   scene.add(text);
