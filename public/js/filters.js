@@ -15,10 +15,40 @@ $("#TableList").change(function(){
 	var visualSelected =  $("#VisualList option:selected").val();
 	switch(visualSelected){
 		case 'bar':
+      var tableSelected = $("#TableList option:selected").val();
+      var getColumnTypeQuery = "SELECT column_name ,data_type FROM information_schema.columns where table_name = '";
+      getColumnTypeQuery = getColumnTypeQuery.concat(tableSelected + "'");
+
+      $("#columnSelection.off-canvas-submenu").html("");
+      $.getJSON('/retrieveData', { myQuery : getColumnTypeQuery }, function(data){
+        // create a dropdown list
+        // default at "Choose Column" to make sure user actually chooses a column
+        var htmlStr = "<option value='' selected='selected' disabled='disabled'> Choose Column </option>";
+        var htmlStrForY = "<option value='' selected='selected' disabled='disabled'> Choose Column </option>";
+        // populate dropdown list with columnNames and Values
+        for (var i = 0; i < data.length; i++){
+          htmlStr = htmlStr.concat('<option value="' + data[i].data_type + '">' + data[i].column_name + '</option>');
+
+          // for Y Column since Y should not contain any text
+          if (data[i].data_type != 'text'){
+            htmlStrForY = htmlStrForY.concat('<option value="' + data[i].data_type + '">' + data[i].column_name + '</option>');
+          }
+        }
+
+        htmlStr = htmlStr.concat('</select></li>');
+        $("#columnSelection.off-canvas-submenu").append('<li><p>X:</p> <select id="xColumn">' + htmlStr);
+        $("#columnSelection.off-canvas-submenu").append('<li><p>Y:</p> <select id="yColumn">' + htmlStrForY);
+        $("#columnSelection.off-canvas-submenu").append('<li><p>Z:</p> <select id="zColumn">' + htmlStr);
+
+        //generateBarFilters();
+
+      });
+      break;
 		case 'scatter':
 			var tableSelected = $("#TableList option:selected").val();
 			var getColumnTypeQuery = "SELECT column_name ,data_type FROM information_schema.columns where table_name = '";
 			getColumnTypeQuery = getColumnTypeQuery.concat(tableSelected + "'");
+      getColumnTypeQuery = getColumnTypeQuery.concat(" and data_type = 'double precision'");
 
 			$("#columnSelection.off-canvas-submenu").html("");
 			$.getJSON('/retrieveData', { myQuery : getColumnTypeQuery }, function(data){
@@ -193,11 +223,13 @@ function generateNumericColumnFilter(colID){
           stepValue = stepValue/10;
         }
     }
+
+  
     $( slideName ).slider({
     	range: true,
-    	min: parseFloat(data[0].min),
-    	max: parseFloat(data[0].max),
-    	values: [ data[0].min, data[0].max ],
+    	min: Math.floor(parseFloat(data[0].min)),
+    	max: Math.ceil(parseFloat(data[0].max)),
+    	values: [ Math.floor(parseFloat(data[0].min)), Math.ceil(parseFloat(data[0].max)) ],
       step: stepValue,
     	slide: function( event, ui ) {
     		$( amountName ).val(  ui.values[ 0 ] + " - " + ui.values[ 1 ] );

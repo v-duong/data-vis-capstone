@@ -54,7 +54,7 @@ function generateVisuals() {
   }
 }
 
-//generate objects on scatter plot and render 
+//generate objects on scatter plot and render
 function generateScatter() {
   clearmeshes();
   if (RENDERID != null)
@@ -85,7 +85,6 @@ function generateScatter() {
   var y = $("#yColumn option:selected").text();
   var z = $("#zColumn option:selected").text();
   var getColumnTypeQuery = BarScatterFilterQuery();
-  // console.log("generateScatter: "+x+" "+y+" "+z);
   $.getJSON('/retrieveData', {
     myQuery: getColumnTypeQuery
   }, function(data) {
