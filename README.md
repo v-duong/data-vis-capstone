@@ -4,9 +4,12 @@ Project Name: **Graphiq Reality**
 
 ##Revision History
 10/9/2015 - Created PRD document and basic information.
+
 10/16/2015 - Added User Stories.
 10/21/2015 - Intro expanded and High Level System Architecture added.
+
 11/23/2015 - Added more User Stories
+
 11/24/2015 - Added UML Diagram
 
 
