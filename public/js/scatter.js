@@ -29,7 +29,7 @@ var drawLine = function(v1, v2, color)
 };
 
 
-// draw several lines 
+// draw several lines
 var drawLines = function(line, movingDirection, movingDistance,times)
 {
 	for(i = 0; i < times-1; i++)
@@ -43,7 +43,7 @@ var drawLines = function(line, movingDirection, movingDistance,times)
 
 //draw a text
 var drawText = function(text, x, y, z, texts)
-{  
+{
 	var TextGeo = new THREE.TextGeometry(text, {
 		font:  'helvetiker'
 		,height:0
@@ -96,11 +96,16 @@ tempNumber.position.set(startPoint.x, startPoint.y, startPoint.z);
 	}
 }
 
-//create a node 
+//create a node
 var createNode = function(x, y, z, scales)
 {
 	//console.log(getColor(x,y,z,scales).toString(16));
 	var sphere = new THREE.Mesh( new THREE.SphereGeometry( 0.1, 32, 32 ), new THREE.MeshBasicMaterial( {color: getColor(x,y,z,scales)} ));
+
+  var data = [x * scales[0] / 5, y * scales[1] / 5, z * scales[2] / 5]
+
+  sphere.data = data;
+
 	sphere.position.set(x,y,z);
 	scene.add( sphere );
 	meshes.push(sphere);
@@ -151,7 +156,7 @@ var findMax = function(data, name)
 	return max;
 }
 
-//generate the nodes based on the chosen column 
+//generate the nodes based on the chosen column
 var displayNodes = function(data, x, y, z, scales)
 {
 	var temp;
@@ -172,7 +177,7 @@ var displayNodes = function(data, x, y, z, scales)
 	}
 }
 
-//setup the scatter plot 
+//setup the scatter plot
 var setupScene = function()
 {
 	var width = window.innerWidth;

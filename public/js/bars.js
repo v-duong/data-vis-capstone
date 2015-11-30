@@ -3,7 +3,6 @@ function initbars() {
   hideCamera = new THREE.PerspectiveCamera(85, window.innerWidth / window.innerHeight, 1, 10000);
   camera = new THREE.OrthographicCamera(window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, 1, 100000);
 
-
   renderer.setSize(window.innerWidth, window.innerHeight);
 
   //add effect
@@ -49,6 +48,11 @@ function addBar(x, y, z, size, xoffset, zoffset, c) {
   scene.add(mesh);
   var edges = new THREE.EdgesHelper(mesh, 0x000000);
   edges.material.linewidth = 2;
+
+  var data = [x / size , y , z / size]
+
+  mesh.data = data;
+
   meshes.push(mesh);
   meshes.push(edges);
   targetlist.push(mesh);
@@ -61,7 +65,6 @@ function createDictionary(data) {
 }
 
 function renderData(data) {
-  console.log(data);
   var ticks = 5;
   var size = 50;
 

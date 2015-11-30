@@ -255,24 +255,30 @@ function CheckMouseSphere(mouseSphereCoords) {
 
 function updateTextSprite(intersects){
   scene.remove(sprite1);
+  /*
   var resultx = Math.round(intersects[0].object.position.x * 100) / 100
   var resulty = Math.round(intersects[0].object.position.y * 100) / 100
   var resultz = Math.round(intersects[0].object.position.z * 100) / 100
+  */
+  var resultx = intersects[0].object.data[0];
+  var resulty = intersects[0].object.data[1];
+  var resultz = intersects[0].object.data[2];
 
-  intersects[0].object.name = "X:" + resultx + '\n' + "Y:" + resulty + '\n' + "Z:" + resultz;
-  message = intersects[0].object.name; //new line dsnt work
+  var msg = "X:" + resultx + '\n' + "Y:" + resulty + '\n' + "Z:" + resultz;
   canvas1 = document.createElement('canvas');
+  canvas1.width = 512;
+  canvas1.height = 256;
   context1.clearRect(0, 0, 100, 100);
   context1 = canvas1.getContext('2d');
   context1.font = "Bold 30px Arial";
-  var metrics = context1.measureText(message);
+  var metrics = context1.measureText(msg);
   var width = metrics.width;
   context1.fillStyle = "rgba(0,0,0,0.95)"; // black border
   context1.fillRect(0, 0, width + 16, 20 + 16);
   context1.fillStyle = "rgba(255,255,255,0.95)"; // white filler
   context1.fillRect(2, 2, width + 16, 20 + 16);
   context1.fillStyle = "rgba(0,0,0,1)"; // text color
-  context1.fillText(message, 10, 30);
+  context1.fillText(msg, 10, 30);
   texture1.needsUpdate = true;
 
   texture1 = new THREE.Texture(canvas1);
@@ -286,14 +292,14 @@ function updateTextSprite(intersects){
   sprite1 = new THREE.Sprite(spriteMaterial);
 
   if (graphType === 'bar') { //check if scatter or bar, adjusts sprite parameters
-    sprite1.scale.set(200, 100, 1)
+    sprite1.scale.set(300, 200, 1)
     sprite1.position.set(50, 50, 0);
     scene.add(sprite1);
     //need to work on putting sprite on a new scene, so other bars wont block the sprite
     // this will also fix the issue with positioning, right now i position it so sprite is above all other bars
     sprite1.position.set(intersects[0].object.position.x, intersects[0].object.position.y + 150, intersects[0].object.position.z); //update sprite position
   } else {
-    sprite1.scale.set(1.5, 1.5, 1)
+    sprite1.scale.set(3, 2, 1)
     sprite1.position.set(50, 50, 0);
     scene.add(sprite1);
     sprite1.position.set(intersects[0].object.position.x, intersects[0].object.position.y, intersects[0].object.position.z); //update sprite position
