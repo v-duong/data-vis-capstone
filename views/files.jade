@@ -9,11 +9,13 @@ block maintext
           input(type="submit", value="Upload")
   br
   .row
-    .large-centered
+    .center
       table.filetable
-        tr
-          th File
+        thead
+          th Table Name
           th Options
+        tbody
+    
   script(src='https://code.jquery.com/jquery-2.1.4.min.js')
   script.
     function deleteFunc(btnID){
@@ -32,6 +34,6 @@ block maintext
       var d = JSON.parse(data);
       for (i = 0; i < d.length; i++)
         $('.filetable').append('<tr><td>'+ d[i].table_name +'</td><td>\
-        <input type="button" class="delbutton" id='+ d[i].table_name +' value="Delete" onclick="deleteFunc(this.id)">\
+        <input class="button" type="button" class="delbutton" id='+ d[i].table_name +' value="Delete" onclick="deleteFunc(this.id)">\
         </td></tr>')
       })
