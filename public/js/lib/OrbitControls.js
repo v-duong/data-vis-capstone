@@ -213,6 +213,8 @@ THREE.OrbitControls = function ( object, domElement ) {
 
     scale /= dollyScale;
 
+    this.object.zoom += dollyScale - 1;
+
   };
 
   this.dollyOut = function ( dollyScale ) {
@@ -224,6 +226,8 @@ THREE.OrbitControls = function ( object, domElement ) {
     }
 
     scale *= dollyScale;
+
+    this.object.zoom += 1 - dollyScale;
 
   };
 
@@ -259,7 +263,7 @@ THREE.OrbitControls = function ( object, domElement ) {
     // restrict phi to be betwee EPS and PI-EPS
     phi = Math.max( EPS, Math.min( Math.PI - EPS, phi ) );
 
-    var radius = offset.length() * scale;
+    var radius = offset.length();
 
     // restrict radius to be between desired limits
     radius = Math.max( this.minDistance, Math.min( this.maxDistance, radius ) );
@@ -451,6 +455,7 @@ THREE.OrbitControls = function ( object, domElement ) {
     }
 
     scope.update();
+    scope.object.updateProjectionMatrix();
     scope.dispatchEvent( startEvent );
     scope.dispatchEvent( endEvent );
 

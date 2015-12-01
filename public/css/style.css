@@ -1,10 +1,5 @@
 .center {
-  display: -webkit-box;
-  display: -moz-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: box;
-  display: flex;
+  margin-top: 2rem;
   text-align: center;
   -webkit-box-pack: center;
   -moz-box-pack: center;
@@ -12,6 +7,10 @@
   -ms-flex-pack: center;
   -webkit-justify-content: center;
   justify-content: center;
+}
+.center hr {
+  width: 25%;
+  margin: 1rem auto;
 }
 .top-bar,
 .top-bar-section li a,
@@ -145,7 +144,7 @@ form.filterselect {
   background-size: cover;
   background-repeat: no-repeat;
   height: 24rem;
-  font-family: Lato;
+  font-family: Lato, "Helvetica Neue", Arial, sans-serif;
 }
 .hero .intro {
   padding: 2rem;
@@ -229,14 +228,88 @@ form.filterselect {
 form.uploader {
   margin: 10px;
 }
-form.uploader input.file-input {
-  top: 0;
-  right: 0;
-  margin: 0;
-  padding: 0;
+input.file-input {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: alpha(opacity=0);
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+.file-input + label {
+  text-transform: uppercase;
+  font-size: 1em;
+  font-weight: 700;
+  color: #000;
+  display: inline-block;
   cursor: pointer;
+  border-style: solid;
+  background-color: rgba(0,0,0,0);
+  border-width: 2px;
+  border-color: #000;
+  padding: 0.75rem 2.5rem;
+  -webkit-transition: all 0.3s ease-in-out;
+  -moz-transition: all 0.3s ease-in-out;
+  -o-transition: all 0.3s ease-in-out;
+  -ms-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+  font-family: Lato, "Helvetica Neue", Arial, sans-serif;
+}
+.file-input:focus + label,
+.file-input + label:hover {
+  background-color: #000;
+  color: #fff;
+  -webkit-transition: all 0.3s ease-in-out;
+  -moz-transition: all 0.3s ease-in-out;
+  -o-transition: all 0.3s ease-in-out;
+  -ms-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+  border-style: solid;
+  border-width: 2px;
+  border-color: #000;
+}
+.file-input:focus + label {
+  outline: 1px dotted #000;
+  outline: -webkit-focus-ring-color auto 5px;
+}
+input.button2 {
+  margin: 0.35rem;
+  text-transform: uppercase;
+  font-size: 1em;
+  font-weight: 700;
+  color: #000;
+  display: inline-block;
+  cursor: pointer;
+  border-style: solid;
+  background-color: rgba(0,0,0,0);
+  border-width: 2px;
+  border-color: #000;
+  padding: 0.75rem 2.5rem;
+  -webkit-transition: all 0.3s ease-in-out;
+  -moz-transition: all 0.3s ease-in-out;
+  -o-transition: all 0.3s ease-in-out;
+  -ms-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+  font-family: Lato, "Helvetica Neue", Arial, sans-serif;
+}
+input.button2:hover {
+  background: #000;
+  color: #fff;
+  -webkit-transition: all 0.3s ease-in-out;
+  -moz-transition: all 0.3s ease-in-out;
+  -o-transition: all 0.3s ease-in-out;
+  -ms-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+}
+input.button2:disabled {
+  background-color: rgba(0,0,0,0.1);
+  color: rgba(0,0,0,0.6);
+  border-color: rgba(0,0,0,0.6);
 }
 table.filetable {
+  margin: auto;
   border-collapse: collapse;
   border: 1;
 }

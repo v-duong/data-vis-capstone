@@ -109,8 +109,8 @@ function renderData(data) {
       .nice();
   }
 
-  var c1 = $('input#freq').val();
-  var c2 = $('input#offset').val();
+  var c1 = '#0044ff';
+  var c2 = '#ff3300';
 
   var cscale = d3.scale.linear()
               .domain([min_y, max_y])
