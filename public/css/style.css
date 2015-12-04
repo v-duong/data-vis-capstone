@@ -47,25 +47,55 @@ ul.right li a {
   letter-spacing: 1px;
   position: relative;
 }
+ul.off-canvas-list {
+  max-width: 90%;
+  margin: auto;
+}
+ul.off-canvas-list li {
+  font-family: Lato;
+  padding: 0.5em 0 0.5em 0;
+}
 ul.off-canvas-list li label {
   border-top: none;
-  background-color: #ddd;
+  background-color: rgba(0,0,0,0);
   color: #000;
+  font-size: 0.75em;
+  padding: 0.15em;
+  cursor: initial;
 }
 ul.off-canvas-list li label.flabel {
   text-transform: none;
   font-weight: normal;
   display: inline;
   background-color: #fff;
-  font-size: 0.9rem;
+  font-size: 1rem;
   padding: 0;
   margin: 0;
+  cursor: pointer;
 }
 ul.off-canvas-list li a {
   border: 0;
   color: #000;
-  background-color: #ddd;
-  padding: 0.3rem 0.9375rem;
+  background-color: rgba(0,0,0,0);
+  padding: 0;
+}
+ul.off-canvas-list li a:hover {
+  background-color: rgba(0,0,0,0);
+  color: #666;
+}
+ul.off-canvas-list li.b {
+  -webkit-box-pack: center;
+  -moz-box-pack: center;
+  -o-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  text-align: center;
+}
+ul.off-canvas-list li.c {
+  opacity: 0;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: alpha(opacity=0);
 }
 ul.off-canvas-list p {
   color: #000;
@@ -76,9 +106,16 @@ ul.off-canvas-list div.ui-slider {
   width: 90%;
   margin: 0 auto;
 }
+ul.off-canvas-list select {
+  margin: 0 auto;
+}
 ul.off-canvas-submenu {
   list-style-type: none;
   margin-left: 0.1rem;
+}
+ul.off-canvas-submenu select {
+  max-width: 85%;
+  margin-left: 1em;
 }
 ul.footer1 {
   list-style-type: none;
@@ -121,6 +158,8 @@ ul.footer1 {
 }
 input.button {
   background-color: #666;
+  color: #fff;
+  font-family: Lato, "Helvetica Neue", Arial, sans-serif;
 }
 input.button:hover,
 input.button:focus {
@@ -128,7 +167,8 @@ input.button:focus {
 }
 form.filterselect {
   max-height: 250px;
-  border: 1px solid #ccc;
+  border: 0;
+  padding: 0.5em;
 }
 .fbox {
   overflow-y: auto;
@@ -164,13 +204,13 @@ form.filterselect {
   font-size: 2rem;
   line-height: 1.5em;
   letter-spacing: -0.025em;
-  font-weight: 600;
+  font-weight: 400;
   text-align: center;
   font-family: inherit;
 }
 .hero p {
   line-height: 1.75em;
-  font-weight: 400;
+  font-weight: 300;
   text-align: center;
   margin-bottom: 2rem;
   color: inherit;
@@ -366,7 +406,7 @@ footer.footer p {
     text-align: center;
   }
   .hero p {
-    font-size: 1.5em;
+    font-size: 1.75em;
   }
   .hero a.button,
   .hero input[type='submit'] {

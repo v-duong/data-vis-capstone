@@ -36,9 +36,9 @@ $("#TableList").change(function(){
         }
 
         htmlStr = htmlStr.concat('</select></li>');
-        $("#columnSelection.off-canvas-submenu").append('<li><p>X:</p> <select id="xColumn">' + htmlStr);
-        $("#columnSelection.off-canvas-submenu").append('<li><p>Y:</p> <select id="yColumn">' + htmlStrForY);
-        $("#columnSelection.off-canvas-submenu").append('<li><p>Z:</p> <select id="zColumn">' + htmlStr);
+        $("#columnSelection.off-canvas-submenu").append('<li><p>X</p> <select id="xColumn">' + htmlStr);
+        $("#columnSelection.off-canvas-submenu").append('<li><p>Y</p> <select id="yColumn">' + htmlStrForY);
+        $("#columnSelection.off-canvas-submenu").append('<li><p>Z</p> <select id="zColumn">' + htmlStr);
 
         //generateBarFilters();
 
@@ -62,9 +62,9 @@ $("#TableList").change(function(){
 				}
 
 				htmlStr = htmlStr.concat('</select></li>');
-				$("#columnSelection.off-canvas-submenu").append('<li><p>X:</p> <select id="xColumn">' + htmlStr);
-				$("#columnSelection.off-canvas-submenu").append('<li><p>Y:</p> <select id="yColumn">' + htmlStr);
-				$("#columnSelection.off-canvas-submenu").append('<li><p>Z:</p> <select id="zColumn">' + htmlStr);
+				$("#columnSelection.off-canvas-submenu").append('<li><p>X</p> <select id="xColumn">' + htmlStr);
+				$("#columnSelection.off-canvas-submenu").append('<li><p>Y</p> <select id="yColumn">' + htmlStr);
+				$("#columnSelection.off-canvas-submenu").append('<li><p>Z</p> <select id="zColumn">' + htmlStr);
 
 				//generateBarFilters();
 
@@ -213,7 +213,7 @@ function generateNumericColumnFilter(colID){
 
   $.getJSON('/retrieveData', { myQuery : getMinMaxQuery }, function(data){
     $(filterID).html("");
-    $(filterID).append(filterLabel + ':<input id=' + amountName.substring(1) + ' type=text onkeypress=”return isNumber(event);” ></input>' + '<div id=' + slideName.substring(1) + '></div>');
+    $(filterID).append(filterLabel + ':<input id=' + amountName.substring(1) + ' type=text onkeypress=”return isNumber(event);” readonly></input>' + '<div id=' + slideName.substring(1) + '></div>');
     var stepValue = 1;
     var dataDiff = data[0].max - data[0].min;
 
@@ -224,7 +224,7 @@ function generateNumericColumnFilter(colID){
         }
     }
 
-  
+
     $( slideName ).slider({
     	range: true,
     	min: Math.floor(parseFloat(data[0].min)),

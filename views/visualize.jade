@@ -18,20 +18,20 @@ block sidelist
 		li
 			a.off-canvas-submenu-call(href='#')
 				| Column Selection
-				span.right +
+				span.right -
 		ul#columnSelection.off-canvas-submenu
 		li
 			a.off-canvas-submenu-call(href='#')
 				| Filters
-				span.right +
+				span.right -
 		ul#filters.off-canvas-submenu
 			li#filters1
 			li#filters2
 			li#filters3
-		li
+		li.b
 			input.button(type='button', value='Apply', onclick='generateVisuals()')
 			input.button(type='button', value='Enter VR', onclick='VRBottonPressed()')
-		li
+		li.c
 			input(id="sphere" type='checkbox', checked=false)
 			p Sphere Toggle
 block scripts
