@@ -47,24 +47,40 @@ ul
         letter-spacing 1px
         position relative
   &.off-canvas-list
+    max-width 90%
+    margin auto
     li
+      font-family Lato
+      padding 0.5em 0 0.5em 0
       label
         border-top none
-        background-color bgcolor2
+        background-color rgba(0,0,0,0)
         color color1
+        font-size 0.75em
+        padding 0.15em
+        cursor initial
       label.flabel
         text-transform none
         font-weight normal
         display inline
         background-color bgcolor1
-        font-size 0.9rem
+        font-size 1rem
         padding 0
         margin 0
+        cursor pointer
       a
         border 0
         color color1
-        background-color bgcolor2
-        padding 0.3rem 0.9375rem
+        background-color rgba(0,0,0,0)
+        padding 0
+        &:hover
+          background-color rgba(0,0,0,0)
+          color #666
+      &.b
+        justify-content center
+        text-align center
+      &.c
+        opacity 0
     p
       color color1
       display inline-block
@@ -73,9 +89,14 @@ ul
       &.ui-slider
         width 90%
         margin 0 auto
+    select
+      margin 0 auto
   &.off-canvas-submenu
     list-style-type none
     margin-left 0.1rem
+    select
+      max-width 85%
+      margin-left 1em
 
 ul.footer1
   list-style-type none
@@ -115,12 +136,15 @@ ul.footer1
 input
   &.button
     background-color #666
+    color color2
+    font-family Lato, "Helvetica Neue", Arial, sans-serif
     &:hover, &:focus
       background-color #333
 
 form.filterselect
   max-height 250px
-  border 1px solid #ccc
+  border 0
+  padding 0.5em
 
 .fbox
   overflow-y auto
@@ -146,12 +170,12 @@ form.filterselect
     font-size 2rem
     line-height 1.5em
     letter-spacing -0.025em
-    font-weight 600
+    font-weight 400
     text-align center
     font-family inherit
   p
     line-height 1.75em
-    font-weight 400
+    font-weight 300
     text-align center
     margin-bottom 2rem
     color inherit
@@ -307,7 +331,7 @@ footer.footer
       font-size 3.75rem
       text-align center
     p
-      font-size:1.5em
+      font-size:1.75em
     a.button, input[type='submit']
       border-width 2px
       font-size 1.3rem
