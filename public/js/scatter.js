@@ -102,7 +102,7 @@ var createNode = function(x, y, z, scales)
 	//console.log(getColor(x,y,z,scales).toString(16));
 	var sphere = new THREE.Mesh( new THREE.SphereGeometry( 0.1, 32, 32 ), new THREE.MeshBasicMaterial( {color: getColor(x,y,z,scales)} ));
 
-  var data = [x * scales[0] / 5, y * scales[1] / 5, z * scales[2] / 5]
+  var data = [(x * scales[0] / 5).toFixed(2), (y * scales[1] / 5).toFixed(2), (z * scales[2] / 5).toFixed(2)]
 
   sphere.data = data;
 

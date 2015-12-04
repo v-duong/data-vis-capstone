@@ -33,7 +33,7 @@ function render() {
 }
 
 
-function addBar(x, y, z, size, xoffset, zoffset, c) {
+function addBar(x, y, z, size, xoffset, zoffset, c, truex, truez) {
   var geometry = new THREE.BoxGeometry(size * 0.8, y, size * 0.8);
   //geometry.computeFaceNormals();
   //geometry.computeVertexNormals();
@@ -49,7 +49,25 @@ function addBar(x, y, z, size, xoffset, zoffset, c) {
   var edges = new THREE.EdgesHelper(mesh, 0x000000);
   edges.material.linewidth = 2;
 
-  var data = [x / size , y , z / size]
+  if (_.isString(truex))
+    var x_ = truex;
+  else{
+    if ((truex % 1) === 0)
+      var x_ = truex;
+    else
+      var x_ = truex.toFixed(2);
+  }
+
+  if (_.isString(truez))
+    var z_ = truez;
+  else{
+    if ((truez % 1) == 0)
+      var z_ = truez;
+    else
+      var z_ = truez.toFixed(2);
+  }
+
+  var data = [x_ , y.toFixed(2) , z_];
 
   mesh.data = data;
 
@@ -120,7 +138,7 @@ function renderData(data) {
   var zoffset = u_z.length / 2 * size;
   for (var i = 0; i < data.length; i++) {
     d = data[i];
-    addBar(_.indexOf(u_x, d[keys[0]]) * size, scale(d[keys[1]]), _.indexOf(u_z, d[keys[2]]) * size, size, xoffset, zoffset, cscale(d[keys[1]]));
+    addBar(_.indexOf(u_x, d[keys[0]]) * size, scale(d[keys[1]]), _.indexOf(u_z, d[keys[2]]) * size, size, xoffset, zoffset, cscale(d[keys[1]]), d[keys[0]], d[keys[2]]);
   }
   /*   For now we just use that top one. rest will be used when I can fix the cases.
   else if ($("#x option:selected").val() === 'text')
