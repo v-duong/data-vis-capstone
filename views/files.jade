@@ -1,0 +1,75 @@
+extend navtemplate
+block maintext
+  .row
+    .center
+      h3 File Upload
+      hr
+      form.uploader(action="/files", method="post", enctype="multipart/form-data")
+          input.file-input(type="file" accept=".csv", name="datafile" id="file" data-multiple-caption="{count} files selected" multiple)
+          label(for="file")
+            span Choose a file
+          br
+          input.button2(type="submit" value="Upload" disabled="disabled" id="upload")
+  br
+  .row
+    .center
+      h3 Table List
+      hr
+      table.filetable
+        thead
+          th Table Name
+          th Options
+        tbody
+    
+  script(src='https://code.jquery.com/jquery-2.1.4.min.js')
+  script.
+    function deleteFunc(btnID){
+      var fileName = btnID;
+      $.post('/delData', { tName: fileName }, function(data){
+        console.log(data);
+        if (data == true){
+          location.reload();
+        }
+        else {
+          console.log("It died");
+        }
+      }, 'json');
+    }
+    $.get('/tables', function(data){
+      var d = JSON.parse(data);
+      for (i = 0; i < d.length; i++)
+        $('.filetable').append('<tr><td>'+ d[i].table_name +'</td><td>\
+        <input class="button" type="button" class="delbutton" id='+ d[i].table_name +' value="Delete" onclick="deleteFunc(this.id)">\
+        </td></tr>')
+      })
+      
+    $( '.file-input' ).each( function()
+    {
+      var $input   = $( this ),
+        $label   = $input.next( 'label' ),
+        labelVal = $label.html();
+
+      $input.on( 'change', function( e )
+      {
+        var fileName = '';
+
+        if( this.files && this.files.length > 1 )
+          fileName = ( this.getAttribute( 'data-multiple-caption' ) || '' ).replace( '{count}', this.files.length );
+        else if( e.target.value )
+          fileName = e.target.value.split( '\\' ).pop();
+
+        if( fileName ){
+          $label.find( 'span' ).html( fileName );
+          $('#upload').removeAttr('disabled');
+        }
+        else {
+          $label.html( labelVal );
+          $('#upload').attr('disabled', 'disabled');
+        }
+      });
+
+      // Firefox bug fix
+      $input
+      .on( 'focus', function(){ $input.addClass( 'has-focus' ); })
+      .on( 'blur', function(){ $input.removeClass( 'has-focus' ); });
+    });

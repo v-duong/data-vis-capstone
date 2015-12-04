@@ -3,9 +3,16 @@ Team: **Graphiq Content**
 Project Name: **Graphiq Reality**
 
 ##Revision History
-10/09/2015 - Created PRD document and basic information.  
-10/16/2015 - Added User Stories.  
+10/9/2015 - Created PRD document and basic information.
+
+10/16/2015 - Added User Stories.
+
 10/21/2015 - Intro expanded and High Level System Architecture added.
+
+11/23/2015 - Added more User Stories
+
+11/24/2015 - Added UML Diagram
+
 
 ##Intro
 **Graphiq Reality** is a website that will let you view data sets in 3-D and explore them in virtual reality using your phone. Not only can you view the data sets readily available on the website, but you can also import your own data in the form of a CSV file.
@@ -19,35 +26,22 @@ Project Name: **Graphiq Reality**
 
 ##System Architecture: High­-Level Overview
 
-Graphiq Reality is a web application completely hosted on Heroku. It is written all in javascript and uses Node.js as its web server. Data is stored inside a PostgreSQL relational database. Our application will detect whether the user is accessing the website on a browser or phone and adjust the site from normal to virtual reality accordingly. When a data visualization is requested, the server will query the database for the specified data and will process the data into the interactive graphic. Filtering or altering the data through slides will also be processed by the server and the visual will adjust accordingly.
+Graphiq Reality is a web application hosted on Heroku. It is written entirely in javascript and uses Node.js and Express framework as its web server. The front end is made with Foundation framework. Data is stored inside a PostgreSQL relational database.
 
-##User Stories/Use Cases
-(Draft 1: Need up to 10 of use cases or user stories) (Draft 2: 20 total!!)
-1. As a user I want to connect to the website so that I can view the web application.  
-2. As a user I want to be able to view the data visuals through my desktop so that I do not necessarily need a VR device.  
-3. As a user I want to be able to view the data visuals through my Google Cardboard VR Device.  
-4. As a user I want to interact with the data through VR in order for a fully immersive experience.  
-5. As a user I want to be able to switch between data sets on my desktop using a drop down menu so that I can see multiple data sets.  
-6. As a user I want to be able to switch between data sets on my phone using symbol tracking so that I can see multiple data sets.  
-7. As a user I want to (filter) change the range of parameters shown in the data visualization so that I can further analyse the data.  
-8. As a user I want to import data through a .csv file into the application so that I can view my data visually.  
-9. As a user I want to be able to choose which data corresponds to which variables inside the data visualization.  
-10. As a user I want to choose which type of data visualization my imported data will go through.
+When a data visualization is requested, the server will query the database for the specified data and the data will be processed visually on the client-side. Filtering or altering the data through slides will also be processed by the server in the form of a database query and the visual will adjust accordingly. The user can also upload their own data in the form of a .csv file into the server temporarily and visualize it through our app.
 
-
-##Prototype Code & Test Cases
-https://github.com/v-duong/data-vis-capstone  
-https://limitless-taiga-3899.herokuapp.com/
-
-##System Model
-(N/A)
+For virtual reality, there is no separate Android or iPhone app necessary, as everything is contained in javascript through the browser. The user only need to go to the website through their phone, select their dataset and visualization model, and select the VR button. Then they are able to put their phone into a Google Cardboard device and interact with the visual through virtual reality.
 
 ##Technologies Employed
+* CSS
+* Express
+* Foundation
+* Google Cardboard
+* Heroku
+* HTML
 * Javascript
 * Node.js
-* Heroku
 * PostgreSQL
-* HTML/CSS
 * Three.js
 * WebVR
-* Google Cardboard
+

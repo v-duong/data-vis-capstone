@@ -1,9 +1,12 @@
 head
+  meta(name='viewport', content='width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui')
+  meta(name="apple-mobile-web-app-capable" content="yes")
   title Reality
   link(rel='stylesheet', href='static/css/foundation.css' type='text/css')
   link(rel='stylesheet', href='static/css/style.css' type='text/css')
   link(href='https://cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/foundation-icons.css', rel='stylesheet')
   link(href='https://fonts.googleapis.com/css?family=Gudea:400,700', rel='stylesheet')
+  link(href='https://fonts.googleapis.com/css?family=Lato:300,400,700', rel='stylesheet')
   body
     div
       nav.top-bar(data-topbar role="navigation")
@@ -17,10 +20,10 @@ head
         section.top-bar-section
           ul.right
             li
-              a(href='/') Upload
+              a(href='/files') Files
             li
               a(href='/visualize') Visualization
             li
-              a(href='/') About
+              a(href='/about') About
     block maintext
       

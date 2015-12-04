@@ -23,6 +23,14 @@ app.get('/', function(req, res) {
     res.render('index');
 });
 
+app.get('/files', function(req, res) {
+  res.render('files');
+});
+
+app.get('/about', function(req, res) {
+  res.render('about');
+});
+
 
 app.get('/Uploaded_Files', function(req, res) {
   //var fileList = fs.readdirSync('public_files');
@@ -43,10 +51,17 @@ app.get('/Uploaded_Files', function(req, res) {
 
 });
 
-app.get('/uploadPage', function(req, res) {
-  res.render('uploadPage');
+app.get('/tables', function(req,res) {
+  var getTableQuery = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'";
+  var myDB = require('./public/js/database.js');
+  myDB.queryDB(getTableQuery, function(myTables) {
+    if (myTables == null)
+      res.end("ERROR")
+    else {
+      res.end(JSON.stringify(myTables))
+    }
+  });
 });
-
 
 var storage = multer.diskStorage({
   destination: function(req, file, cb) {
@@ -62,7 +77,7 @@ var file_uploaded = multer({
   storage: storage
 });
 
-app.post('/file-upload', file_uploaded.single('datafile'), function(req, res) {
+app.post('/files', file_uploaded.single('datafile'), function(req, res) {
   if (req.file == null) {
     return;
   }
@@ -76,8 +91,6 @@ app.post('/file-upload', file_uploaded.single('datafile'), function(req, res) {
     textBuff = textBuff.concat(fileData.toString());
   });
 
-
-
   // uploaded successfully
   src.on('end', function() {
     // add textBuff into DB
@@ -90,35 +103,22 @@ app.post('/file-upload', file_uploaded.single('datafile'), function(req, res) {
         console.log("insert success");
         // delete the physical file
 
-        res.render('uploadPage', {
-          "fileData": textBuff
-        });
+        res.render('files');
 
       } else {
         console.log("insert fail");
         textBuff = "Upload Failed";
-        res.render('uploadPage', {
-          "fileData": textBuff
-        });
+        res.render('files');
 
       }
       fs.unlinkSync(target_path);
 
     });
   });
-
-
-  // failed to upload
   src.on('error', function(err) {
-    res.render('back');
+    res.render('files');
   });
 
-});
-
-
-var server = require('http').createServer(app);
-server.listen((process.env.PORT || app.get('port')), function() {
-  console.log("Express server listening on port %d ", server.address().port);
 });
 
 app.get('/scatter', function(req, res) {
@@ -182,7 +182,7 @@ app.get('/retrieveData', function(req, res) {
     if (myRows == null) {
       console.log("Couldnt access database");
     } else {
-      //console.log(JSON.stringify(myRows))
+      
       res.send(JSON.stringify(myRows));
     }
   });
@@ -196,4 +196,12 @@ app.post('/delData', function(req, res) {
     res.send(JSON.stringify(dropErr));
   });
 
+});
+
+
+
+
+var server = require('http').createServer(app);
+server.listen((process.env.PORT || app.get('port')), function() {
+  console.log("Express server listening on port %d ", server.address().port);
 });

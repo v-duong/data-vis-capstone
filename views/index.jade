@@ -2,11 +2,12 @@ extend navtemplate
 block maintext
   section.hero
     .row.intro
-      .large-centered
+      .large-centered.hero-container
         h1 Simple 3D Data Visualizations
         p
-          | Just upload a file and customize.
-        a.d(href='/uploadPage' class="button") Upload Now
+          | See data in a different way.
+        a.d(href='/files' class="button") Upload
+        a.d(href='/visualize' class="button") Visualization
   .row.features
     .medium-4.columns
       .round-icon
@@ -29,6 +30,24 @@ block maintext
       hr
       p
         | Easily share your data visualizations with a simple link.
+  footer.footer
+    .row
+      .large-4.columns
+        h4 FOOTER
+        p Footer text here.
+        p Who reads footers anyway?
+      .large-4.columns
+        h4 Links
+        ul.footer1
+          li
+            a(href='/files') Files
+          li
+            a(href='/visualize') Visualization
+          li
+            a(href='/about') About
+      .large-4.columns
+        h4 Contact
+        p Email us at email@email.com
 
   script(type='text/javascript', src='https://code.jquery.com/jquery-latest.min.js')
   script(type='text/javascript', src='static/js/lib/foundation.min.js')

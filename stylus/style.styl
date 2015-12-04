@@ -5,7 +5,16 @@ color2 = #fff
 bgcolor1 = #fff
 bgcolor2 = #ddd
 bgcolor3 = #42c5fa
-bgcolor4 = #F99548
+bgcolor4 = #FE8B05
+bgcolor5 = #E9E9E9
+
+.center
+  margin-top 2rem
+  text-align center
+  justify-content center
+  hr
+    width 25%
+    margin 1rem auto
 
 .top-bar, .top-bar-section li a, .top-bar .name h1 a, .top-bar expanded, .left-off-canvas-menu
   background bgcolor1
@@ -16,7 +25,8 @@ bgcolor4 = #F99548
   font-weight 500
   font-family 'Gudea', sans-serif
   position relative
-
+  &:hover
+    background-color bgcolor1
 .top-bar
   border-color color1
   border-width 0
@@ -37,23 +47,40 @@ ul
         letter-spacing 1px
         position relative
   &.off-canvas-list
+    max-width 90%
+    margin auto
     li
+      font-family Lato
+      padding 0.5em 0 0.5em 0
       label
         border-top none
-        background-color bgcolor2
+        background-color rgba(0,0,0,0)
         color color1
+        font-size 0.75em
+        padding 0.15em
+        cursor initial
       label.flabel
         text-transform none
         font-weight normal
         display inline
         background-color bgcolor1
-        font-size 0.9rem
+        font-size 1rem
         padding 0
         margin 0
+        cursor pointer
       a
         border 0
         color color1
-        background-color bgcolor2
+        background-color rgba(0,0,0,0)
+        padding 0
+        &:hover
+          background-color rgba(0,0,0,0)
+          color #666
+      &.b
+        justify-content center
+        text-align center
+      &.c
+        opacity 0
     p
       color color1
       display inline-block
@@ -62,9 +89,19 @@ ul
       &.ui-slider
         width 90%
         margin 0 auto
+    select
+      margin 0 auto
   &.off-canvas-submenu
     list-style-type none
     margin-left 0.1rem
+    select
+      max-width 85%
+      margin-left 1em
+
+ul.footer1
+  list-style-type none
+  padding 0
+  margin 0
 
 .tab-bar
   background-color rgba(250, 250, 250, 0)
@@ -99,10 +136,15 @@ ul
 input
   &.button
     background-color #666
+    color color2
+    font-family Lato, "Helvetica Neue", Arial, sans-serif
+    &:hover, &:focus
+      background-color #333
 
 form.filterselect
   max-height 250px
-  border 1px solid #ccc
+  border 0
+  padding 0.5em
 
 .fbox
   overflow-y auto
@@ -112,12 +154,18 @@ form.filterselect
 
 .hero
   margin auto
-  background-color bgcolor3
-  height 32rem
-  font-family Gudea
+  background url('/static/img/a.jpg') bgcolor3
+  background-size cover
+  background-repeat no-repeat
+  height 24rem
+  font-family Lato, "Helvetica Neue", Arial, sans-serif
   .intro
     padding 2rem
     position relative
+  .hero-container
+    display block
+    justify-content center
+    text-align center
   h1
     font-size 2rem
     line-height 1.5em
@@ -127,23 +175,21 @@ form.filterselect
     font-family inherit
   p
     line-height 1.75em
-    font-weight 200
+    font-weight 300
     text-align center
     margin-bottom 2rem
     color inherit
     font-size 1.0rem
-    font-weight 300
     text-align center
   a
     &.button
-      margin 0 auto
-      display block
+      margin 0.35rem
+      display inline-block
       background-color rgba(0, 0, 0, 0)
       border-style solid
       border-color color1
       border-width 2px
       font-size 1rem
-      width 10rem
       color color1
       font-family inherit
       &:hover
@@ -155,8 +201,9 @@ form.filterselect
   border-right 0px
 
 .features
-  margin-top: 10px
+  margin-top: 10em
   text-align center
+  margin-bottom: 6em
   hr
     width 25%
     margin 1rem auto
@@ -164,38 +211,155 @@ form.filterselect
     background-color bgcolor4
     border-radius 50%
     display table
-    height 100px
+    height 70px
     margin -61px auto 1rem
-    width 100px
-    font-size 3rem
+    width 70px
+    font-size 2.2rem
     span
       color color2
       display table-cell
       text-align center
       vertical-align middle
 
+form.uploader
+  margin 10px
+
+input.file-input
+  width 0.1px
+  height 0.1px
+  opacity 0
+  overflow hidden
+  position absolute
+  z-index -1
+
+.file-input + label
+  text-transform uppercase
+  font-size 1em
+  font-weight 700
+  color color1
+  display inline-block
+  cursor pointer
+  border-style solid
+  background-color rgba(0, 0, 0, 0)
+  border-width 2px
+  border-color color1
+  padding 0.75rem 2.5rem
+  transition all .3s ease-in-out
+  font-family Lato, "Helvetica Neue", Arial, sans-serif
+
+
+.file-input:focus + label, .file-input + label:hover
+  background-color color1
+  color color2
+  transition all .3s ease-in-out
+  border-style solid
+  border-width 2px
+  border-color color1
+
+.file-input:focus + label
+  outline 1px dotted #000;
+  outline -webkit-focus-ring-color auto 5px
+
+input.button2
+  margin 0.35rem
+  text-transform uppercase
+  font-size 1em
+  font-weight 700
+  color color1
+  display inline-block
+  cursor pointer
+  border-style solid
+  background-color rgba(0, 0, 0, 0)
+  border-width 2px
+  border-color color1
+  padding 0.75rem 2.5rem
+  transition all .3s ease-in-out
+  font-family Lato, "Helvetica Neue", Arial, sans-serif
+  &:hover
+    background color1
+    color #fff
+    transition all .3s ease-in-out
+  &:disabled
+    background-color rgba(0, 0, 0, 0.1)
+    color rgba(0, 0, 0, 0.6)
+    border-color rgba(0, 0, 0, 0.6)
+
+
+table.filetable
+  margin auto
+  border-collapse collapse
+  border 1
+  tr
+    border 0
+    background bgcolor1
+    border-bottom 1px
+    border-style solid
+  th, td
+    font-size 1em
+  thead tr
+    border-color #000
+  tbody tr
+    border-color #999
+  th
+    padding 1em
+  input.button
+    margin 0
+    padding 0.6em 1.3em
+
+
+footer.footer
+  background-color bgcolor5
+  padding 2rem 3rem
+  text-align center
+  a
+    font-weight 600
+    color #333
+    font-size 0.9rem
+    &:hover
+      color #777
+  p
+    font-size 0.9rem
+    margin 0
+
 @media only screen and (min-width: 40.0625em)
   nav.top-bar
       overflow hidden
   .hero
+    height 32rem
     h1
       padding-top 4.5rem
-      font-size 3.5rem
+      font-size 3.75rem
       text-align center
     p
-      font-size:1.5em
+      font-size:1.75em
     a.button, input[type='submit']
       border-width 2px
       font-size 1.3rem
-      width 16rem
+      padding 1rem 3rem
   .top-bar
-    max-width 1280px
+    max-width 62.5rem
     margin 0 auto
   .top-bar-section
     ul
       margin-left 1em
     li:not(.has-form) a:not(.button)
       background bgcolor1
+  table.filetable
+    width 40%
+  .features
+    .round-icon
+      height 100px
+      width 100px
+      font-size 3em
+  .footer .columns:nth-child(n+2)
+    border-left 1px solid #b3b3b3
+    min-height 7em
+
 @media only screen and (max-width: 40.0625em)
   .features .columns
       margin-bottom 5rem
+  .footer div
+    margin-bottom 0.5rem
+    padding-top 0.5rem
+  .footer .columns:nth-child(n+2)
+    border-top 1px solid #b3b3b3

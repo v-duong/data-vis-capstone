@@ -39,6 +39,14 @@ See bars.js for reference.
 
 var vrModeIsOn = false;
 
+function VRBottonPressed(){
+	if (vrModeIsOn)
+		fullScreenExitHandler()
+	else
+		enterVRMode()
+
+}
+
 function fullScreenExitHandler(){
     if ( !(document.webkitIsFullScreen || document.mozFullScreen || document.msFullScreen || document.fullScreen) ){
     	vrModeIsOn = false;
