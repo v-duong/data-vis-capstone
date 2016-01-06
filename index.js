@@ -31,6 +31,10 @@ app.get('/about', function(req, res) {
   res.render('about');
 });
 
+app.get('/nba_visualize', function(req, res){
+  res.render('nba_visualize');
+});
+
 
 app.get('/Uploaded_Files', function(req, res) {
   //var fileList = fs.readdirSync('public_files');
@@ -182,7 +186,7 @@ app.get('/retrieveData', function(req, res) {
     if (myRows == null) {
       console.log("Couldnt access database");
     } else {
-      
+
       res.send(JSON.stringify(myRows));
     }
   });
