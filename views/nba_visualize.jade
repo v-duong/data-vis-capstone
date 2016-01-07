@@ -4,15 +4,27 @@ block sidelist
 		li
 			label Team
 		li
-			select(id='Team Name')
-				option(value='' selected='selected' disabled="disabled") Choose Visual
+			select(id='TeamName')
+				option(value='' selected='selected' disabled="disabled") Choose Team
 				option(value='bar') bar
 				option(value='scatter') scatter
 		li
 			label Player
 		li
 			select(id='PlayerName')
-				option(value='' selected='selected' disabled="disabled") Choose Table
+				option(value='' selected='selected' disabled="disabled") Choose Player
+		li
+			label Year
+		li
+			select(id='Year')
+				option(value='' selected='selected' disabled="disabled") Choose Year
+				option(value='2015') 2015
+				option(value='2015') 2014
+		li.b
+			input.button(type='button', value='Apply', onclick='generateCourt()')
+        
+block scripts
+	script(src='static/js/nbaInit.js')
 				
 		
 		
