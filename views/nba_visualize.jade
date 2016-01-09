@@ -6,13 +6,17 @@ block sidelist
 			label Year
 		
 		ul#yearSelection.off-canvas-list
-		
+			li
+				select(id='Season')
+					option(value='' selected='selected' disabled="disabled") Choose Season
 		li
 			label Team
-		li
-			select(id='TeamName')
-				option(value='' selected='selected' disabled="disabled") Choose Team
-				ul#teamSelection.off-canvas-submenu
+		
+		ul#teamSelection.off-canvas-list
+			li
+				select(id='TeamName')
+					option(value='' selected='selected' disabled="disabled") Choose Team
+			
 		li
 			label Player
 		li
