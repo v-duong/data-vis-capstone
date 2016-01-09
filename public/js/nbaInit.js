@@ -6,31 +6,63 @@ var sphereToggle = false;
 var sprite1;
 
 
+function generateYears(){
+  var curYear = new Date().getFullYear();
+
+  var yearsSinceBeginning = curYear - 1947
+  var tempStr = "";
+  $("#yearSelection.off-canvas-list").html("");
+  var htmlStr = "<option value='' selected='selected' disabled='disabled'> Choose Year </option>";
+  for (var i = 0; i < yearsSinceBeginning; i++){
+    //console.log((curYear - (i-1)).toString() + " - " + (curYear - (i)).toString());
+    tempStr = (curYear - (i+1)).toString() + " - " + (curYear - (i)).toString();
+    htmlStr = htmlStr.concat('<option value="' + tempStr + '">' + tempStr + '</option>');
+
+  }
+  htmlStr = htmlStr.concat('</select></li>');
+  $("#yearSelection.off-canvas-list").append('<li> <select id="Year">' + htmlStr);
+}
+
+
+
+function genListOfTeam(yearSpan){
+//  $("#teamSelection.off-canvas-submenu").html("");
+
+  var yearSpanStr = yearSpan.toString();
+  $("ul#teamSelection.off-canvas-submenu").html("");
+
+  //2015 - 2016 -> 2015-16
+  var yearID = yearSpanStr.slice(0,4) + "-" + yearSpanStr.slice(-2);
+
+  var teamUrl = 'http://stats.nba.com/stats/leaguedashteamstats?Conference=&DateFrom=&DateTo=&Division=&GameScope=&GameSegment=&LastNGames=0&LeagueID=00&Location=&MeasureType=Base&Month=0&OpponentTeamID=0&Outcome=&PORound=0&PaceAdjust=N&PerMode=PerGame&Period=0&PlayerExperience=&PlayerPosition=&PlusMinus=N&Rank=N&Season='
+    + yearID +
+    '&SeasonSegment=&SeasonType=Regular+Season&ShotClockRange=&StarterBench=&TeamID=0&VsConference=&VsDivision=';
+    $.ajax({
+      type: "GET",
+      dataType: "jsonp",
+      url: teamUrl,
+      success: function(data) {
+        //console.log(data.resultSets[0].rowSet);
+        var teamSet = data.resultSets[0].rowSet;
+        for (var i = 0; i < teamSet.length; i++ ){
+          console.log(teamSet[i][1]);
+          // to do next.. append these teamSet to HTML
+        }
+      }
+    });
+};
+
+// as the year change, we should generate a different list of teams
+$(document).on('change', '#Year', function(){
+  console.log(this.value);
+  genListOfTeam(this.value);
+});
+
 
 function retreiveNBAData() {
   var patt = /\"resultSets\":\[/i;
   var webpage = "http://stats.nba.com/stats/shotchartdetail?CFID=33&CFPARAMS=2014-15&ContextFilter=&ContextMeasure=FGA&DateFrom=&DateTo=&GameID=&GameSegment=&LastNGames=0&LeagueID=00&Location=&MeasureType=Base&Month=0&OpponentTeamID=0&Outcome=&PaceAdjust=N&PerMode=PerGame&Period=0&PlayerID=201939&PlusMinus=N&Position=&Rank=N&RookieYear=&Season=2014-15&SeasonSegment=&SeasonType=Regular+Season&TeamID=0&VsConference=&VsDivision=&mode=Advanced&showDetails=0&showShots=1&showZones=0";
   var bodycontent;
-  //$("#div").load(webpage, function (data) {
-//    bodycontent = data;
-  //  console.log(bodycontent);
-  //});
-  //var fullParagraph =  $(webpage + " #container").text();
-
-  /*
-  $.get(webpage, function(data){
-    alert( "Load was performed." );
-    console.log(data);
-    //$( ".result" ).html( data );
-  })
-  .done(function() {
-    alert( "second success" );
-  })
-  .fail(function() {
-    console.log(webpage);
-    alert( "error" );
-  })
-  */
   $.ajax({
     type: "GET",
     dataType: "jsonp",
@@ -76,7 +108,7 @@ function retreiveNBAData() {
             percentageMatrix[i][j] = madeMatrix[i][j] / totalShots;
           }
         }
-        console.logs(i + ': ' + percentageMatrix[i]);
+        //console.logs(i + ': ' + percentageMatrix[i]);
       }
 
 

@@ -42,9 +42,8 @@ app.get('/Uploaded_Files', function(req, res) {
   var myDB = require('./public/js/database.js');
   myDB.queryDB(getTableQuery, function(myTables) {
     if (myTables == null) {
-      console.log("uh oh");
-    } else {
-
+    }
+    else {
       res.render('Uploaded_Files', {
         "showFiles": myTables
       });
@@ -54,6 +53,8 @@ app.get('/Uploaded_Files', function(req, res) {
   //fileList.splice(0,1);
 
 });
+
+
 
 app.get('/tables', function(req,res) {
   var getTableQuery = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'";
