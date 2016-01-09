@@ -37,13 +37,50 @@ function retreiveNBAData() {
     url: 'http://stats.nba.com/stats/shotchartdetail?CFID=33&CFPARAMS=2014-15&ContextFilter=&ContextMeasure=FGA&DateFrom=&DateTo=&GameID=&GameSegment=&LastNGames=0&LeagueID=00&Location=&MeasureType=Base&Month=0&OpponentTeamID=0&Outcome=&PaceAdjust=N&PerMode=PerGame&Period=0&PlayerID=201939&PlusMinus=N&Position=&Rank=N&RookieYear=&Season=2014-15&SeasonSegment=&SeasonType=Regular+Season&TeamID=0&VsConference=&VsDivision=&mode=Advanced&showDetails=0&showShots=1&showZones=0',
     success: function(data) {
       //$('#result').html(data);
-      console.log(data);
-      //console.log('Load was performed.');
-      //$(data.responseText).find('body.pre').each(function(){
-          //$('#here').append($(this).html());
-        //  console.log("Lei goh lo mo hai");
-    // });
-    }
+      //var myData = JSON.parse(data);
+      var shotList = data.resultSets[0].rowSet;
+      var shotListLen = shotList.length;
+
+      // create 2D - array and set all to 0;
+      var madeMatrix = new Array(50);
+      var missMatrix = new Array(50);
+      var percentageMatrix = new Array(50);
+      for (var i = 0; i < 50; i++){
+        madeMatrix[i] = new Array(94);
+        missMatrix[i] = new Array(94);
+        percentageMatrix[i] = new Array(94);
+        for (var j = 0; j < 94; j++){
+          madeMatrix[i][j] = 0;
+          missMatrix[i][j] = 0;
+        }
+      }
+
+      // going through each one and start doing computation
+      for (var i = 0; i < shotListLen; i++){
+        //console.log(shotList[i][4]+ ", " + shotList[i][10] + ", " +  shotList[i][17] + ", " +  shotList[i][18]);
+        // if its a make
+        if (shotList[i][10] == 'Made Shot'){
+          madeMatrix[ Math.floor((shotList[i][17] + 250)/10)][Math.floor(shotList[i][18]/10)]++;
+        }
+        else {
+          missMatrix[ Math.floor((shotList[i][17] + 250)/10)][Math.floor(shotList[i][18]/10)]++;
+        }
+      }
+      for (var i = 0; i < 50; i++){
+        for (var j = 0 ; j < 94; j++){
+          var totalShots = madeMatrix[i][j] + missMatrix[i][j];
+          if (totalShots == 0){
+            percentageMatrix[i][j] = 0;
+          }
+          else{
+            percentageMatrix[i][j] = madeMatrix[i][j] / totalShots;
+          }
+        }
+        console.logs(i + ': ' + percentageMatrix[i]);
+      }
+
+
+  }
 
   });
 }
