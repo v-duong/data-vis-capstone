@@ -49,6 +49,9 @@ function generateVisuals() {
       graphType = 'scatter';
       generateScatter();
       break;
+    case 'globe':
+      graphType = 'globe';
+      generateGlobe();
     default:
       break;
   }
@@ -99,6 +102,42 @@ function generateScatter() {
   drawText(z, 0, 0, 6, texts);
 
   renderScatter();
+}
+
+function generateGlobe(){
+  clearmeshes();
+  $('.visual').empty();
+  console.log("globe function run");
+  var container = document.createElement('div');
+  // var container = document.getElementById('test1');
+  var globe = new DAT.Globe(container);
+  $('.visual').append(container);
+  var xhr = new XMLHttpRequest();
+  xhr.open( 'GET', 'static/js/population909500.json', true );
+  xhr.onreadystatechange = function() {
+    // If we've received the data
+    if ( xhr.readyState === 4 && xhr.status === 200 ) {
+      console.log("data received");
+        // Parse the JSON
+        var data = JSON.parse( xhr.responseText );
+
+        // Tell the globe about your JSON data
+        for ( var i = 0; i < data.length; i ++ ) {
+            globe.addData( data[i][1], {format: 'magnitude', name: data[i][0]} );
+        }
+
+        // Create the geometry
+        globe.createPoints();
+
+        // Begin animation
+        globe.animate();
+
+    }
+
+  };
+
+// Begin request
+  xhr.send( null );
 }
 
 
