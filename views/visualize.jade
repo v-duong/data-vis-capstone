@@ -8,6 +8,7 @@ block sidelist
 				option(value='' selected='selected' disabled="disabled") Choose Visual
 				option(value='bar') bar
 				option(value='scatter') scatter
+				option(value='globe') globe
 		li
 			label Table
 		li
@@ -50,3 +51,6 @@ block scripts
 	script(src='static/js/bars.js')
 	link(rel='stylesheet', href='//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css')
 	script(src='//code.jquery.com/ui/1.11.4/jquery-ui.js')
+	script(src="static/js/third-party/Detector.js")
+	script(src="static/js/third-party/Tween.js")
+	script(src="static/js/globe.js")
