@@ -19,9 +19,11 @@ block sidelist
 			
 		li
 			label Player
-		li
-			select(id='PlayerName')
-				option(value='' selected='selected' disabled="disabled") Choose Player
+		
+		ul#playerSelection.off-canvas-list
+			li
+				select(id='PlayerName')
+					option(value='' selected='selected' disabled="disabled") Choose Player
 
 		li.b
 			input.button(type='button', value='Apply', onclick='generateCourt()')
