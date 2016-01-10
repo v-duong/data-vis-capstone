@@ -22,9 +22,7 @@ function generateYears(){
   $("#yearSelection.off-canvas-list").append('<li> <select id="Season">' + htmlStr);
 }
 
-/*
-'http://stats.nba.com/stats/leaguedashteamstats?Conference=&DateFrom=&DateTo=&Division=&GameScope=&GameSegment=&LastNGames=0&LeagueID=00&Location=&MeasureType=Base&Month=0&OpponentTeamID=0&Outcome=&PORound=0&PaceAdjust=N&PerMode=PerGame&Period=0&PlayerExperience=&PlayerPosition=&PlusMinus=N&Rank=N&Season=2014-15&SeasonSegment=&SeasonType=Regular+Season&ShotClockRange=&StarterBench=&TeamID=0&VsConference=&VsDivision='
-*/
+
 function genListOfTeam(yearSpan){
   var yearSpanStr = yearSpan.toString();
   $("ul#teamSelection.off-canvas-submenu").html("");
@@ -94,12 +92,27 @@ $(document).on('change', '#TeamName', function(){
 
 function retreiveNBAData() {
   var patt = /\"resultSets\":\[/i;
-  var webpage = "http://stats.nba.com/stats/shotchartdetail?CFID=33&CFPARAMS=2014-15&ContextFilter=&ContextMeasure=FGA&DateFrom=&DateTo=&GameID=&GameSegment=&LastNGames=0&LeagueID=00&Location=&MeasureType=Base&Month=0&OpponentTeamID=0&Outcome=&PaceAdjust=N&PerMode=PerGame&Period=0&PlayerID=201939&PlusMinus=N&Position=&Rank=N&RookieYear=&Season=2014-15&SeasonSegment=&SeasonType=Regular+Season&TeamID=0&VsConference=&VsDivision=&mode=Advanced&showDetails=0&showShots=1&showZones=0";
+  var seasonText = $("#Season option:selected").val();
+  var seasonID = seasonText.slice(0,4) + "-" + seasonText.slice(-2);
+  //var teamID = $("#TeamName option:selected").val();
+  var playerID = $("#PlayerName option:selected").val();
+  console.log(seasonID);
+  //console.log(teamID);
+  console.log(playerID);
+  var webpage = 'http://stats.nba.com/stats/shotchartdetail?CFID=33&CFPARAMS='
+  + seasonID
+  + '&ContextFilter=&ContextMeasure=FGA&DateFrom=&DateTo=&GameID=&GameSegment=&LastNGames=0&LeagueID=00&Location=&MeasureType=Base&Month=0&OpponentTeamID=0&Outcome=&PaceAdjust=N&PerMode=PerGame&Period=0&PlayerID='
+  + playerID
+  + '&PlusMinus=N&Position=&Rank=N&RookieYear=&Season='
+  + seasonID
+  + '&SeasonSegment=&SeasonType=Regular+Season&TeamID=0&VsConference=&VsDivision=&mode=Advanced&showDetails=0&showShots=1&showZones=0';
+
+
   var bodycontent;
   $.ajax({
     type: "GET",
     dataType: "jsonp",
-    url: 'http://stats.nba.com/stats/shotchartdetail?CFID=33&CFPARAMS=2014-15&ContextFilter=&ContextMeasure=FGA&DateFrom=&DateTo=&GameID=&GameSegment=&LastNGames=0&LeagueID=00&Location=&MeasureType=Base&Month=0&OpponentTeamID=0&Outcome=&PaceAdjust=N&PerMode=PerGame&Period=0&PlayerID=201939&PlusMinus=N&Position=&Rank=N&RookieYear=&Season=2014-15&SeasonSegment=&SeasonType=Regular+Season&TeamID=0&VsConference=&VsDivision=&mode=Advanced&showDetails=0&showShots=1&showZones=0',
+    url: webpage,
     success: function(data) {
       //$('#result').html(data);
       //var myData = JSON.parse(data);
