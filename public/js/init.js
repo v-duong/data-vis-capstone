@@ -54,6 +54,8 @@ function generateVisuals() {
   }
 }
 
+
+
 //generate objects on scatter plot and render
 function generateScatter() {
   clearmeshes();
@@ -100,6 +102,8 @@ function generateScatter() {
 
   renderScatter();
 }
+
+
 
 
 function generateBar() {

@@ -1,0 +1,47 @@
+extend vistemplate
+
+block sidelist
+	ul.off-canvas-list
+		li
+			label Year
+		
+		ul#yearSelection.off-canvas-list
+			li
+				select(id='Season')
+					option(value='' selected='selected' disabled="disabled") Choose Season
+		li
+			label Team
+		
+		ul#teamSelection.off-canvas-list
+			li
+				select(id='TeamName')
+					option(value='' selected='selected' disabled="disabled") Choose Team
+			
+		li
+			label Player
+		
+		ul#playerSelection.off-canvas-list
+			li
+				select(id='PlayerName')
+					option(value='' selected='selected' disabled="disabled") Choose Player
+
+		li.b
+			input.button(type='button', value='Apply', onclick='generateCourt()')
+        
+block scripts
+	script(src='static/js/lib/three.min.js')
+	script(src='static/js/lib/TextGeometry.js')
+	script(src='static/js/lib/FontUtils.js')
+	script(src='static/js/lib/helvetiker_regular.typeface.js')
+	script(src='static/js/lib/OrbitControls.js')
+	script(src='static/js/lib/lodash.min.js')
+	script(src='static/js/lib/d3.min.js')
+	script(src='static/js/lib/StereoEffect.js')
+	script(src='static/js/nbaInit.js')
+	script(src='static/js/vrDetection.js')
+	link(rel='stylesheet', href='//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css')
+	script(src='//code.jquery.com/ui/1.11.4/jquery-ui.js')
+	script(type='text/javascript') generateYears();
+				
+		
+		
