@@ -216,7 +216,7 @@ function generatePlainCourtTexture(){
 
   $('.visual').append(renderer.domElement);
 	var geometry = new THREE.BoxGeometry( 940, 500, 1 );
-	var material = new THREE.MeshBasicMaterial( { map : THREE.ImageUtils.loadTexture("static/img/wooden_basketball_court.jpg")} );
+	var material = new THREE.MeshBasicMaterial( { map : THREE.ImageUtils.loadTexture("static/img/basketball_court.png")} );
 	var cube = new THREE.Mesh( geometry, material );
 
 	scene.add( cube );
