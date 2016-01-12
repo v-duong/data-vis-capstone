@@ -3,7 +3,8 @@ var targetlist, mousetargetlist;
 var INTERSECTED;
 var mouseSphere = []
 var sphereToggle = false;
-var sprite1;
+var court;
+var INITIAL = false
 
 
 function generateYears(){
@@ -113,57 +114,66 @@ function retreiveNBAData() {
   $.ajax({
     type: "GET",
     dataType: "jsonp",
-    url: webpage,
-    success: function(data) {
-      //$('#result').html(data);
-      //var myData = JSON.parse(data);
-      var shotList = data.resultSets[0].rowSet;
-      var shotListLen = shotList.length;
-
-      // create 2D - array and set all to 0;
-      var madeMatrix = new Array(50);
-      var missMatrix = new Array(50);
-      var percentageMatrix = new Array(50);
-      for (var i = 0; i < 50; i++){
-        madeMatrix[i] = new Array(94);
-        missMatrix[i] = new Array(94);
-        percentageMatrix[i] = new Array(94);
-        for (var j = 0; j < 94; j++){
-          madeMatrix[i][j] = 0;
-          missMatrix[i][j] = 0;
-        }
-      }
-
-      // going through each one and start doing computation
-      for (var i = 0; i < shotListLen; i++){
-        // if its a make
-        if (shotList[i][10] == 'Made Shot'){
-          madeMatrix[ Math.floor((shotList[i][17] + 250)/10)][Math.floor(shotList[i][18]/10)]++;
-        }
-        else {
-          missMatrix[ Math.floor((shotList[i][17] + 250)/10)][Math.floor(shotList[i][18]/10)]++;
-        }
-      }
-      for (var i = 0; i < 50; i++){
-        for (var j = 0 ; j < 94; j++){
-          var totalShots = madeMatrix[i][j] + missMatrix[i][j];
-          if (totalShots == 0){
-            percentageMatrix[i][j] = 0;
-          }
-          else{
-            percentageMatrix[i][j] = madeMatrix[i][j] / totalShots;
-          }
-        }
-        //console.logs(i + ': ' + percentageMatrix[i]);
-      }
+    url: webpage
+  })
+    .done(function(data) {
+      parseShotData(data);
+    });
 
 
+}
+
+
+function parseShotData(data){
+  //console.log(data);
+  var shotList = data.resultSets[0].rowSet;
+  var shotListLen = shotList.length;
+
+  // create 2D - array and set all to 0;
+  var madeMatrix = new Array(50);
+  var missMatrix = new Array(50);
+  var percentageMatrix = new Array(50);
+  for (var i = 0; i < 50; i++){
+    madeMatrix[i] = new Array(94);
+    missMatrix[i] = new Array(94);
+    percentageMatrix[i] = new Array(94);
+    for (var j = 0; j < 94; j++){
+      madeMatrix[i][j] = 0;
+      missMatrix[i][j] = 0;
+    }
   }
 
-  });
+  // going through each one and start doing computation
+  for (var i = 0; i < shotListLen; i++){
+    // if its a make
+    if (shotList[i][10] == 'Made Shot'){
+      madeMatrix[ Math.floor((shotList[i][17] + 250)/10)][Math.floor(shotList[i][18]/10)]++;
+    }
+    else {
+      missMatrix[ Math.floor((shotList[i][17] + 250)/10)][Math.floor(shotList[i][18]/10)]++;
+    }
+  }
+  for (var i = 0; i < 50; i++){
+    for (var j = 0 ; j < 94; j++){
+      var totalShots = madeMatrix[i][j] + missMatrix[i][j];
+      if (totalShots == 0){
+        percentageMatrix[i][j] = 0;
+      }
+      else{
+        percentageMatrix[i][j] = madeMatrix[i][j] / totalShots;
+      }
+    }
+    //console.logs(i + ': ' + percentageMatrix[i]);
+  }
+}
+
+function addShotArea(){
+
 }
 
 function init() {
+  window.addEventListener('resize', onWindowResize, false);
+
   scene = new THREE.Scene();
 
   renderer = new THREE.WebGLRenderer({
@@ -171,14 +181,6 @@ function init() {
   });
 
   $('.visual').append(renderer.domElement);
-  sphereToggle = false;
-
-
-  canvas1 = document.createElement('canvas'); //canvas for text popup
-  context1 = canvas1.getContext('2d');
-
-  texture1 = new THREE.Texture(canvas1); //texture for canvas
-  texture1.needsUpdate = true;
 
 }
 
@@ -206,25 +208,50 @@ function generateCourt() {
 }
 
 function generatePlainCourtTexture(){
-
-  //scene = new THREE.Scene();
-  init();
+  if (!INITIAL) {
+    init();
+    INITIAL = true;
+  }
   camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
 
 	//renderer = new THREE.WebGLRenderer();
 	renderer.setSize( window.innerWidth, window.innerHeight );
 
   $('.visual').append(renderer.domElement);
-	var geometry = new THREE.BoxGeometry( 940, 500, 1 );
+	var geometry = new THREE.BoxGeometry( 940, 2, 500 );
 	var material = new THREE.MeshBasicMaterial( { map : THREE.ImageUtils.loadTexture("static/img/basketball_court.png")} );
-	var cube = new THREE.Mesh( geometry, material );
+	court = new THREE.Mesh( geometry, material );
 
-	scene.add( cube );
-	camera.position.z = 500;
-	var render = function () {
-		requestAnimationFrame( render );
-		renderer.render(scene, camera);
-	};
-	render();
+	scene.add( court );
+	camera.position.y = 500;
+  camera.lookAt(0,0,0);
+  controls = new THREE.OrbitControls(camera, renderer.domElement);
+	animate();
+
+}
+
+function animate() {
+  RENDERID = requestAnimationFrame(animate);
+  render();
+}
+
+function render() {
+    renderer.render(scene, camera);
+}
+
+function onWindowResize() {
+
+  windowHalfX = window.innerWidth / 2;
+  windowHalfY = window.innerHeight / 2;
+
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.left = -1 * windowHalfX;
+  camera.right = windowHalfX;
+  camera.top = windowHalfY;
+  camera.bottom = -1 * windowHalfY;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  effect.setSize(window.innerWidth, window.innerHeight);
 
 }
