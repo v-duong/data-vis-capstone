@@ -7,6 +7,7 @@ var sphereToggle = false;
 var sprite1;
 
 function generateCourt() {
+  /*
   var seasonText = $("#Season option:selected").val();
   if (seasonText == ""){
     alert('Please choose a Season');
@@ -21,7 +22,7 @@ function generateCourt() {
   if (playerID == ""){
     alert('Please choose a player');
     return;
-  }
+  }*/
 
   retreiveNBAData();
   generatePlainCourtTexture();
@@ -89,9 +90,24 @@ function generatePlainCourtTexture(){
   //$('.visual').append(renderer.domElement);
 	var geometry = new THREE.BoxGeometry( 940, 500, 1 );
 	var material = new THREE.MeshBasicMaterial( { map : THREE.ImageUtils.loadTexture("static/img/basketball_court.png")} );
-	var cube = new THREE.Mesh( geometry, material );
+	var courtFloor = new THREE.Mesh( geometry, material );
+  var backboardMaterial = new THREE.MeshBasicMaterial ( {map : THREE.ImageUtils.loadTexture("static/img/backboard.jpg")} );
 
-	scene.add( cube );
+
+  var backboard = new THREE.Mesh(
+    new THREE.BoxGeometry( 60, 35, 3),
+    backboardMaterial );
+  //backboard.position = new THREE.Vector3(100, 100, 100);
+  backboard.position.set(470,0,100);
+  backboard.__dirtyPosition = true;
+  backboard.rotation.set(0, Math.PI / 2,Math.PI/2 );
+  //backboard.__dirtyRotation = true;
+
+
+
+	scene.add( courtFloor );
+  scene.add( backboard );
+
 	camera.position.z = 500;
 
 	animate();
