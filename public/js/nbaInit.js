@@ -1,10 +1,111 @@
 var camera, scene, renderer;
+var effect, controls;
 var targetlist, mousetargetlist;
 var INTERSECTED;
 var mouseSphere = []
 var sphereToggle = false;
 var sprite1;
 
+function generateCourt() {
+  var seasonText = $("#Season option:selected").val();
+  if (seasonText == ""){
+    alert('Please choose a Season');
+    return;
+  }
+  var teamID = $("#TeamName option:selected").val();
+  if (teamID == ""){
+    alert('Please choose a team');
+    return;
+  }
+  var playerID = $("#PlayerName option:selected").val();
+  if (playerID == ""){
+    alert('Please choose a player');
+    return;
+  }
+
+  retreiveNBAData();
+  generatePlainCourtTexture();
+
+}
+
+function init() {
+  scene = new THREE.Scene();
+  //window.addEventListener('resize', onWindowResize, false);
+  renderer = new THREE.WebGLRenderer({
+    alpha: true
+  });
+
+  //document.addEventListener('mousedown', onDocumentMouseDown, false);
+
+  $('.visual').append(renderer.domElement);
+  sphereToggle = false;
+
+
+  //canvas1 = document.createElement('canvas'); //canvas for text popup
+  //context1 = canvas1.getContext('2d');
+
+  //texture1 = new THREE.Texture(canvas1); //texture for canvas
+  //texture1.needsUpdate = true;
+
+}
+
+
+
+function onWindowResize() {
+
+  windowHalfX = window.innerWidth / 2;
+  windowHalfY = window.innerHeight / 2;
+
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.left = -1 * windowHalfX;
+  camera.right = windowHalfX;
+  camera.top = windowHalfY;
+  camera.bottom = -1 * windowHalfY;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  effect.setSize(window.innerWidth, window.innerHeight);
+  render();
+
+}
+
+function generatePlainCourtTexture(){
+
+  //scene = new THREE.Scene();
+  init();
+//  camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+  camera = new THREE.OrthographicCamera(window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, 1, 100000);
+
+  window.addEventListener('resize', onWindowResize, false);
+
+  controls = new THREE.OrbitControls( camera );
+  controls.addEventListener( 'change', render );
+
+  effect = new THREE.StereoEffect(renderer);
+  effect.setSize(window.innerWidth, window.innerHeight);
+	//renderer = new THREE.WebGLRenderer();
+	//renderer.setSize( window.innerWidth, window.innerHeight );
+
+  //$('.visual').append(renderer.domElement);
+	var geometry = new THREE.BoxGeometry( 940, 500, 1 );
+	var material = new THREE.MeshBasicMaterial( { map : THREE.ImageUtils.loadTexture("static/img/wooden_basketball_court.jpg")} );
+	var cube = new THREE.Mesh( geometry, material );
+
+	scene.add( cube );
+	camera.position.z = 500;
+
+	animate();
+
+}
+function animate() {
+  requestAnimationFrame( animate );
+  controls.update();
+}
+function render() {
+  //requestAnimationFrame( render );
+  //controls.update();
+  renderer.render(scene, camera);
+};
 
 function generateYears(){
   var curYear = new Date().getFullYear();
@@ -161,70 +262,4 @@ function retreiveNBAData() {
   }
 
   });
-}
-
-function init() {
-  scene = new THREE.Scene();
-
-  renderer = new THREE.WebGLRenderer({
-    alpha: true
-  });
-
-  $('.visual').append(renderer.domElement);
-  sphereToggle = false;
-
-
-  canvas1 = document.createElement('canvas'); //canvas for text popup
-  context1 = canvas1.getContext('2d');
-
-  texture1 = new THREE.Texture(canvas1); //texture for canvas
-  texture1.needsUpdate = true;
-
-}
-
-
-function generateCourt() {
-  var seasonText = $("#Season option:selected").val();
-  if (seasonText == ""){
-    alert('Please choose a Season');
-    return;
-  }
-  var teamID = $("#TeamName option:selected").val();
-  if (teamID == ""){
-    alert('Please choose a team');
-    return;
-  }
-  var playerID = $("#PlayerName option:selected").val();
-  if (playerID == ""){
-    alert('Please choose a player');
-    return;
-  }
-
-  retreiveNBAData();
-  generatePlainCourtTexture();
-
-}
-
-function generatePlainCourtTexture(){
-
-  //scene = new THREE.Scene();
-  init();
-  camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
-
-	//renderer = new THREE.WebGLRenderer();
-	renderer.setSize( window.innerWidth, window.innerHeight );
-
-  $('.visual').append(renderer.domElement);
-	var geometry = new THREE.BoxGeometry( 940, 500, 1 );
-	var material = new THREE.MeshBasicMaterial( { map : THREE.ImageUtils.loadTexture("static/img/wooden_basketball_court.jpg")} );
-	var cube = new THREE.Mesh( geometry, material );
-
-	scene.add( cube );
-	camera.position.z = 500;
-	var render = function () {
-		requestAnimationFrame( render );
-		renderer.render(scene, camera);
-	};
-	render();
-
 }
