@@ -56,7 +56,7 @@ var PointToZone = [[10,10,10,8,8,8,8,8,8,3,3,3,3,3,3,3,0,0,0,0,0,0,0,0,0,0,0,0,0
 
 
 function generateCourt() {
-  /*
+
   var seasonText = $("#Season option:selected").val();
   if (seasonText == ""){
     alert('Please choose a Season');
@@ -71,11 +71,11 @@ function generateCourt() {
   if (playerID == ""){
     alert('Please choose a player');
     return;
-  }*/
+  }
 
-  buildingCourtZones();
-  //retreiveNBAData();
-  //generatePlainCourtTexture();
+
+  retreiveNBAData();
+  generatePlainCourtTexture();
 
 }
 
@@ -108,118 +108,6 @@ function onWindowResize() {
 
 }
 
-function buildingCourtZones(){
-  /*var locMapToZone = new Array(50);
-  for ( var i = 0; i < 50; i++){
-    locMapToZone[i] = new Array(47);
-  }
-
-  for (var i = 0; i < 50; i++){
-    for (var j = 0; j < 47; j++){
-      locMapToZone[i][j] = convertPointToZone(i,j);
-    }
-  }*/
-
-  var output = "";
-  for (var j = 0; j < 50; j++){
-      for (var i = 0; i < 47; i++){
-        output = output.concat(PointToZone[i][j]);
-        if (PointToZone[i][j] >= 10)
-          output = output.concat(" ");
-        else {
-          output = output.concat("  ");
-        }
-      }
-      console.log(output);
-      output = "";
-  }
-
-
-}
-function computeDist(x,y){
-  return Math.sqrt( Math.pow(x - 24, 2) + Math.pow(y-3, 2));
-}
-function convertPointToZone(x,y){
-  // check zone 0
-  var dist = computeDist(x,y);
-  if (dist <= 8)
-    return 0;
-
-  // check zone 1,2,3
-  if (dist >=8 && dist<16){
-    // zone 3
-    if (x < 19){
-      return 3;
-    }
-    // zone 1
-    if (x > 30){
-      return 1;
-    }
-
-    // zone 2
-    else {
-      return 2;
-    }
-
-  }
-
-
-  // Zones 9 and 10
-  if ( y >= 0 && y < 14){
-    if (x >= 0 && x < 3 )
-      return 10;
-
-    if (x <50 && x >= 47)
-      return 9;
-  }
-
-  // Zones 4, 5, 6, 7, 8
-  if (dist >= 16 && dist<24){
-    var angle = 0;
-
-    // straight away, guarantee 6
-    if (x == 25){
-      return 6;
-    }
-    else {
-      angle = Math.atan((y+0.01)/x-25);
-    }
-
-
-    if (angle > -34 && angle < 0){
-        return 8;
-    }
-    if (angle < 34 && angle >0){
-      return 4;
-    }
-    if (angle < 70 && angle >= 34){
-      return 5;
-    }
-    if (angle > -70 && angle <= -34 ){
-      return 7;
-    }
-    return 6;
-
-  }
-
-  // Zones 11, 12, 13
-  if (dist > 24){
-    // zone 13
-    if (x < 17){
-      return 13;
-    }
-    // zone 11
-    if (x > 32){
-      return 11;
-    }
-
-    // zone 12
-    else {
-      return 12;
-    }
-  }
-
-}
 
 function generatePlainCourtTexture(){
 
