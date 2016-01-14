@@ -5,6 +5,7 @@ var mouseSphere = []
 var sphereToggle = false;
 var court;
 var INITIAL = false
+var zones = new Array(14);
 
 var PointToZone = [[10,10,10,8,8,8,8,8,8,3,3,3,3,3,3,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,4,4,4,4,4,4,4,9,9,9],
 [10,10,10,8,8,8,8,8,8,3,3,3,3,3,3,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,4,4,4,4,4,4,4,9,9,9],
@@ -56,7 +57,7 @@ var PointToZone = [[10,10,10,8,8,8,8,8,8,3,3,3,3,3,3,3,0,0,0,0,0,0,0,0,0,0,0,0,0
 
 
 function generateCourt() {
-
+/*
   var seasonText = $("#Season option:selected").val();
   if (seasonText == ""){
     alert('Please choose a Season');
@@ -72,11 +73,11 @@ function generateCourt() {
     alert('Please choose a player');
     return;
   }
+*/
 
-
-  retreiveNBAData();
+  //retreiveNBAData();
   generatePlainCourtTexture();
-
+  generateZones();
 }
 
 function init() {
@@ -145,6 +146,31 @@ function generatePlainCourtTexture(){
 
 
 }
+
+function generateZones(){
+  var zone10 = new THREE.BoxGeometry(140, 1, 30);
+
+  // geometry
+  var geometry = new THREE.Geometry();
+  geometry.vertices.push( new THREE.Vector3( 0+329, 4, 0-250 ) );
+  geometry.vertices.push( new THREE.Vector3( 140+329, 4, 0-250 ) );
+  geometry.vertices.push( new THREE.Vector3( 140+329, 4, 30-250 ) );
+  geometry.vertices.push( new THREE.Vector3( 0+329, 4, 30-250 ) ); // close the loop
+  geometry.faces.push(new THREE.Face3(0,1,2));
+  geometry.faces.push(new THREE.Face3(0,2,3));
+  //geometry.colors.push(new THREE.Color(0xFF0000));
+
+  //var material = new THREE.LineBasicMaterial({
+  //	color: 0x0000ff
+  //});
+  var material = new THREE.MeshBasicMaterial({
+    color: 0x0000ff,
+    side: THREE.DoubleSide
+  });
+  // line
+  var line = new THREE.Mesh( geometry, material );
+  scene.add( line );
+};
 
 function animate() {
   RENDERID = requestAnimationFrame(animate);
