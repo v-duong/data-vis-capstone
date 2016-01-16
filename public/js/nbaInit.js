@@ -165,7 +165,9 @@ function genZone10(){
 
   var material = new THREE.MeshBasicMaterial({
     color: 0x0000ff,
-    side: THREE.DoubleSide
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.5
   });
 
   zones[10] = new THREE.Mesh( geo, material );
@@ -182,7 +184,9 @@ function genZone9(){
 
   var material = new THREE.MeshBasicMaterial({
     color: 0x0000ff,
-    side: THREE.DoubleSide
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.5
   });
   // line
   zones[9] = new THREE.Mesh( geo, material );
@@ -190,12 +194,100 @@ function genZone9(){
 
   zones[9].material.color.setHex( 0xff0000 );
 }
+function genZone0(){
+  var shape = new THREE.Shape();
+  shape.moveTo( 87.5, 0 );
+  shape.absarc( 0, 0, 87.5, 0, (240/180)* Math.PI, false );
+
+  var extrudeSettings = {
+    amount : 1,
+    steps : 1
+  };
+  var material = new THREE.MeshBasicMaterial({
+    color: 0x00ff00,
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.5
+  });
+  var geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+  var mesh = new THREE.Mesh(geometry, material);
+
+  mesh.rotation.set(Math.PI/2, 0,Math.PI/2.75);
+  mesh.position.set(425,0,0);
+  mesh.__dirtyPosition = true;
+
+  scene.add(mesh);
+}
+function genZone1(){
+    //var shape = new THREE.Shape();
+    var geometry = new THREE.RingGeometry( 87.5, 167.5, 16, 2, 0, 80/180 * Math.PI);
+    //shape.moveTo( 167.5, 0 );
+    //shape.absarc( 0, 0, 167.5, 0, (80/180)* Math.PI, false );
+    //shape.lineTo( 100, 50 );
+    //var extrudeSettings = {
+  //    amount : 1,
+  ///    steps : 1
+  //  };
+    var material = new THREE.MeshBasicMaterial({
+      color: 0x00fff0,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.5
+    });
+  //  var geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+    var mesh = new THREE.Mesh(geometry, material);
+
+    mesh.rotation.set(Math.PI/2, 0,Math.PI/2.5);
+    mesh.position.set(425,2,0);
+    //mesh.__dirtyPosition = true;
+
+    scene.add(mesh);
+
+}
+function genZone2(){
+  var geometry = new THREE.RingGeometry( 87.5, 167.5, 16, 2, 0, 53/180 * Math.PI);
+
+  var material = new THREE.MeshBasicMaterial({
+    color: 0xfff000,
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.5
+  });
+//  var geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+  var mesh = new THREE.Mesh(geometry, material);
+
+  mesh.rotation.set(Math.PI/2, 0,(2*Math.PI/2.37));
+  mesh.position.set(425,2,0);
+  mesh.__dirtyPosition = true;
+
+  scene.add(mesh);
+
+}
+function genZone3(){
+  var geometry = new THREE.RingGeometry( 87.5, 167.5, 16, 2, 0, 80/180 * Math.PI);
+
+  var material = new THREE.MeshBasicMaterial({
+    color: 0x00fff0,
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.5
+  });
+//  var geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+  var mesh = new THREE.Mesh(geometry, material);
+
+  mesh.rotation.set(Math.PI/2, 0,(3*Math.PI/2.64));
+  mesh.position.set(425,2,0);
+  //mesh.__dirtyPosition = true;
+
+  scene.add(mesh);
+
+}
 
 function generateZones(){
-  //genZone0();
-  //genZone1();
-  //genZone2();
-  //genZone3();
+  genZone0();
+  genZone1();
+  genZone2();
+  genZone3();
   //genZone4();
   //genZone5();
   //genZone6();
