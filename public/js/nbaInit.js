@@ -6,6 +6,8 @@ var sphereToggle = false;
 var court;
 var INITIAL = false
 var zones = new Array(14);
+var zonesMiss = new Array(14);
+var zonesMade = new Array(14);
 
 var PointToZone = [[10,10,10,8,8,8,8,8,8,3,3,3,3,3,3,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,4,4,4,4,4,4,4,9,9,9],
 [10,10,10,8,8,8,8,8,8,3,3,3,3,3,3,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,4,4,4,4,4,4,4,9,9,9],
@@ -147,29 +149,63 @@ function generatePlainCourtTexture(){
 
 }
 
-function generateZones(){
-  var zone10 = new THREE.BoxGeometry(140, 1, 30);
+function drawCircle(degrees, radius){
 
+}
+
+function genZone10(){
   // geometry
-  var geometry = new THREE.Geometry();
-  geometry.vertices.push( new THREE.Vector3( 0+329, 4, 0-250 ) );
-  geometry.vertices.push( new THREE.Vector3( 140+329, 4, 0-250 ) );
-  geometry.vertices.push( new THREE.Vector3( 140+329, 4, 30-250 ) );
-  geometry.vertices.push( new THREE.Vector3( 0+329, 4, 30-250 ) ); // close the loop
-  geometry.faces.push(new THREE.Face3(0,1,2));
-  geometry.faces.push(new THREE.Face3(0,2,3));
-  //geometry.colors.push(new THREE.Color(0xFF0000));
+  var geo = new THREE.Geometry();
+  geo.vertices.push( new THREE.Vector3( 0+329, 4, 0-250 ) );
+  geo.vertices.push( new THREE.Vector3( 140+329, 4, 0-250 ) );
+  geo.vertices.push( new THREE.Vector3( 140+329, 4, 30-250 ) );
+  geo.vertices.push( new THREE.Vector3( 0+329, 4, 30-250 ) ); // close the loop
+  geo.faces.push(new THREE.Face3(0,1,2));
+  geo.faces.push(new THREE.Face3(0,2,3));
 
-  //var material = new THREE.LineBasicMaterial({
-  //	color: 0x0000ff
-  //});
+  var material = new THREE.MeshBasicMaterial({
+    color: 0x0000ff,
+    side: THREE.DoubleSide
+  });
+
+  zones[10] = new THREE.Mesh( geo, material );
+  scene.add( zones[10]);
+}
+function genZone9(){
+  var geo = new THREE.Geometry();
+  geo.vertices.push( new THREE.Vector3( 0+329, 4, 0+220 ) );
+  geo.vertices.push( new THREE.Vector3( 140+329, 4, 0+220 ) );
+  geo.vertices.push( new THREE.Vector3( 140+329, 4, 30+220 ) );
+  geo.vertices.push( new THREE.Vector3( 0+329, 4, 30+220 ) ); // close the loop
+  geo.faces.push(new THREE.Face3(0,1,2));
+  geo.faces.push(new THREE.Face3(0,2,3));
+
   var material = new THREE.MeshBasicMaterial({
     color: 0x0000ff,
     side: THREE.DoubleSide
   });
   // line
-  var line = new THREE.Mesh( geometry, material );
-  scene.add( line );
+  zones[9] = new THREE.Mesh( geo, material );
+  scene.add( zones[9] );
+
+  zones[9].material.color.setHex( 0xff0000 );
+}
+
+function generateZones(){
+  //genZone0();
+  //genZone1();
+  //genZone2();
+  //genZone3();
+  //genZone4();
+  //genZone5();
+  //genZone6();
+  //genZone7();
+  //genZone8();
+  genZone9();
+  genZone10();
+  //genZone11();
+  //genZone12();
+  //genZone13();
 };
 
 function animate() {
