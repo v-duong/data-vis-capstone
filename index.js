@@ -35,7 +35,6 @@ app.get('/nba_visualize', function(req, res){
   res.render('nba_visualize');
 });
 
-
 app.get('/Uploaded_Files', function(req, res) {
   //var fileList = fs.readdirSync('public_files');
   var getTableQuery = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'";
@@ -174,11 +173,39 @@ app.get('/visualize', function(req, res) {
   var client = require('./public/js/database.js');
   var tlist;
   client.queryDB("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';", function(tlist) {
+    console.log(tlist);//
     res.render('visualize', {
       tables: tlist
     });
   });
 });
+
+app.get('/globe_visualize', function(req, res){
+  var client = require('./public/js/database.js');
+  var tlist = getFiles(__dirname + '/public/globeData');
+  //Removes .json from fileNames
+  for (i = 0; i < tlist.length; i++){
+    tlist[i] = tlist[i].substring(0, tlist[i].length-5);
+  }
+  res.render('globe_visualize', {
+      tables: tlist
+    });
+});
+
+//Returns list of files from a directory
+function getFiles(dir){
+    fileList = [];
+ 
+    var files = fs.readdirSync(dir);
+    for(var i in files){
+        if (!files.hasOwnProperty(i)) continue;
+        var name = dir+'/'+files[i];
+        if (!fs.statSync(name).isDirectory()){
+            fileList.push(files[i]);
+        }
+    }
+    return fileList;
+}
 
 app.get('/retrieveData', function(req, res) {
   var myQuery = req.query.myQuery;
