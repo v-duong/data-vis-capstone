@@ -93,6 +93,7 @@ app.post('/files', file_uploaded.single('datafile'), function(req, res) {
   var textBuff = "";
   var src = fs.createReadStream(tmp_path);
 
+  //If globe radiobutton selected
   if (visualType == 1){
   var jsonFile = "";
 
@@ -104,7 +105,13 @@ app.post('/files', file_uploaded.single('datafile'), function(req, res) {
 
     jsonFile = jsonFile.slice(0,-1);
     jsonFile = jsonFile.split('\r\n');
-    jsonFile.splice(0,1);
+    columns = jsonFile.splice(0,1)[0];
+
+    //Check if there are not 3 columns (lat,long,magnitude)
+    if (columns.split(',').length != 3){
+      console.log("Invalid Globe Data");
+      return;
+    }
     name = req.file.originalname;
     name = name.substring(0, name.indexOf('.csv'));
     jsonFile = "[\"" + name + "\", [" + jsonFile + "]]";
@@ -124,6 +131,7 @@ app.post('/files', file_uploaded.single('datafile'), function(req, res) {
     res.render('files');
   });
 
+  //If general data type radio button selected
   } else if (visualType == 0){
 
   src.on('data', function(fileData) {
