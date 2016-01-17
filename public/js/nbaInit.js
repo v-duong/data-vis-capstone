@@ -59,7 +59,7 @@ var PointToZone = [[10,10,10,8,8,8,8,8,8,3,3,3,3,3,3,3,0,0,0,0,0,0,0,0,0,0,0,0,0
 
 
 function generateCourt() {
-/*
+
   var seasonText = $("#Season option:selected").val();
   if (seasonText == ""){
     alert('Please choose a Season');
@@ -75,9 +75,9 @@ function generateCourt() {
     alert('Please choose a player');
     return;
   }
-*/
 
-  //retreiveNBAData();
+
+  retreiveNBAData();
   generatePlainCourtTexture();
   generateZones();
 }
@@ -149,9 +149,6 @@ function generatePlainCourtTexture(){
 
 }
 
-function drawCircle(degrees, radius){
-
-}
 
 function genZone10(){
   // geometry
@@ -237,7 +234,7 @@ function genZone1(){
   //  var geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
     var mesh = new THREE.Mesh(geometry, material);
 
-    mesh.rotation.set(Math.PI/2, 0,Math.PI/2.5);
+    mesh.rotation.set(Math.PI/2, 0,Math.PI/2.4);
     mesh.position.set(425,2,0);
     //mesh.__dirtyPosition = true;
 
@@ -245,7 +242,7 @@ function genZone1(){
 
 }
 function genZone2(){
-  var geometry = new THREE.RingGeometry( 87.5, 167.5, 16, 2, 0, 53/180 * Math.PI);
+  var geometry = new THREE.RingGeometry( 87.5, 167.5, 16, 2, 0, 50/180 * Math.PI);
 
   var material = new THREE.MeshBasicMaterial({
     color: 0xfff000,
@@ -256,7 +253,7 @@ function genZone2(){
 //  var geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
   var mesh = new THREE.Mesh(geometry, material);
 
-  mesh.rotation.set(Math.PI/2, 0,(2*Math.PI/2.37));
+  mesh.rotation.set(Math.PI/2, 0,(2*Math.PI/2.33));
   mesh.position.set(425,2,0);
   mesh.__dirtyPosition = true;
 
@@ -283,15 +280,71 @@ function genZone3(){
 
 }
 
+function genZone5(){
+  var geometry = new THREE.RingGeometry( 167.5, 247.5, 16, 2, 0, 40/180 * Math.PI);
+
+  var material = new THREE.MeshBasicMaterial({
+    color: 0x0ccff0,
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.5
+  });
+//  var geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+  var mesh = new THREE.Mesh(geometry, material);
+
+  mesh.rotation.set(Math.PI/2, 0,(2*Math.PI/3));
+  mesh.position.set(425,2,0);
+  //mesh.__dirtyPosition = true;
+
+  scene.add(mesh);
+}
+
+function genZone6(){
+  var geometry = new THREE.RingGeometry( 167.5, 247.5, 16, 2, 0, 40/180 * Math.PI);
+
+  var material = new THREE.MeshBasicMaterial({
+    color: 0xdccffd,
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.5
+  });
+//  var geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+  var mesh = new THREE.Mesh(geometry, material);
+
+  mesh.rotation.set(Math.PI/2, 0,(Math.PI/1.125));
+  mesh.position.set(425,2,0);
+  //mesh.__dirtyPosition = true;
+
+  scene.add(mesh);
+}
+function genZone7(){
+  var geometry = new THREE.RingGeometry( 167.5, 247.5, 16, 2, 0, 40/180 * Math.PI);
+
+  var material = new THREE.MeshBasicMaterial({
+    color: 0x0ffcc0,
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.5
+  });
+//  var geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+  var mesh = new THREE.Mesh(geometry, material);
+
+  mesh.rotation.set(Math.PI/2, 0,(Math.PI/.9));
+  mesh.position.set(425,2,0);
+  //mesh.__dirtyPosition = true;
+
+  scene.add(mesh);
+}
+
 function generateZones(){
   genZone0();
   genZone1();
   genZone2();
   genZone3();
   //genZone4();
-  //genZone5();
-  //genZone6();
-  //genZone7();
+  genZone5();
+  genZone6();
+  genZone7();
   //genZone8();
   genZone9();
   genZone10();
@@ -427,44 +480,43 @@ function retreiveNBAData() {
 
 
 function parseShotData(data){
-  //console.log(data);
   var shotList = data.resultSets[0].rowSet;
   var shotListLen = shotList.length;
 
-  // create 2D - array and set all to 0;
-  var madeMatrix = new Array(50);
-  var missMatrix = new Array(50);
-  var percentageMatrix = new Array(50);
-  for (var i = 0; i < 50; i++){
-    madeMatrix[i] = new Array(94);
-    missMatrix[i] = new Array(94);
-    percentageMatrix[i] = new Array(94);
-    for (var j = 0; j < 94; j++){
-      madeMatrix[i][j] = 0;
-      missMatrix[i][j] = 0;
-    }
+  // reset zonesMade/Miss array
+  for (var i = 0; i < 14; i++){
+    zonesMade[i] = 0;
+    zonesMiss[i] = 0;
   }
 
   // going through each one and start doing computation
   for (var i = 0; i < shotListLen; i++){
+    var indexX=0;
+    var indexY=0;
     // if its a make
     if (shotList[i][10] == 'Made Shot'){
-      madeMatrix[ Math.floor((shotList[i][17] + 250)/10)][Math.floor(shotList[i][18]/10)]++;
+       indexX = Math.round((shotList[i][17]+250 )/10);
+       indexY =Math.round((shotList[i][18] + 40)/10);  // add 40 to include the distance from base line to rim
+
+      // for now we won't include shots from back court
+       if (indexY >= 47)
+        continue;
+      zonesMade[PointToZone[indexY][indexX]]++;
     }
     else {
-      missMatrix[ Math.floor((shotList[i][17] + 250)/10)][Math.floor(shotList[i][18]/10)]++;
+      indexX =  Math.round((shotList[i][17]+250 )/10);
+      indexY = Math.round((shotList[i][18] + 40)/10) ; // add 40 to include the distance from base line to rim
+
+      // for now we won't include shots from back court
+      if (indexY >= 47)
+        continue;
+
+      zonesMiss[PointToZone[indexY][indexX]]++;
     }
   }
-  for (var i = 0; i < 50; i++){
-    for (var j = 0 ; j < 94; j++){
-      var totalShots = madeMatrix[i][j] + missMatrix[i][j];
-      if (totalShots == 0){
-        percentageMatrix[i][j] = 0;
-      }
-      else{
-        percentageMatrix[i][j] = madeMatrix[i][j] / totalShots;
-      }
-    }
-    //console.logs(i + ': ' + percentageMatrix[i]);
+  for (var i = 0; i < 14; i++){
+    console.log("zone" + i + ": " + zonesMade[i]/(zonesMade[i]+zonesMiss[i]));
+    console.log("made: " + zonesMade[i] + '----- ' + "miss: " + zonesMiss[i]);
+    console.log("");
   }
 }
