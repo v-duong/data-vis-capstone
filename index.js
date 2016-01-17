@@ -5,7 +5,6 @@ var multer = require('multer');
 var bodyParser = require('body-parser');
 
 
-
 app.set('port', (process.env.PORT || 4500));
 
 app.set('views', 'views');
@@ -82,47 +81,85 @@ var file_uploaded = multer({
 });
 
 app.post('/files', file_uploaded.single('datafile'), function(req, res) {
+
   if (req.file == null) {
     return;
   }
+
+  var visualType = req.body.visualType;
 
   var tmp_path = req.file.path;
   var target_path = 'public_files/' + req.file.originalname;
   var textBuff = "";
   var src = fs.createReadStream(tmp_path);
 
+  if (visualType == 1){
+  var jsonFile = "";
+
   src.on('data', function(fileData) {
-    textBuff = textBuff.concat(fileData.toString());
+    jsonFile = jsonFile.concat(fileData.toString());
   });
 
-  // uploaded successfully
   src.on('end', function() {
-    // add textBuff into DB
+    var x = "";
+    var writer = fs.createWriteStream(__dirname + "/public/globeData/test.json");
 
-    var myDB = require('./public/js/database.js');
+    jsonFile = jsonFile.slice(0,-1);
+    jsonFile = jsonFile.split('\r\n');
+    jsonFile.splice(0,1);
+    name = req.file.originalname;
+    name = name.substring(0, name.indexOf('.csv'));
+    jsonFile = "[\"" + name + "\", [" + jsonFile + "]]";
 
-    myDB.insertTable(req.file.originalname, textBuff, function(myRows) {
-
-      if (myRows == true) {
-        console.log("insert success");
-        // delete the physical file
-
+    var writer = fs.writeFile(__dirname + "/public/globeData/" + name + ".json", jsonFile, function(err){
+        if (err){
+          return console.log(err);
+        }
+        console.log("Saved");
         res.render('files');
 
-      } else {
-        console.log("insert fail");
-        textBuff = "Upload Failed";
-        res.render('files');
-
-      }
-      fs.unlinkSync(target_path);
+      });
 
     });
-  });
+
   src.on('error', function(err) {
     res.render('files');
   });
 
+  } else if (visualType == 0){
+
+  src.on('data', function(fileData) {
+    textBuff = textBuff.concat(fileData.toString());
+  });
+
+    // uploaded successfully
+    src.on('end', function() {
+      // add textBuff into DB
+
+      var myDB = require('./public/js/database.js');
+
+      myDB.insertTable(req.file.originalname, textBuff, function(myRows) {
+
+        if (myRows == true) {
+          console.log("insert success");
+          // delete the physical file
+
+          res.render('files');
+
+        } else {
+          console.log("insert fail");
+          textBuff = "Upload Failed";
+          res.render('files');
+
+        }
+        fs.unlinkSync(target_path);
+
+      });
+    });
+    src.on('error', function(err) {
+      res.render('files');
+    });
+  }
 });
 
 app.get('/scatter', function(req, res) {
@@ -173,7 +210,6 @@ app.get('/visualize', function(req, res) {
   var client = require('./public/js/database.js');
   var tlist;
   client.queryDB("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';", function(tlist) {
-    console.log(tlist);//
     res.render('visualize', {
       tables: tlist
     });
@@ -195,7 +231,7 @@ app.get('/globe_visualize', function(req, res){
 //Returns list of files from a directory
 function getFiles(dir){
     fileList = [];
- 
+
     var files = fs.readdirSync(dir);
     for(var i in files){
         if (!files.hasOwnProperty(i)) continue;
