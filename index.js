@@ -101,8 +101,6 @@ app.post('/files', file_uploaded.single('datafile'), function(req, res) {
   });
 
   src.on('end', function() {
-    var x = "";
-    var writer = fs.createWriteStream(__dirname + "/public/globeData/test.json");
 
     jsonFile = jsonFile.slice(0,-1);
     jsonFile = jsonFile.split('\r\n');
