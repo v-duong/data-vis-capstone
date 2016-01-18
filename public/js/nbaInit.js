@@ -77,9 +77,10 @@ function generateCourt() {
   }
 
 
-  retreiveNBAData();
+
   generatePlainCourtTexture();
   generateZones();
+  retreiveNBAData();
 }
 
 function init() {
@@ -161,7 +162,7 @@ function genZone10(){
   geo.faces.push(new THREE.Face3(0,2,3));
 
   var material = new THREE.MeshBasicMaterial({
-    color: 0x0000ff,
+    //color: 0x0000ff,
     side: THREE.DoubleSide,
     transparent: true,
     opacity: 0.5
@@ -180,7 +181,7 @@ function genZone9(){
   geo.faces.push(new THREE.Face3(0,2,3));
 
   var material = new THREE.MeshBasicMaterial({
-    color: 0x0000ff,
+    //color: 0x0f00ff,
     side: THREE.DoubleSide,
     transparent: true,
     opacity: 0.5
@@ -189,7 +190,7 @@ function genZone9(){
   zones[9] = new THREE.Mesh( geo, material );
   scene.add( zones[9] );
 
-  zones[9].material.color.setHex( 0xff0000 );
+
 }
 function genZone0(){
   var shape = new THREE.Shape();
@@ -201,19 +202,19 @@ function genZone0(){
     steps : 1
   };
   var material = new THREE.MeshBasicMaterial({
-    color: 0x00ff00,
+    //color: 0x00ff00,
     side: THREE.DoubleSide,
     transparent: true,
     opacity: 0.5
   });
   var geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-  var mesh = new THREE.Mesh(geometry, material);
+  zones[0] = new THREE.Mesh(geometry, material);
 
-  mesh.rotation.set(Math.PI/2, 0,Math.PI/2.75);
-  mesh.position.set(425,0,0);
-  mesh.__dirtyPosition = true;
+  zones[0].rotation.set(Math.PI/2, 0,Math.PI/2.75);
+  zones[0].position.set(425,0,0);
+  zones[0].__dirtyPosition = true;
 
-  scene.add(mesh);
+  scene.add(zones[0]);
 }
 function genZone1(){
     //var shape = new THREE.Shape();
@@ -226,57 +227,57 @@ function genZone1(){
   ///    steps : 1
   //  };
     var material = new THREE.MeshBasicMaterial({
-      color: 0x00fff0,
+      //color: 0x00fff0,
       side: THREE.DoubleSide,
       transparent: true,
       opacity: 0.5
     });
   //  var geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-    var mesh = new THREE.Mesh(geometry, material);
+    zones[1] = new THREE.Mesh(geometry, material);
 
-    mesh.rotation.set(Math.PI/2, 0,Math.PI/2.4);
-    mesh.position.set(425,2,0);
-    //mesh.__dirtyPosition = true;
+    zones[1].rotation.set(Math.PI/2, 0,Math.PI/2.4);
+    zones[1].position.set(425,2,0);
+    zones[1].__dirtyPosition = true;
 
-    scene.add(mesh);
+    scene.add(zones[1]);
 
 }
 function genZone2(){
   var geometry = new THREE.RingGeometry( 87.5, 167.5, 16, 2, 0, 50/180 * Math.PI);
 
   var material = new THREE.MeshBasicMaterial({
-    color: 0xfff000,
+    //color: 0xfff000,
     side: THREE.DoubleSide,
     transparent: true,
     opacity: 0.5
   });
 //  var geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-  var mesh = new THREE.Mesh(geometry, material);
+  zones[2] = new THREE.Mesh(geometry, material);
 
-  mesh.rotation.set(Math.PI/2, 0,(2*Math.PI/2.33));
-  mesh.position.set(425,2,0);
-  mesh.__dirtyPosition = true;
+  zones[2].rotation.set(Math.PI/2, 0,(2*Math.PI/2.33));
+  zones[2].position.set(425,2,0);
+  zones[2].__dirtyPosition = true;
 
-  scene.add(mesh);
+  scene.add(zones[2]);
 
 }
 function genZone3(){
   var geometry = new THREE.RingGeometry( 87.5, 167.5, 16, 2, 0, 80/180 * Math.PI);
 
   var material = new THREE.MeshBasicMaterial({
-    color: 0x00fff0,
+    //color: 0x00fff0,
     side: THREE.DoubleSide,
     transparent: true,
     opacity: 0.5
   });
 //  var geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-  var mesh = new THREE.Mesh(geometry, material);
+  zones[3] = new THREE.Mesh(geometry, material);
 
-  mesh.rotation.set(Math.PI/2, 0,(3*Math.PI/2.64));
-  mesh.position.set(425,2,0);
-  //mesh.__dirtyPosition = true;
+  zones[3].rotation.set(Math.PI/2, 0,(3*Math.PI/2.64));
+  zones[3].position.set(425,2,0);
+  zones[3].__dirtyPosition = true;
 
-  scene.add(mesh);
+  scene.add(zones[3]);
 
 }
 
@@ -284,56 +285,56 @@ function genZone5(){
   var geometry = new THREE.RingGeometry( 167.5, 247.5, 16, 2, 0, 40/180 * Math.PI);
 
   var material = new THREE.MeshBasicMaterial({
-    color: 0x0ccff0,
+    //color: 0x0ccff0,
     side: THREE.DoubleSide,
     transparent: true,
     opacity: 0.5
   });
 //  var geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-  var mesh = new THREE.Mesh(geometry, material);
+  zones[5] = new THREE.Mesh(geometry, material);
 
-  mesh.rotation.set(Math.PI/2, 0,(2*Math.PI/3));
-  mesh.position.set(425,2,0);
-  //mesh.__dirtyPosition = true;
+  zones[5].rotation.set(Math.PI/2, 0,(2*Math.PI/3));
+  zones[5].position.set(425,2,0);
+  zones[5].__dirtyPosition = true;
 
-  scene.add(mesh);
+  scene.add(zones[5]);
 }
 
 function genZone6(){
   var geometry = new THREE.RingGeometry( 167.5, 247.5, 16, 2, 0, 40/180 * Math.PI);
 
   var material = new THREE.MeshBasicMaterial({
-    color: 0xdccffd,
+    //color: 0xdccffd,
     side: THREE.DoubleSide,
     transparent: true,
     opacity: 0.5
   });
 //  var geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-  var mesh = new THREE.Mesh(geometry, material);
+  zones[6] = new THREE.Mesh(geometry, material);
 
-  mesh.rotation.set(Math.PI/2, 0,(Math.PI/1.125));
-  mesh.position.set(425,2,0);
-  //mesh.__dirtyPosition = true;
+  zones[6].rotation.set(Math.PI/2, 0,(Math.PI/1.125));
+  zones[6].position.set(425,2,0);
+  zones[6].__dirtyPosition = true;
 
-  scene.add(mesh);
+  scene.add(zones[6]);
 }
 function genZone7(){
   var geometry = new THREE.RingGeometry( 167.5, 247.5, 16, 2, 0, 40/180 * Math.PI);
 
   var material = new THREE.MeshBasicMaterial({
-    color: 0x0ffcc0,
+    //color: 0x0ffcc0,
     side: THREE.DoubleSide,
     transparent: true,
     opacity: 0.5
   });
 //  var geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-  var mesh = new THREE.Mesh(geometry, material);
+  zones[7] = new THREE.Mesh(geometry, material);
 
-  mesh.rotation.set(Math.PI/2, 0,(Math.PI/.9));
-  mesh.position.set(425,2,0);
-  //mesh.__dirtyPosition = true;
+  zones[7].rotation.set(Math.PI/2, 0,(Math.PI/.9));
+  zones[7].position.set(425,2,0);
+  zones[7].__dirtyPosition = true;
 
-  scene.add(mesh);
+  scene.add(zones[7]);
 }
 
 function generateZones(){
@@ -514,9 +515,38 @@ function parseShotData(data){
       zonesMiss[PointToZone[indexY][indexX]]++;
     }
   }
+  generateZoneColor();
+
+}
+
+function generateZoneColor(){
+
   for (var i = 0; i < 14; i++){
-    console.log("zone" + i + ": " + zonesMade[i]/(zonesMade[i]+zonesMiss[i]));
-    console.log("made: " + zonesMade[i] + '----- ' + "miss: " + zonesMiss[i]);
+    var shotPercent = zonesMade[i]/(zonesMade[i] + zonesMiss[i]);
+    console.log("zone" + i + ": " + shotPercent);
+    console.log("made: " + zonesMade[i] + '/' +   (zonesMade[i]+ zonesMiss[i]));
     console.log("");
+
+    // i don't have the mesh created for these yet
+    if (i == 4 || i == 8 || i > 10)
+      continue;
+
+    // red
+    if (shotPercent > .50){
+      zones[i].material.color.setHex( 0xff0000 );
+    }
+    // yellow
+    else if (shotPercent > .40){
+      zones[i].material.color.setHex( 0xffff00 );
+    }
+    // green
+    else if (shotPercent > .30){
+      zones[i].material.color.setHex( 0x00cc00 );
+    }
+    else{
+      zones[i].material.color.setHex( 0x00ccff );
+    }
+
+
   }
 }
