@@ -20,10 +20,10 @@ function generateGlobe(){
     if ( xhr.readyState === 4 && xhr.status === 200 ) {
       console.log("data received");
         // Parse the JSON
-        console.log(xhr.responseText);
         var data = JSON.parse( xhr.responseText );
+
         // Tell the globe about your JSON data
-        globe.addData( data[2], {format: 'magnitude', name: data[0], max: data[1]} );
+        globe.addData( data[1], {format: 'magnitude', name: data[0]} );
 
         // Create the geometry
         globe.createPoints();
