@@ -1,0 +1,29 @@
+extend vistemplate
+block sidelist
+	ul.off-canvas-list
+		li
+			label Table
+		li
+			select(id='TableList')
+				option(value='' selected='selected' disabled="disabled") Choose Table
+				each item in tables
+					option(value=item) #{item}
+		li
+		li.b
+			input.button(type='button', value='Apply', onclick='generateVisuals()')
+			input.button(type='button', value='Enter VR', onclick='VRBottonPressed()')
+			
+block scripts
+	script(src='static/js/lib/three.min.js')
+	script(src='static/js/lib/TextGeometry.js')
+	script(src='static/js/lib/FontUtils.js')
+	script(src='static/js/lib/helvetiker_regular.typeface.js')
+	script(src='static/js/lib/OrbitControls.js')
+	script(src='static/js/lib/lodash.min.js')
+	script(src='static/js/lib/d3.min.js')
+	script(src='static/js/lib/StereoEffect.js')
+	script(src='static/js/vrDetection.js')
+	script(src='static/js/globe/globeInit.js')
+	script(src='static/js/globe/globe.js')
+	link(rel='stylesheet', href='//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css')
+	script(src='//code.jquery.com/ui/1.11.4/jquery-ui.js')
