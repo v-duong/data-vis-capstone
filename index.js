@@ -99,12 +99,16 @@ app.post('/files', file_uploaded.single('datafile'), function(req, res) {
 
   src.on('data', function(fileData) {
     jsonFile = jsonFile.concat(fileData.toString());
+    // console.log(fileData.toString());
   });
 
   src.on('end', function() {
 
     jsonFile = jsonFile.slice(0,-1);
     jsonFile = jsonFile.split('\r\n');
+    if(jsonFile.length==1){
+      jsonFile = jsonFile.join().split('\r');
+    }
     columns = jsonFile.splice(0,1)[0];
 
     //Check if there are not 3 columns (lat,long,magnitude)
@@ -112,9 +116,21 @@ app.post('/files', file_uploaded.single('datafile'), function(req, res) {
       console.log("Invalid Globe Data");
       return;
     }
+
+    var max = 0;
+    var temp;
+    var mag;
+    for(var i in jsonFile){
+      temp = jsonFile[i].split(",");
+      mag = parseFloat(temp[2]);
+      if(mag>max){max = mag;}
+    }
+
+    // console.log(max);
+
     name = req.file.originalname;
     name = name.substring(0, name.indexOf('.csv'));
-    jsonFile = "[\"" + name + "\", [" + jsonFile + "]]";
+    jsonFile = "[\"" + name + "\"," +max+",[" + jsonFile + "]]";
 
     var writer = fs.writeFile(__dirname + "/public/globeData/" + name + ".json", jsonFile, function(err){
         if (err){
