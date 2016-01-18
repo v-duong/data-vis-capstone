@@ -9,6 +9,14 @@ block maintext
           label(for="file")
             span Choose a file
           br
+
+          input(type='radio', name='visualType', value='0', checked)
+          |  General  
+          input(type='radio', name='visualType', value='1')
+          |  Globe  
+          input(type='radio', name='visualType', value='2', disabled='true')
+          |  NBA  
+          br
           input.button2(type="submit" value="Upload" disabled="disabled" id="upload")
   br
   .row

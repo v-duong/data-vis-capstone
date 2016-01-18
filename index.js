@@ -5,7 +5,6 @@ var multer = require('multer');
 var bodyParser = require('body-parser');
 
 
-
 app.set('port', (process.env.PORT || 4500));
 
 app.set('views', 'views');
@@ -34,7 +33,6 @@ app.get('/about', function(req, res) {
 app.get('/nba_visualize', function(req, res){
   res.render('nba_visualize');
 });
-
 
 app.get('/Uploaded_Files', function(req, res) {
   //var fileList = fs.readdirSync('public_files');
@@ -83,47 +81,91 @@ var file_uploaded = multer({
 });
 
 app.post('/files', file_uploaded.single('datafile'), function(req, res) {
+
   if (req.file == null) {
     return;
   }
+
+  var visualType = req.body.visualType;
 
   var tmp_path = req.file.path;
   var target_path = 'public_files/' + req.file.originalname;
   var textBuff = "";
   var src = fs.createReadStream(tmp_path);
 
+  //If globe radiobutton selected
+  if (visualType == 1){
+  var jsonFile = "";
+
   src.on('data', function(fileData) {
-    textBuff = textBuff.concat(fileData.toString());
+    jsonFile = jsonFile.concat(fileData.toString());
   });
 
-  // uploaded successfully
   src.on('end', function() {
-    // add textBuff into DB
 
-    var myDB = require('./public/js/database.js');
+    jsonFile = jsonFile.slice(0,-1);
+    jsonFile = jsonFile.split('\r\n');
+    columns = jsonFile.splice(0,1)[0];
 
-    myDB.insertTable(req.file.originalname, textBuff, function(myRows) {
+    //Check if there are not 3 columns (lat,long,magnitude)
+    if (columns.split(',').length != 3){
+      console.log("Invalid Globe Data");
+      return;
+    }
+    name = req.file.originalname;
+    name = name.substring(0, name.indexOf('.csv'));
+    jsonFile = "[\"" + name + "\", [" + jsonFile + "]]";
 
-      if (myRows == true) {
-        console.log("insert success");
-        // delete the physical file
-
+    var writer = fs.writeFile(__dirname + "/public/globeData/" + name + ".json", jsonFile, function(err){
+        if (err){
+          return console.log(err);
+        }
+        console.log("Saved");
         res.render('files');
 
-      } else {
-        console.log("insert fail");
-        textBuff = "Upload Failed";
-        res.render('files');
-
-      }
-      fs.unlinkSync(target_path);
+      });
 
     });
-  });
+
   src.on('error', function(err) {
     res.render('files');
   });
 
+  //If general data type radio button selected
+  } else if (visualType == 0){
+
+  src.on('data', function(fileData) {
+    textBuff = textBuff.concat(fileData.toString());
+  });
+
+    // uploaded successfully
+    src.on('end', function() {
+      // add textBuff into DB
+
+      var myDB = require('./public/js/database.js');
+
+      myDB.insertTable(req.file.originalname, textBuff, function(myRows) {
+
+        if (myRows == true) {
+          console.log("insert success");
+          // delete the physical file
+
+          res.render('files');
+
+        } else {
+          console.log("insert fail");
+          textBuff = "Upload Failed";
+          res.render('files');
+
+        }
+        fs.unlinkSync(target_path);
+
+      });
+    });
+    src.on('error', function(err) {
+      res.render('files');
+    });
+  }
 });
 
 app.get('/scatter', function(req, res) {
@@ -179,6 +221,33 @@ app.get('/visualize', function(req, res) {
     });
   });
 });
+
+app.get('/globe_visualize', function(req, res){
+  var client = require('./public/js/database.js');
+  var tlist = getFiles(__dirname + '/public/globeData');
+  //Removes .json from fileNames
+  for (i = 0; i < tlist.length; i++){
+    tlist[i] = tlist[i].substring(0, tlist[i].length-5);
+  }
+  res.render('globe_visualize', {
+      tables: tlist
+    });
+});
+
+//Returns list of files from a directory
+function getFiles(dir){
+    fileList = [];
+
+    var files = fs.readdirSync(dir);
+    for(var i in files){
+        if (!files.hasOwnProperty(i)) continue;
+        var name = dir+'/'+files[i];
+        if (!fs.statSync(name).isDirectory()){
+            fileList.push(files[i]);
+        }
+    }
+    return fileList;
+}
 
 app.get('/retrieveData', function(req, res) {
   var myQuery = req.query.myQuery;
