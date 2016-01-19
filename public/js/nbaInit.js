@@ -61,6 +61,7 @@ var PointToZone = [[10,10,10,8,8,8,8,8,8,3,3,3,3,3,3,3,0,0,0,0,0,0,0,0,0,0,0,0,0
 function generateCourt() {
 
   var seasonText = $("#Season option:selected").val();
+/*
   if (seasonText == ""){
     alert('Please choose a Season');
     return;
@@ -74,9 +75,7 @@ function generateCourt() {
   if (playerID == ""){
     alert('Please choose a player');
     return;
-  }
-
-
+  }*/
 
   generatePlainCourtTexture();
   generateZones();
@@ -337,12 +336,86 @@ function genZone7(){
   scene.add(zones[7]);
 }
 
+//87.5, 167.5, 16, 2, 0, 80/180 * Math.PI
+function genZone4(){
+  var curve = new THREE.EllipseCurve(
+    0, 0,             // ax, aY
+    80, 157.5,            // xRadius, yRadius
+    -1/35 * Math.PI, 4.6/18 * Math.PI, // aStartAngle, aEndAngle
+    false             // aClockwise
+  );
+
+  var points = curve.getSpacedPoints(20);
+  var path = new THREE.Path();
+  var geometry = path.createGeometry(points);
+  geometry.vertices.push(new THREE.Vector3(125,150,0));
+  geometry.vertices.push( new THREE.Vector3( 135, 125, 0 ) );
+  geometry.vertices.push(new THREE.Vector3(135, -15, 0));
+  geometry.vertices.push(new THREE.Vector3(75, -15, 0));
+  geometry.faces.push(new THREE.Face3(20,21,22));
+  for (var i = 0; i < 20; i++){
+    geometry.faces.push(new THREE.Face3(i,i+1,22));
+  }
+  geometry.faces.push(new THREE.Face3(0,22,23));
+  //geometry.faces.push(new THREE.Face3(20,22,23));
+  //geometry.faces.push(new THREE.Face3(20,23,24));
+
+  var material = new THREE.MeshBasicMaterial({
+    //color: 0x0ffcc0,
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.5
+  });
+  //zones[4] = new THREE.Line(geometry, new THREE.LineBasicMaterial({color: 0x0f00ff}));
+  zones[4] = new THREE.Mesh(geometry, material);
+  zones[4].rotation.set(-Math.PI/2, 0,Math.PI/2);
+  zones[4].position.set(455,4,-87.5);
+  zones[4].__dirtyPosition = true;
+  scene.add(zones[4]);
+
+  //zone 5
+  zones[8] = new THREE.Mesh(geometry, material);
+  zones[8].rotation.set(Math.PI/2, 0, Math.PI/2);
+  zones[8].position.set(455,4,87.5);
+  zones[8].__dirtyPosition = true;
+  scene.add(zones[8]);
+
+  //var line = new THREE.Line(geometry, new THREE.LineBasicMaterial({color: 0x0f00ff}));
+  //scene.add(line);
+/*
+  var geo = new THREE.Geometry();
+  geo.vertices.push( new THREE.Vector3( 0, 4, 0) );
+  geo.vertices.push( new THREE.Vector3( 140, 4, 0 ) );
+  geo.vertices.push( new THREE.Vector3( 140, 4, 30) );
+  geo.vertices.push(new THRE;
+  geo.vertices.push( new THREE.Vector3( 0, 4, 30 ) ); // close the loop
+  geo.faces.push(new THREE.Face3(0,1,2));
+  geo.faces.push(new THREE.Face3(0,2,3));
+
+  var material = new THREE.MeshBasicMaterial({
+    color: 0x0f00ff,
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.5
+  });
+  // line
+  zones[4] = new THREE.Mesh( geo, material );
+  scene.add( zones[4] );
+  */
+
+}
+function genZone8(){
+
+}
+
+
+
 function generateZones(){
   genZone0();
   genZone1();
   genZone2();
   genZone3();
-  //genZone4();
+  genZone4();
   genZone5();
   genZone6();
   genZone7();
@@ -528,7 +601,7 @@ function generateZoneColor(){
     console.log("");
 
     // i don't have the mesh created for these yet
-    if (i == 4 || i == 8 || i > 10)
+    if ( i > 10)
       continue;
 
     // red
@@ -549,4 +622,36 @@ function generateZoneColor(){
 
 
   }
+
+  genPercentageText();
+}
+
+
+
+function genPercentageText(){
+
+  var textCoordX = [380,360,280,360,380,225,180,230,380, 380, 380, 100, 100, 100];
+  //var textCoordY = [4,];
+  var textCoordZ = [0,120,0,-120,200,120,0,-100,-200, 240, -230, 200, 0, -200];
+
+  for (var i = 0; i < 14; i++){
+		var TextGeo = new THREE.TextGeometry( String(zonesMade[i]) + '/' + String(zonesMade[i] + zonesMiss[i]), {
+		font:  'helvetiker'
+		,height:0
+		,size:10
+		});
+    var textMaterial = new THREE.MeshPhongMaterial({
+	     color: 0xdddddd
+     });
+
+     var item = new THREE.Mesh(TextGeo, textMaterial);
+      item.position.set(textCoordX[i],10,textCoordZ[i]);
+      item.rotation.set(-Math.PI/2, 0, 0);
+     scene.add(item);
+   }
+
+  //var textShapes = THREE.FontUtils.generateShapes( text, options );
+  //var text = new THREE.ShapeGeometry( textShapes );
+  //var textMesh = new THREE.Mesh( text, new THREE.MeshBasicMaterial( { color: 0xff0000 } ) ) ;
+  //scene.add(textMesh);
 }
