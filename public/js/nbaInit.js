@@ -8,6 +8,8 @@ var INITIAL = false
 var zones = new Array(14);
 var zonesMiss = new Array(14);
 var zonesMade = new Array(14);
+var zonesText = new Array(14);
+var FirstTime = true;
 
 var PointToZone = [[10,10,10,8,8,8,8,8,8,3,3,3,3,3,3,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,4,4,4,4,4,4,4,9,9,9],
 [10,10,10,8,8,8,8,8,8,3,3,3,3,3,3,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,4,4,4,4,4,4,4,9,9,9],
@@ -61,7 +63,7 @@ var PointToZone = [[10,10,10,8,8,8,8,8,8,3,3,3,3,3,3,3,0,0,0,0,0,0,0,0,0,0,0,0,0
 function generateCourt() {
 
   var seasonText = $("#Season option:selected").val();
-/*
+
   if (seasonText == ""){
     alert('Please choose a Season');
     return;
@@ -75,7 +77,9 @@ function generateCourt() {
   if (playerID == ""){
     alert('Please choose a player');
     return;
-  }*/
+  }
+
+
 
   generatePlainCourtTexture();
   generateZones();
@@ -411,20 +415,23 @@ function genZone8(){
 
 
 function generateZones(){
-  genZone0();
-  genZone1();
-  genZone2();
-  genZone3();
-  genZone4();
-  genZone5();
-  genZone6();
-  genZone7();
-  //genZone8();
-  genZone9();
-  genZone10();
-  //genZone11();
-  //genZone12();
-  //genZone13();
+  if (FirstTime){
+    genZone0();
+    genZone1();
+    genZone2();
+    genZone3();
+    genZone4();
+    genZone5();
+    genZone6();
+    genZone7();
+    //genZone8();
+    genZone9();
+    genZone10();
+    //genZone11();
+    //genZone12();
+    //genZone13();
+
+  }
 };
 
 function animate() {
@@ -627,14 +634,17 @@ function generateZoneColor(){
 }
 
 
-
 function genPercentageText(){
 
   var textCoordX = [380,360,280,360,380,225,180,230,380, 380, 380, 100, 100, 100];
   //var textCoordY = [4,];
   var textCoordZ = [0,120,0,-120,200,120,0,-100,-200, 240, -230, 200, 0, -200];
 
+
   for (var i = 0; i < 14; i++){
+    if (!FirstTime){
+      scene.remove(zonesText[i]);
+    }
 		var TextGeo = new THREE.TextGeometry( String(zonesMade[i]) + '/' + String(zonesMade[i] + zonesMiss[i]), {
 		font:  'helvetiker'
 		,height:0
@@ -644,11 +654,17 @@ function genPercentageText(){
 	     color: 0xdddddd
      });
 
-     var item = new THREE.Mesh(TextGeo, textMaterial);
-      item.position.set(textCoordX[i],10,textCoordZ[i]);
-      item.rotation.set(-Math.PI/2, 0, 0);
-     scene.add(item);
+     zonesText[i] = new THREE.Mesh(TextGeo, textMaterial);
+      zonesText[i].position.set(textCoordX[i],10,textCoordZ[i]);
+      zonesText[i].rotation.set(-Math.PI/2, 0, 0);
+     scene.add(zonesText[i]);
    }
+
+   if (FirstTime)
+    FirstTime = false;
+
+
+
 
   //var textShapes = THREE.FontUtils.generateShapes( text, options );
   //var text = new THREE.ShapeGeometry( textShapes );
