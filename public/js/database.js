@@ -41,6 +41,7 @@ exports.queryDB = function(queryStr, callback) {
 
 exports.deleteTable = function(tableName, callback) {
   //drop table firsttest
+  console.log("trying to drop");
   var dropQuery = "drop table ".concat(tableName);
   client.query(dropQuery, function(err, rows) {
     if (err) {
@@ -160,7 +161,7 @@ exports.insertTable = function(tableName, dataSet, callback){
 			break;
 	}
 
-	insertBaseQuery = insertBaseQuery.concat(columnNames[i] + ") values (");
+	insertBaseQuery = insertBaseQuery.concat(columnNames[i] + ") values ");
 
 
 
@@ -172,12 +173,13 @@ exports.insertTable = function(tableName, dataSet, callback){
 		}
 
 		else {
-			// should have "insert into firsttest (x,y,z) values (" already done in insertTableQuery
-			var insertQuery;
+			// should have "insert into firsttest (x,y,z) values " already done in insertTableQuery
+			var insertQuery = insertBaseQuery;
 			for (i = 1; i < dataSet.length; i++){
-				insertQuery = "";
+        insertQuery = insertQuery.concat('(');
 				var tempRow = dataSet[i].split(",");
-				insertQuery = insertQuery.concat(insertBaseQuery);
+        var endLineSymbol = ",";
+
 				for (j = 0; j < columnNames.length-1; j++){
 
 					if ((j >= tempRow.length) || (tempRow[j] == "NULL") || (tempRow[j] == "")){
@@ -203,42 +205,40 @@ exports.insertTable = function(tableName, dataSet, callback){
 
 				}
 
+        if (i == dataSet.length -1)
+          endLineSymbol = "";
+
 				if ((j >= tempRow.length) || (tempRow[j] == "NULL") || (tempRow[j] == ""))
-					insertQuery = insertQuery.concat('null)');
+					insertQuery = insertQuery.concat('null)' + endLineSymbol + ' ');
 
 				else{
 					switch (colTypes[j]){
 							case 0:
-								insertQuery = insertQuery.concat("'" + tempRow[j] + "'" + ')');
+								insertQuery = insertQuery.concat("'" + tempRow[j] + "'" + ')' + endLineSymbol + ' ');
 								break;
 							case 2:
-								insertQuery = insertQuery.concat(tempRow[j] + ')');
+								insertQuery = insertQuery.concat(tempRow[j] + ')' + endLineSymbol + ' ');
 								break;
 								case 3:
-								insertQuery = insertQuery.concat("timestamp '" + tempRow[j] + "')" );
+								insertQuery = insertQuery.concat("timestamp '" + tempRow[j] + "')' + endLineSymbol + ' " );
 								break;
 							default:
 								break;
 						}
 				}
-
-
-				client.query(insertQuery, function(err, rows){
-
-					if (err){
-
-						console.log("Could not insert data", insertQuery);
-					}
-
-				});
 			}
 
-
-
+      console.log(insertQuery);
+      client.query(insertQuery, function(err, rows){
+        if (err){
+          console.log("Could not insert data", insertQuery);
+        }
+      });
 
 			callback(true);
 			return;
 		}
+
 
 	});
 
