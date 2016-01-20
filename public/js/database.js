@@ -75,7 +75,7 @@ function findType(dataSet, colNum){
 	var retVal = 0; // default for int
 	var curRow;
 	for (var i = 1; i < dataSet.length; i++){
-		curRow = dataSet[i].split(",");
+		curRow = dataSet[i];
 		// ignore NULL or empty
 		if ((curRow[colNum]) == "" || (curRow[colNum] == "NULL")){
 			continue;
@@ -90,14 +90,54 @@ function findType(dataSet, colNum){
 
 		}
 
-		if (isNaN(curRow[colNum]))  // found a non numerical number. Column will be text
-			return 0;
-
+		if (isNaN(curRow[colNum]) && (curRow[colNum] !== undefined))  // found a non numerical number. Column will be text
+		{
+      console.log(curRow);
+      console.log(colNum);
+      console.log(curRow[colNum]);
+      return 0;
+    }
 		retVal = 2;
 	}
 
 
 	return retVal;
+}
+
+function CSVToArray( strData, strDelimiter ){
+    strDelimiter = (strDelimiter || ",");
+    var objPattern = new RegExp(
+        (
+            "(\\" + strDelimiter + "|\\r?\\n|\\r|^)" +
+            "(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" +
+            "([^\"\\" + strDelimiter + "\\r\\n]*))"
+        ),
+        "gi"
+        );
+    var arrData = [[]];
+    var arrMatches = null;
+    while (arrMatches = objPattern.exec( strData )){
+        var strMatchedDelimiter = arrMatches[ 1 ];
+        if (
+            strMatchedDelimiter.length &&
+            strMatchedDelimiter !== strDelimiter
+            ){
+            arrData.push( [] );
+        }
+
+        var strMatchedValue;
+        if (arrMatches[ 2 ]){
+            strMatchedValue = arrMatches[ 2 ].replace(
+                new RegExp( "\"\"", "g" ),
+                "\""
+                );
+        }
+        else {
+            strMatchedValue = arrMatches[ 3 ];
+        }
+        arrData[ arrData.length - 1 ].push( strMatchedValue );
+    }
+    return( arrData );
 }
 
 exports.insertTable = function(tableName, dataSet, callback){
@@ -109,12 +149,11 @@ exports.insertTable = function(tableName, dataSet, callback){
 		return;
 	}
 
+
 	tableName = tableName.substr(0, tableName.length-4);
 	tableName = tableName.replace(/ /g, "_");  // table name can't have spaces
-
-	dataSet = dataSet.split("\r");
-	//console.log(dataSet[0]);
-	var columnNames = dataSet[0].split(",");
+  dataSet = CSVToArray( dataSet, "," );
+	var columnNames = dataSet[0];
 	var colTypes = [];
 	//CREATE table firsttest (x TEXT, y TEXT, z TEXT);
 	var createTableQuery = "CREATE TABLE ";
@@ -177,7 +216,7 @@ exports.insertTable = function(tableName, dataSet, callback){
 			var insertQuery = insertBaseQuery;
 			for (i = 1; i < dataSet.length; i++){
         insertQuery = insertQuery.concat('(');
-				var tempRow = dataSet[i].split(",");
+				var tempRow = dataSet[i];
         var endLineSymbol = ",";
 
 				for (j = 0; j < columnNames.length-1; j++){
@@ -186,6 +225,7 @@ exports.insertTable = function(tableName, dataSet, callback){
 						insertQuery = insertQuery.concat('null,');
 					}
 					else{
+            tempRow[j] = cleanUpText(tempRow[j]);
 						switch (colTypes[j]){
 							case 0:
 								insertQuery = insertQuery.concat("'" + tempRow[j] + "'" + ',');
@@ -228,10 +268,15 @@ exports.insertTable = function(tableName, dataSet, callback){
 				}
 			}
 
-      console.log(insertQuery);
+      //console.log(insertQuery);
+      console.log("God damit");
       client.query(insertQuery, function(err, rows){
         if (err){
-          console.log("Could not insert data", insertQuery);
+          console.log("Count not insert query");
+          //console.log("Could not insert data", insertQuery);
+        }
+        else {
+          console.log("insert Complete!");
         }
       });
 
@@ -245,6 +290,10 @@ exports.insertTable = function(tableName, dataSet, callback){
 
 
 
+}
+
+function cleanUpText(str){
+  return str.replace("'", "''");
 }
 
 exports.addition = function(num1, num2){

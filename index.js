@@ -159,7 +159,7 @@ app.post('/files', file_uploaded.single('datafile'), function(req, res) {
       // add textBuff into DB
 
       var myDB = require('./public/js/database.js');
-
+      //console.log(textBuff);
       myDB.insertTable(req.file.originalname, textBuff, function(myRows) {
 
         if (myRows == true) {
