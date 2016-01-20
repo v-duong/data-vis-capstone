@@ -41,9 +41,9 @@ var vrModeIsOn = false;
 
 function VRBottonPressed(){
 	if (vrModeIsOn)
-		fullScreenExitHandler()
+		fullScreenExitHandler();
 	else
-		enterVRMode()
+		enterVRMode();
 
 }
 

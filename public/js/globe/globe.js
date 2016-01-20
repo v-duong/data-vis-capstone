@@ -68,7 +68,7 @@ DAT.Globe = function(container, opts) {
     }
   };
 
-  var camera, scene, renderer, w, h;
+  var camera, scene, renderer, w, h, effect;
   var mesh, atmosphere, point;
 
   var overRenderer;
@@ -143,7 +143,10 @@ DAT.Globe = function(container, opts) {
 
     renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
     renderer.setClearColor(0x000000, .9)
-    renderer.setSize(w, h);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    effect = new THREE.StereoEffect(renderer);
+    effect.setSize(window.innerWidth, window.innerHeight);
 
     container.appendChild(renderer.domElement);
 
@@ -340,11 +343,19 @@ DAT.Globe = function(container, opts) {
     }
   }
 
+  // function onWindowResize( event ) {
+  //   camera.aspect = container.offsetWidth / container.offsetHeight;
+  //   camera.updateProjectionMatrix();
+  //   renderer.setSize( container.offsetWidth, container.offsetHeight );
+  // }
+
   function onWindowResize( event ) {
-    camera.aspect = container.offsetWidth / container.offsetHeight;
+    camera.aspect = window.innerWidth/ window.innerHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize( container.offsetWidth, container.offsetHeight );
+    renderer.setSize( window.innerWidth, window.innerHeight );
+    effect.setSize( window.innerWidth, window.innerHeight );
   }
+
 
   function zoom(delta) {
     distanceTarget -= delta;
@@ -370,8 +381,13 @@ DAT.Globe = function(container, opts) {
 
     camera.lookAt(mesh.position);
 
-    renderer.render(scene, camera);
+    if (vrModeIsOn) {
+      effect.render(scene, camera);
+    } else {
+      renderer.render(scene, camera);
+    }
   }
+
 
   init();
   this.animate = animate;

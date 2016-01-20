@@ -24,6 +24,7 @@ function animate() {
   render();
 }
 
+
 function render() {
   if (vrModeIsOn) {
     effect.render(scene, camera);
