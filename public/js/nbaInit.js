@@ -1,4 +1,4 @@
-var camera, scene, renderer;
+var camera, scene, renderer, effect;
 var targetlist, mousetargetlist;
 var INTERSECTED;
 var mouseSphere = []
@@ -92,6 +92,8 @@ function init() {
   renderer = new THREE.WebGLRenderer({
     alpha: true
   });
+  effect = new THREE.StereoEffect(renderer);
+  effect.setSize(window.innerWidth, window.innerHeight);
   $('.visual').append(renderer.domElement);
 
 }
@@ -440,7 +442,11 @@ function animate() {
 }
 
 function render() {
-    renderer.render(scene, camera);
+    if (vrModeIsOn) {
+      effect.render(scene, camera);
+    } else {
+      renderer.render(scene, camera);
+    }
 }
 
 function generateYears(){
