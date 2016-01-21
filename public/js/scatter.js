@@ -1,14 +1,42 @@
  //renderer render the whole scene and camera
+ var initscatter = function() {
+
+  hideCamera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
+ 	camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
+ 	
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  //add effect
+  effect = new THREE.StereoEffect(renderer);
+  effect.setSize(window.innerWidth, window.innerHeight);
+
+  controls = new THREE.OrbitControls(camera, renderer.domElement);
+  //        controls.damping = 0.2;
+  hidecontrols = new THREE.DeviceOrientationControls(hideCamera);
+  //hidecontrols = new THREE.OrbitControls(hideCamera, renderer.domElement);
+  //        controls.damping = 0.2;
+  if (!INITIAL) {
+    controls.addEventListener('change', render);
+    hidecontrols.addEventListener('change', render);
+
+
+
+
+  }
+
+ }
  var renderScatter = function () {
 	RENDERID = requestAnimationFrame(renderScatter);
 	textFaceCamera(texts);
 	if (vrModeIsOn) {
+		  //hideCamera = new THREE.PerspectiveCamera(85, window.innerWidth / window.innerHeight, 1, 10000);
     	effect.render(scene, camera);
   	}
   	else {
     	renderer.render(scene, camera);
   	}
 	controls.update();
+	hidecontrols.update();
 }
 
 //draw line according to two points and color
@@ -185,13 +213,13 @@ var setupScene = function()
 
 	var camFactor = 130;
 
-	renderer.setClearColor( 0xffffff, 1);
-	renderer.setSize( window.innerWidth, window.innerHeight );
+ 
 	camera.position.set(10,10,10);
+	hideCamera.position.set(10,10,10);
+	scene.add(hideCamera);
 	scene.add(camera);
 
-	controls = new THREE.OrbitControls( camera , renderer.domElement);
-
+	
 	var geometry = new THREE.PlaneGeometry( 5, 5);
 	var material = new THREE.MeshBasicMaterial( {color: 0xF0F0F0, side: THREE.DoubleSide, transparent:true, opacity: 0.3} );
 	var material1 = new THREE.MeshBasicMaterial( {color: 0xC1C1C1, side: THREE.DoubleSide, transparent:true,opacity: 0.3} );
