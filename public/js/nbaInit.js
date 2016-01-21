@@ -669,11 +669,4 @@ function genPercentageText(){
    if (FirstTime)
     FirstTime = false;
 
-
-
-
-  //var textShapes = THREE.FontUtils.generateShapes( text, options );
-  //var text = new THREE.ShapeGeometry( textShapes );
-  //var textMesh = new THREE.Mesh( text, new THREE.MeshBasicMaterial( { color: 0xff0000 } ) ) ;
-  //scene.add(textMesh);
 }
