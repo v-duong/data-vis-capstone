@@ -9,6 +9,7 @@ var zones = new Array(14);
 var zonesMiss = new Array(14);
 var zonesMade = new Array(14);
 var zonesText = new Array(14);
+var zonesTextPerc = new Array(14);
 var FirstTime = true;
 
 var PointToZone = [[10,10,10,8,8,8,8,8,8,3,3,3,3,3,3,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,4,4,4,4,4,4,4,9,9,9],
@@ -642,16 +643,23 @@ function generateZoneColor(){
 
 function genPercentageText(){
 
-  var textCoordX = [380,360,280,360,380,225,180,230,380, 380, 380, 100, 100, 100];
+  var textCoordX = [380,360,280,360,380,225,190,230,380, 380, 380, 100, 100, 100];
   //var textCoordY = [4,];
-  var textCoordZ = [0,120,0,-120,200,120,0,-100,-200, 240, -230, 200, 0, -200];
-
+  var textCoordZ = [0,  120,0, -120,180,120,0, -100,-190,238,-240, 200, 0,  -200];
+  //var textCoordZPerc = [0,120,0,-120,200,120,0,-100,-200, 240, -230, 200, 0, -2];
 
   for (var i = 0; i < 14; i++){
     if (!FirstTime){
       scene.remove(zonesText[i]);
+      scene.remove(zonesTextPerc[i]);
     }
-		var TextGeo = new THREE.TextGeometry( String(zonesMade[i]) + '/' + String(zonesMade[i] + zonesMiss[i]), {
+		var TextGeo = new THREE.TextGeometry( String(zonesMade[i]) + '/' +
+                                          String(zonesMade[i] + zonesMiss[i]) , {
+		font:  'helvetiker'
+		,height:0
+		,size:10
+		});
+    var TextGeoPerc = new THREE.TextGeometry( String(((zonesMade[i]/(zonesMade[i]+zonesMiss[i]))*100).toFixed(2)) + '%', {
 		font:  'helvetiker'
 		,height:0
 		,size:10
@@ -661,9 +669,15 @@ function genPercentageText(){
      });
 
      zonesText[i] = new THREE.Mesh(TextGeo, textMaterial);
-      zonesText[i].position.set(textCoordX[i],10,textCoordZ[i]);
+      zonesText[i].position.set(textCoordX[i],10,textCoordZ[i] );
       zonesText[i].rotation.set(-Math.PI/2, 0, 0);
+
+      zonesTextPerc[i] = new THREE.Mesh(TextGeoPerc, textMaterial);
+       zonesTextPerc[i].position.set(textCoordX[i],10,textCoordZ[i]+15);
+       zonesTextPerc[i].rotation.set(-Math.PI/2, 0, 0);
+
      scene.add(zonesText[i]);
+     scene.add(zonesTextPerc[i]);
    }
 
    if (FirstTime)
