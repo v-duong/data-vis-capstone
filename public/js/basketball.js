@@ -199,6 +199,12 @@ function genZone4and8(){
     transparent: true,
     opacity: 0.5
   });
+  var material2 = new THREE.MeshBasicMaterial({
+    //color: 0x0ffcc0,
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.5
+  });
   //zones[4] = new THREE.Line(geometry, new THREE.LineBasicMaterial({color: 0x0f00ff}));
   var mymesh = new THREE.Mesh(geometry, material);
   mymesh.rotation.set(-Math.PI/2, 0,Math.PI/2);
@@ -207,12 +213,12 @@ function genZone4and8(){
   //scene.add(zones[4]);
 
   //zone 5
-  var mymesh2 = new THREE.Mesh(geometry, material);
+  var mymesh2 = new THREE.Mesh(geometry, material2);
   mymesh2.rotation.set(Math.PI/2, 0, Math.PI/2);
   mymesh2.position.set(455,4,87.5);
   mymesh2.__dirtyPosition = true;
   //scene.add(zones[8]);
-  return [mymesh, mymesh2];
+  return [mymesh2, mymesh];
 }
 
 function genZone5(){
