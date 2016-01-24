@@ -5,11 +5,10 @@ var mouseSphere = []
 var sphereToggle = false;
 var court;
 var INITIAL = false
-var zones = new Array(14);
+
 var zonesMiss = new Array(14);
 var zonesMade = new Array(14);
-var zonesText = new Array(14);
-var zonesTextPerc = new Array(14);
+
 var FirstTime = true;
 
 
@@ -84,24 +83,8 @@ function generatePlainCourtTexture(){
 	renderer.setSize( window.innerWidth, window.innerHeight );
 
   $('.visual').append(renderer.domElement);
-	var geometry = new THREE.BoxGeometry( 940, 2, 500 );
-	var material = new THREE.MeshBasicMaterial( { map : THREE.ImageUtils.loadTexture("static/img/basketball_court.png")} );
-	court = new THREE.Mesh( geometry, material );
-
-  var backboardMaterial = new THREE.MeshBasicMaterial ( {map : THREE.ImageUtils.loadTexture("static/img/backboard.jpg")} );
-
-
-  var backboard = new THREE.Mesh(
-    new THREE.BoxGeometry( 60, 35, 3),
-    backboardMaterial );
-  backboard.position.set(450,100,0);
-  backboard.__dirtyPosition = true;
-  backboard.rotation.set(0, Math.PI/2,0);
-  //backboard.__dirtyRotation = true;
-
-	scene.add( court );
-  scene.add( backboard );
-	camera.position.y = 500;
+  genCourt();
+  camera.position.y = 500;
   camera.lookAt(0,0,0);
   controls = new THREE.OrbitControls(camera, renderer.domElement);
 	animate();
@@ -112,26 +95,19 @@ function generatePlainCourtTexture(){
 
 function generateZones(){
   if (FirstTime){
-    var zone4and8 = genZone4and8();
-    zones[0] = genZone0();
-    zones[1] = genZone1();
-    zones[2] = genZone2();
-    zones[3] = genZone3();
-    zones[4] = zone4and8[0];
-    zones[5] = genZone5();
-    zones[6] = genZone6();
-    zones[7] = genZone7();
-    zones[8] = zone4and8[1];
-    zones[9] = genZone9();
-    zones[10] = genZone10();
-    //zones[11] = genZone11();
-    //zones[12] = genZone12();
-    //zones[13] = genZone13();
-
-
-    for (var i = 0; i < 11; i++){
-      scene.add(zones[i]);
-    }
+    genZone0();
+    genZone1();
+    genZone2();
+    genZone3();
+    genZone4and8();
+    genZone5();
+    genZone6();
+    genZone7();
+    genZone9();
+    genZone10();
+    //genZone11();
+    //genZone12();
+    //genZone13();
 
   }
 };
@@ -301,86 +277,7 @@ function parseShotData(data){
       zonesMiss[PointToZone[indexY][indexX]]++;
     }
   }
-  //generateZoneColor();
-  generateZoneColor(zonesMade, zonesMiss, zones);
-  genPercentageText(zonesMade, zonesMiss, zones);
-}
-/*
-function generateZoneColor(){
 
-  for (var i = 0; i < 14; i++){
-    var shotPercent = zonesMade[i]/(zonesMade[i] + zonesMiss[i]);
-    console.log("zone" + i + ": " + shotPercent);
-    console.log("made: " + zonesMade[i] + '/' +   (zonesMade[i]+ zonesMiss[i]));
-    console.log("");
-
-    // i don't have the mesh created for these yet
-    if ( i > 10)
-      continue;
-
-    // red
-    if (shotPercent > .50){
-      zones[i].material.color.setHex( 0xff0000 );
-    }
-    // yellow
-    else if (shotPercent > .40){
-      zones[i].material.color.setHex( 0xffff00 );
-    }
-    // green
-    else if (shotPercent > .30){
-      zones[i].material.color.setHex( 0x00cc00 );
-    }
-    else{
-      zones[i].material.color.setHex( 0x00ccff );
-    }
-
-
-  }
-
-  genPercentageText();
-}
-*/
-
-function genPercentageText(){
-
-  var textCoordX = [380,360,280,360,380,225,190,230,380, 380, 380, 100, 100, 100];
-  //var textCoordY = [4,];
-  var textCoordZ = [0,  120,0, -120,180,120,0, -100,-190,238,-240, 200, 0,  -200];
-  //var textCoordZPerc = [0,120,0,-120,200,120,0,-100,-200, 240, -230, 200, 0, -2];
-
-  for (var i = 0; i < 14; i++){
-    if (!FirstTime){
-      scene.remove(zonesText[i]);
-      scene.remove(zonesTextPerc[i]);
-    }
-		var TextGeo = new THREE.TextGeometry( String(zonesMade[i]) + '/' +
-                                          String(zonesMade[i] + zonesMiss[i]) , {
-		font:  'helvetiker'
-		,height:0
-		,size:10
-		});
-    var TextGeoPerc = new THREE.TextGeometry( String(((zonesMade[i]/(zonesMade[i]+zonesMiss[i]))*100).toFixed(2)) + '%', {
-		font:  'helvetiker'
-		,height:0
-		,size:10
-		});
-    var textMaterial = new THREE.MeshPhongMaterial({
-	     color: 0xdddddd
-     });
-
-     zonesText[i] = new THREE.Mesh(TextGeo, textMaterial);
-      zonesText[i].position.set(textCoordX[i],10,textCoordZ[i] );
-      zonesText[i].rotation.set(-Math.PI/2, 0, 0);
-
-      zonesTextPerc[i] = new THREE.Mesh(TextGeoPerc, textMaterial);
-       zonesTextPerc[i].position.set(textCoordX[i],10,textCoordZ[i]+15);
-       zonesTextPerc[i].rotation.set(-Math.PI/2, 0, 0);
-
-     scene.add(zonesText[i]);
-     scene.add(zonesTextPerc[i]);
-   }
-
-   if (FirstTime)
-    FirstTime = false;
-
+  generateZoneColor(zonesMade, zonesMiss);
+  genPercentageText(zonesMade, zonesMiss);
 }

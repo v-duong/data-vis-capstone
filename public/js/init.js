@@ -49,9 +49,18 @@ function generateVisuals() {
       graphType = 'scatter';
       generateScatter();
       break;
+    case 'basketball'
+      graphType = 'basketball';
+      gererateBasketball();
+      break;
     default:
       break;
   }
+}
+
+function generateBasketball(){
+  return 1;
+
 }
 
 

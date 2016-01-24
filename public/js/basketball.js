@@ -46,7 +46,32 @@ var PointToZone = [[10,10,10,8,8,8,8,8,8,3,3,3,3,3,3,3,0,0,0,0,0,0,0,0,0,0,0,0,0
 [13,13,13,13,13,13,13,13,13,13,13,13,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,11,11,11,11,11,11,11,11,11,11,11,11],
 [13,13,13,13,13,13,13,13,13,13,13,13,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,11,11,11,11,11,11,11,11,11,11,11,11]];
 
+var zones = new Array(14);
+var zonesText = new Array(14);
+var zonesTextPerc = new Array(14);
 
+
+// create floor and backboard
+function genCourt(){
+  var geometry = new THREE.BoxGeometry( 940, 2, 500 );
+	var material = new THREE.MeshBasicMaterial( { map : THREE.ImageUtils.loadTexture("static/img/basketball_court.png")} );
+	court = new THREE.Mesh( geometry, material );
+
+  var backboardMaterial = new THREE.MeshBasicMaterial ( {map : THREE.ImageUtils.loadTexture("static/img/backboard.jpg")} );
+
+
+  var backboard = new THREE.Mesh(
+    new THREE.BoxGeometry( 60, 35, 3),
+    backboardMaterial );
+  backboard.position.set(450,100,0);
+  backboard.__dirtyPosition = true;
+  backboard.rotation.set(0, Math.PI/2,0);
+  //backboard.__dirtyRotation = true;
+
+	scene.add( court );
+  scene.add( backboard );
+
+}
 
 function genZone10(){
   // geometry
@@ -67,7 +92,9 @@ function genZone10(){
 
   var mymesh = new THREE.Mesh( geo, material );
   //scene.add( mymesh);
-  return mymesh;
+  zones[10] = mymesh;
+  scene.add(mymesh);
+  //return mymesh;
 }
 function genZone9(){
   var geo = new THREE.Geometry();
@@ -86,7 +113,10 @@ function genZone9(){
   });
   // line
   var mymesh = new THREE.Mesh( geo, material );
-  return mymesh;
+
+  zones[9] = mymesh;
+  scene.add(mymesh);
+  //return mymesh;
 
 
 }
@@ -112,7 +142,9 @@ function genZone0(){
   myMesh.rotation.set(Math.PI/2, 0,Math.PI/2.75);
   myMesh.position.set(425,0,0);
   myMesh.__dirtyPosition = true;
-  return myMesh;
+  //return myMesh;
+  zones[0] = myMesh;
+  scene.add(myMesh);
   //scene.add(zones[0]);
 }
 
@@ -130,8 +162,9 @@ function genZone1(){
     mymesh.position.set(425,2,0);
     mymesh.__dirtyPosition = true;
 
-    return mymesh;
-
+    //return mymesh;
+    zones[1] = mymesh;
+    scene.add(mymesh);
 }
 function genZone2(){
   var geometry = new THREE.RingGeometry( 87.5, 167.5, 16, 2, 0, 50/180 * Math.PI);
@@ -149,7 +182,10 @@ function genZone2(){
   mymesh.position.set(425,2,0);
   mymesh.__dirtyPosition = true;
 
-  return mymesh;
+
+  zones[2] = mymesh;
+  scene.add(mymesh);
+  //return mymesh;
 }
 function genZone3(){
   var geometry = new THREE.RingGeometry( 87.5, 167.5, 16, 2, 0, 80/180 * Math.PI);
@@ -167,7 +203,9 @@ function genZone3(){
   mymesh.position.set(425,2,0);
   mymesh.__dirtyPosition = true;
 
-  return mymesh;
+  zones[3] = mymesh;
+  scene.add(mymesh);
+  //return mymesh;
 
 }
 
@@ -218,7 +256,11 @@ function genZone4and8(){
   mymesh2.position.set(455,4,87.5);
   mymesh2.__dirtyPosition = true;
   //scene.add(zones[8]);
-  return [mymesh2, mymesh];
+  //return [mymesh2, mymesh];
+  zones[4] = mymesh2;
+  scene.add(mymesh2);
+  zones[8] = mymesh;
+  scene.add(mymesh);
 }
 
 function genZone5(){
@@ -237,7 +279,9 @@ function genZone5(){
   mymesh.position.set(425,2,0);
   mymesh.__dirtyPosition = true;
 
-  return mymesh;
+  zones[5] = mymesh;
+  scene.add(mymesh);
+  //return mymesh;
 }
 
 function genZone6(){
@@ -256,7 +300,9 @@ function genZone6(){
   mymesh.position.set(425,2,0);
   mymesh.__dirtyPosition = true;
 
-  return mymesh;
+  zones[6] = mymesh;
+  scene.add(mymesh);
+  //return mymesh;
 }
 function genZone7(){
   var geometry = new THREE.RingGeometry( 167.5, 247.5, 16, 2, 0, 40/180 * Math.PI);
@@ -274,12 +320,14 @@ function genZone7(){
   mymesh.position.set(425,2,0);
   mymesh.__dirtyPosition = true;
 
-  return mymesh;
+  zones[7] = mymesh;
+  scene.add(mymesh);
+  //return mymesh;
 }
 
 
-function generateZoneColor(zoneMadeList, zoneMissList, zoneList){
-
+function generateZoneColor(zoneMadeList, zoneMissList){
+  var zoneList = zones;
   for (var i = 0; i < 14; i++){
     var shotPercent = zoneMadeList[i]/(zoneMadeList[i] + zoneMissList[i]);
     console.log("zone" + i + ": " + shotPercent);
@@ -308,5 +356,49 @@ function generateZoneColor(zoneMadeList, zoneMissList, zoneList){
 
 
   }
+
+}
+
+function genPercentageText(zoneMadeList, zoneMissList){
+
+  var textCoordX = [380,360,280,360,380,225,190,230,380, 380, 380, 100, 100, 100];
+  //var textCoordY = [4,];
+  var textCoordZ = [0,  120,0, -120,180,120,0, -100,-190,238,-240, 200, 0,  -200];
+  //var textCoordZPerc = [0,120,0,-120,200,120,0,-100,-200, 240, -230, 200, 0, -2];
+
+  for (var i = 0; i < 14; i++){
+    if (!FirstTime){
+      scene.remove(zonesText[i]);
+      scene.remove(zonesTextPerc[i]);
+    }
+		var TextGeo = new THREE.TextGeometry( String(zonesMade[i]) + '/' +
+                                          String(zonesMade[i] + zonesMiss[i]) , {
+		font:  'helvetiker'
+		,height:0
+		,size:10
+		});
+    var TextGeoPerc = new THREE.TextGeometry( String(((zonesMade[i]/(zonesMade[i]+zonesMiss[i]))*100).toFixed(2)) + '%', {
+		font:  'helvetiker'
+		,height:0
+		,size:10
+		});
+    var textMaterial = new THREE.MeshPhongMaterial({
+	     color: 0xdddddd
+     });
+
+     zonesText[i] = new THREE.Mesh(TextGeo, textMaterial);
+      zonesText[i].position.set(textCoordX[i],10,textCoordZ[i] );
+      zonesText[i].rotation.set(-Math.PI/2, 0, 0);
+
+      zonesTextPerc[i] = new THREE.Mesh(TextGeoPerc, textMaterial);
+       zonesTextPerc[i].position.set(textCoordX[i],10,textCoordZ[i]+15);
+       zonesTextPerc[i].rotation.set(-Math.PI/2, 0, 0);
+
+     scene.add(zonesText[i]);
+     scene.add(zonesTextPerc[i]);
+   }
+
+   if (FirstTime)
+    FirstTime = false;
 
 }
