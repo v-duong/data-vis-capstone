@@ -26,7 +26,7 @@ block sidelist
 					option(value='' selected='selected' disabled="disabled") Choose Player
 
 		li.b
-			input.button(type='button', value='Apply', onclick='generateCourt()')
+			input.button(type='button', value='Apply', onclick='generateNBACourt()')
 			input.button(type='button', value='Enter VR', onclick='VRBottonPressed()')
         
 block scripts
@@ -38,6 +38,7 @@ block scripts
 	script(src='static/js/lib/lodash.min.js')
 	script(src='static/js/lib/d3.min.js')
 	script(src='static/js/lib/StereoEffect.js')
+	script(src='static/js/basketball.js')
 	script(src='static/js/nbaInit.js')
 	script(src='static/js/vrDetection.js')
 	link(rel='stylesheet', href='//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css')
