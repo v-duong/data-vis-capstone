@@ -49,7 +49,7 @@ var PointToZone = [[10,10,10,8,8,8,8,8,8,3,3,3,3,3,3,3,0,0,0,0,0,0,0,0,0,0,0,0,0
 var zones = new Array(14);
 var zonesText = new Array(14);
 var zonesTextPerc = new Array(14);
-
+var FirstTime = true;
 
 // create floor and backboard
 function genCourt(){
@@ -72,6 +72,25 @@ function genCourt(){
   scene.add( backboard );
 
 }
+
+function generateZones(){
+  if (FirstTime){
+    genZone0();
+    genZone1();
+    genZone2();
+    genZone3();
+    genZone4and8();
+    genZone5();
+    genZone6();
+    genZone7();
+    genZone9();
+    genZone10();
+    //genZone11();
+    //genZone12();
+    //genZone13();
+
+  }
+};
 
 function genZone10(){
   // geometry
@@ -371,13 +390,13 @@ function genPercentageText(zoneMadeList, zoneMissList){
       scene.remove(zonesText[i]);
       scene.remove(zonesTextPerc[i]);
     }
-		var TextGeo = new THREE.TextGeometry( String(zonesMade[i]) + '/' +
-                                          String(zonesMade[i] + zonesMiss[i]) , {
+		var TextGeo = new THREE.TextGeometry( String(zoneMadeList[i]) + '/' +
+                                          String(zoneMadeList[i] + zoneMissList[i]) , {
 		font:  'helvetiker'
 		,height:0
 		,size:10
 		});
-    var TextGeoPerc = new THREE.TextGeometry( String(((zonesMade[i]/(zonesMade[i]+zonesMiss[i]))*100).toFixed(2)) + '%', {
+    var TextGeoPerc = new THREE.TextGeometry( String(((zoneMadeList[i]/(zoneMadeList[i]+zoneMissList[i]))*100).toFixed(2)) + '%', {
 		font:  'helvetiker'
 		,height:0
 		,size:10

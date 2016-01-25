@@ -6,10 +6,9 @@ var sphereToggle = false;
 var court;
 var INITIAL = false
 
-var zonesMiss = new Array(14);
-var zonesMade = new Array(14);
 
-var FirstTime = true;
+
+
 
 
 
@@ -93,24 +92,6 @@ function generatePlainCourtTexture(){
 }
 
 
-function generateZones(){
-  if (FirstTime){
-    genZone0();
-    genZone1();
-    genZone2();
-    genZone3();
-    genZone4and8();
-    genZone5();
-    genZone6();
-    genZone7();
-    genZone9();
-    genZone10();
-    //genZone11();
-    //genZone12();
-    //genZone13();
-
-  }
-};
 
 function animate() {
   RENDERID = requestAnimationFrame(animate);
@@ -245,7 +226,8 @@ function retreiveNBAData() {
 function parseShotData(data){
   var shotList = data.resultSets[0].rowSet;
   var shotListLen = shotList.length;
-
+  var zonesMiss = new Array(14);
+  var zonesMade = new Array(14);
   // reset zonesMade/Miss array
   for (var i = 0; i < 14; i++){
     zonesMade[i] = 0;

@@ -49,18 +49,107 @@ function generateVisuals() {
       graphType = 'scatter';
       generateScatter();
       break;
-    case 'basketball'
+    case 'basketball':
       graphType = 'basketball';
-      gererateBasketball();
+      generateBasketball();
       break;
     default:
       break;
   }
 }
 
-function generateBasketball(){
-  return 1;
 
+function generateBasketball(){
+  clearmeshes();
+  if (RENDERID != null)
+    cancelAnimationFrame(RENDERID);
+  if (!INITIAL) {
+    init();
+    INITIAL = true;
+
+  }
+  camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+
+	//renderer = new THREE.WebGLRenderer();
+	renderer.setSize( window.innerWidth, window.innerHeight );
+
+  $('.visual').append(renderer.domElement);
+  genCourt();
+  generateZones();
+  camera.position.y = 500;
+  camera.lookAt(0,0,0);
+  controls = new THREE.OrbitControls(camera, renderer.domElement);
+  //parseBallShotData();
+  var dataQuery = BasketballQuery();
+  $.getJSON('/retrieveData', {
+    myQuery: dataQuery
+  }, function(data) {
+    calculateZones(data);
+  });
+
+  //calculateZones();
+	animate();
+}
+// Creates a query based on Table, Columns, and Filters for Bar and Scatter
+function BasketballQuery(){
+  var tableSelected = $("#TableList option:selected").val();
+  var x = $("#courtXColumn option:selected").text();
+  var y = $("#courtYColumn option:selected").text();
+  var z = $("#shotColumn option:selected").text();
+
+  var xType = $("#xColumn option:selected").val();
+  var yType = $("#yColumn option:selected").val();
+  var zType = $("#zColumn option:selected").val();
+
+  var dataQuery = "SELECT " + x + ", " + y + ", " + z + " from " + tableSelected
+  return dataQuery;
+
+}
+
+
+function calculateZones(data){
+
+  var zonesMiss = new Array(14);
+  var zonesMade = new Array(14);
+
+  var courtX = $("#courtXColumn option:selected").text();
+  var courtY = $("#courtYColumn option:selected").text();
+  var shotFlag = $("#shotColumn option:selected").text();
+
+  // set zonesMade/Miss array
+  for (var i = 0; i < 14; i++){
+    zonesMade[i] = 0;
+    zonesMiss[i] = 0;
+  }
+
+  var keys = _.keys(data[0]);
+  console.log(data[0]);
+  console.log(data[1]);
+  for (var i = 0; i < data.length; i++) {
+    //t_x.push(data[i][keys[0]]);
+    //t_y.push(data[i][keys[1]]);
+    //t_z.push(data[i][keys[2]]);
+    //console.log(data[i][keys[0]]);
+    var indexX= Math.round(( data[i][keys[0]]+250 )/10);
+    var indexY=Math.round(( data[i][keys[1]] + 40)/10);  // add 40 to include the distance from base line to rim
+    if ((indexY >= 47) || (indexX < 0) || (indexX >= 50) )
+     continue;
+    // if its a make
+    if (data[i][keys[2]] == 1){
+      // for now we won't include shots from back court
+      //console.log(PointToZone[indexY][indexX]);
+      zonesMade[PointToZone[indexY][indexX]]++;
+    }
+    else {
+      // for now we won't include shots from back court
+
+
+      zonesMiss[PointToZone[indexY][indexX]]++;
+    }
+  }
+
+  generateZoneColor(zonesMade, zonesMiss);
+  genPercentageText(zonesMade, zonesMiss);
 }
 
 
