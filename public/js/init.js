@@ -78,6 +78,10 @@ function generateBasketball(){
   generateZones();
   camera.position.y = 500;
   camera.lookAt(0,0,0);
+  //add effect
+  effect = new THREE.StereoEffect(renderer);
+  effect.setSize(window.innerWidth, window.innerHeight);
+  
   controls = new THREE.OrbitControls(camera, renderer.domElement);
   //parseBallShotData();
   var dataQuery = BasketballQuery();
@@ -126,10 +130,6 @@ function calculateZones(data){
   console.log(data[0]);
   console.log(data[1]);
   for (var i = 0; i < data.length; i++) {
-    //t_x.push(data[i][keys[0]]);
-    //t_y.push(data[i][keys[1]]);
-    //t_z.push(data[i][keys[2]]);
-    //console.log(data[i][keys[0]]);
     var indexX= Math.round(( data[i][keys[0]]+250 )/10);
     var indexY=Math.round(( data[i][keys[1]] + 40)/10);  // add 40 to include the distance from base line to rim
     if ((indexY >= 47) || (indexX < 0) || (indexX >= 50) )
@@ -137,13 +137,9 @@ function calculateZones(data){
     // if its a make
     if (data[i][keys[2]] == 1){
       // for now we won't include shots from back court
-      //console.log(PointToZone[indexY][indexX]);
       zonesMade[PointToZone[indexY][indexX]]++;
     }
     else {
-      // for now we won't include shots from back court
-
-
       zonesMiss[PointToZone[indexY][indexX]]++;
     }
   }

@@ -9,7 +9,47 @@ function isNumber(evt) {
     return true;
 }
 
-
+function setDefaultDropDownValue(visSelected, col1, col2, col3, colList){
+  var col1Elem = document.getElementById(col1);
+  var col2Elem = document.getElementById(col2);
+  var col3Elem = document.getElementById(col3);
+  switch(visSelected){
+    case 'basketball':
+      for (var i = 0; i < colList.length; i++){
+        console.log(colList[i].column_name.toLowerCase())
+        switch (colList[i].column_name.toLowerCase()){
+          //case 'LOC_X':
+          case 'loc_x':
+          case 'x':
+          //case 'X':
+          case 'location_x':
+          //case 'LOCATION_X':
+            col1Elem.selectedIndex = i+1;
+            break;
+        //  case 'LOC_Y':
+          case 'loc_y':
+        //  case 'Y':
+          case 'y':
+          case 'location_y':
+          //case 'LOCATION_Y':
+              col2Elem.selectedIndex = i+1;
+              break;
+          case 'shot_made':
+          case 'shot_flag':
+          case 'shot':
+            col3Elem.selectedIndex = i+1;
+            break;
+          default:
+            break;
+          }
+      }
+    break;
+    case 'scatter':
+    break;
+    case 'bar':
+    break;
+  }
+}
 // table selected, time to show columns.. See what kind of Visualization was chosen first
 $("#TableList").change(function(){
 	var visualSelected =  $("#VisualList option:selected").val();
@@ -39,6 +79,7 @@ $("#TableList").change(function(){
         $("#columnSelection.off-canvas-submenu").append('<li><p>X</p> <select id="xColumn">' + htmlStr);
         $("#columnSelection.off-canvas-submenu").append('<li><p>Y</p> <select id="yColumn">' + htmlStrForY);
         $("#columnSelection.off-canvas-submenu").append('<li><p>Z</p> <select id="zColumn">' + htmlStr);
+
 
         //generateBarFilters();
 
@@ -93,6 +134,7 @@ $("#TableList").change(function(){
 				$("#columnSelection.off-canvas-submenu").append('<li><p>Court Y</p> <select id="courtYColumn">' + htmlStr);
 				$("#columnSelection.off-canvas-submenu").append('<li><p>Shot Result</p> <select id="shotColumn">' + htmlStr);
 
+        setDefaultDropDownValue(visualSelected, 'courtXColumn', 'courtYColumn','shotColumn', data);
 				//generateBarFilters();
 
 			});
