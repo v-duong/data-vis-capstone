@@ -9,45 +9,109 @@ function isNumber(evt) {
     return true;
 }
 
+
+function colDetectBarScatter(colElem1, colElem2, colElem3, colList){
+  for (var i = 0; i < colList.length; i++){
+    //console.log(colList[i].column_name.toLowerCase())
+    switch (colList[i].column_name.toLowerCase()){
+      case 'x':
+        colElem1.selectedIndex = i+1;
+        switch (colElem1[i+1].value){
+          case 'double precision':
+            generateNumericColumnFilter('#xColumn');
+            break;
+          case 'text':
+            generateTextColumnFilter('#xColumn');
+            break;
+          default:
+            break;
+        }
+        break;
+
+        // y column can potentially have less items than x, so need to check items
+      case 'y':
+        var index = 0;
+        console.log(colElem2.length);
+        if (colElem2.length-1 < colList.length){
+            for (index = 1; index < colElem2.length; index++){
+              if(colElem2[index].text == colList[i].column_name){
+
+                break;
+              }
+            }
+        }
+        console.log(index);
+          colElem2.selectedIndex = index;
+          switch (colElem2[index].value){
+            case 'double precision':
+              generateNumericColumnFilter('#yColumn');
+              break;
+            case 'text':
+              generateTextColumnFilter('#yColumn');
+              break;
+            default:
+              break;
+          }
+          break;
+      case 'z':
+        colElem3.selectedIndex = i+1;
+        switch (colElem3[i+1].value){
+          case 'double precision':
+            generateNumericColumnFilter('#zColumn');
+            break;
+          case 'text':
+            generateTextColumnFilter('#zColumn');
+            break;
+          default:
+            break;
+        }
+        break;
+      default:
+        break;
+      }
+  }
+}
+
+function colDetectBasketball(colElem1, colElem2, colElem3, colList){
+  for (var i = 0; i < colList.length; i++){
+    //console.log(colList[i].column_name.toLowerCase())
+    switch (colList[i].column_name.toLowerCase()){
+      case 'loc_x':
+      case 'x':
+      case 'location_x':
+        colElem1.selectedIndex = i+1;
+        break;
+      case 'loc_y':
+      case 'y':
+      case 'location_y':
+          colElem2.selectedIndex = i+1;
+          break;
+      case 'shot_made':
+      case 'shot_flag':
+      case 'shot':
+        colElem3.selectedIndex = i+1;
+        break;
+      default:
+        break;
+      }
+  }
+}
+
 function setDefaultDropDownValue(visSelected, col1, col2, col3, colList){
   var col1Elem = document.getElementById(col1);
   var col2Elem = document.getElementById(col2);
   var col3Elem = document.getElementById(col3);
+  //console.log(visSelected);
   switch(visSelected){
     case 'basketball':
-      for (var i = 0; i < colList.length; i++){
-        console.log(colList[i].column_name.toLowerCase())
-        switch (colList[i].column_name.toLowerCase()){
-          //case 'LOC_X':
-          case 'loc_x':
-          case 'x':
-          //case 'X':
-          case 'location_x':
-          //case 'LOCATION_X':
-            col1Elem.selectedIndex = i+1;
-            break;
-        //  case 'LOC_Y':
-          case 'loc_y':
-        //  case 'Y':
-          case 'y':
-          case 'location_y':
-          //case 'LOCATION_Y':
-              col2Elem.selectedIndex = i+1;
-              break;
-          case 'shot_made':
-          case 'shot_flag':
-          case 'shot':
-            col3Elem.selectedIndex = i+1;
-            break;
-          default:
-            break;
-          }
-      }
-    break;
+      colDetectBasketball(col1Elem, col2Elem, col3Elem, colList);
+      break;
     case 'scatter':
-    break;
     case 'bar':
-    break;
+      colDetectBarScatter(col1Elem, col2Elem, col3Elem, colList);
+      break;
+    default:
+      break;
   }
 }
 // table selected, time to show columns.. See what kind of Visualization was chosen first
@@ -80,7 +144,7 @@ $("#TableList").change(function(){
         $("#columnSelection.off-canvas-submenu").append('<li><p>Y</p> <select id="yColumn">' + htmlStrForY);
         $("#columnSelection.off-canvas-submenu").append('<li><p>Z</p> <select id="zColumn">' + htmlStr);
 
-
+        setDefaultDropDownValue(visualSelected, 'xColumn', 'yColumn','zColumn', data);
         //generateBarFilters();
 
       });
@@ -109,7 +173,7 @@ $("#TableList").change(function(){
 				$("#columnSelection.off-canvas-submenu").append('<li><p>Z</p> <select id="zColumn">' + htmlStr);
 
 				//generateBarFilters();
-
+        setDefaultDropDownValue(visualSelected, 'xColumn', 'yColumn','zColumn', data);
 			});
 			break;
     case 'basketball':
