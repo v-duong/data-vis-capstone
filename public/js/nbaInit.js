@@ -3,7 +3,6 @@ var targetlist, mousetargetlist;
 var INTERSECTED;
 var mouseSphere = []
 var sphereToggle = false;
-var court;
 var INITIAL = false
 
 
@@ -109,7 +108,7 @@ function render() {
 function generateYears(){
   var curYear = new Date().getFullYear();
 
-  var yearsSinceBeginning = curYear - 1947
+  var yearsSinceBeginning = curYear - 1947;
   var tempStr = "";
   $("#yearSelection.off-canvas-list").html("");
   var htmlStr = "<option value='' selected='selected' disabled='disabled'> Choose Season </option>";
