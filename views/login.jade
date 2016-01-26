@@ -1,0 +1,22 @@
+extend navtemplate
+block maintext
+  .error #{message}
+  form(action='/auth/register' method='POST')
+    div.form-group
+      label username
+      input(type='user' name='user')
+    div.form-group
+      label password
+      input(type='password' name='pass')
+    button(type='submit', classname='btn btn-warning btn-lg') Signup
+  br
+  br
+  form(action='/auth/login' method='POST')
+    div.form-group
+      label username
+      input(type='user' name='user')
+    div.form-group
+      label password
+      input(type='password' name='pass')
+    button(type='submit', classname='btn btn-warning btn-lg') Login
+  script(src='https://code.jquery.com/jquery-2.1.4.min.js')

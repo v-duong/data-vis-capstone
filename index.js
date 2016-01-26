@@ -11,11 +11,11 @@ var bcrypt = require('bcrypt');
 var flash = require("connect-flash");
 var db = require('./public/js/database.js')
 var Sequelize = require('sequelize');
-var sequelize = new Sequelize('postgres://uiruphueqmgtzy:MeDPu8elxoLOYZFhSP6JstEQGU@ec2-54-225-195-249.compute-1.amazonaws.com:5432/d4bm6q4qc2ha09?ssl=true');
+var sequelize = new Sequelize('postgres://uiruphueqmgtzy:MeDPu8elxoLOYZFhSP6JstEQGU@ec2-54-225-195-249.compute-1.amazonaws.com:5432/d4bm6q4qc2ha09', {
+   dialectOptions: {
+        ssl: true
+    }});
 //TODO: MOVE DB URL SHIT TO CONFIG VAR
-
-require('./passport.js')(passport, Strategy, bcrypt, sequelize);
-
 
 app.set('port', (process.env.PORT || 4500));
 
@@ -31,22 +31,38 @@ app.use(bodyParser.urlencoded({ // to support URL-encoded bodies
 }));
 app.use(cookieParser());
 app.use(flash());
-app.use(session({secret: 'teststring', resave: false, saveUninitialized: false}));
+app.use(session({secret: 'secret as shit', resave: false, saveUninitialized: false, cookie: {expires: new Date(Date.now() + 2592000000)}}));
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.get('*', function(req, res, next) {
+  res.locals.logged = (req.user) ? true : false
+  next();
+})
 
 app.get('/', function(req, res) {
     res.render('index');
 });
 
-app.post('/login', function(req, res) {
-  var user = req.body.user;
-  var pass = req.body.pass;
+app.get('/login', function(req, res) {
+    res.render('login', {message: req.flash('error')});
 });
 
-app.post('/register', passport.authenticate('register', {
-  successRedirect: '/',
-  failureRedirect: '/fail'
+app.get('/logout', function(req, res) {
+  req.logout();
+  res.redirect('/');
+})
+
+app.post('/auth/login', passport.authenticate('login', {
+  successRedirect: '/files',
+  failureRedirect: '/login',
+  failureFlash : true
+}));
+
+app.post('/auth/register', passport.authenticate('register', {
+  successRedirect: '/files',
+  failureRedirect: '/login',
+  failureFlash : true
 }));
 
 app.get('/files', function(req, res) {
@@ -322,3 +338,60 @@ var server = require('http').createServer(app);
 server.listen((process.env.PORT || app.get('port')), function() {
   console.log("Express server listening on port %d ", server.address().port);
 });
+
+
+
+
+
+
+
+
+
+
+var User = sequelize.define('User', {
+  username: {type: Sequelize.STRING, unique: true},
+  password: Sequelize.STRING,
+  usertables: Sequelize.ARRAY(Sequelize.TEXT)
+});
+
+User.sync();
+
+passport.serializeUser(function(user, done) {
+  console.log(user.id)
+  done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+  User
+    .findById(id).then( function(user) {
+      console.log(id)
+      if (!user) {
+        return done(null, false);
+      }
+      //console.log(user)
+      done(null, user);
+    });
+});
+
+passport.use('register', new Strategy({usernameField: 'user', passwordField: 'pass', passReqToCallback: true},function(req, user, pass, done) {
+  User
+    .findOrCreate({where: {username: user}, defaults: {password: bcrypt.hashSync(pass, 5), usertables: []} }).spread(function(u,c) {
+      if (!c) {
+        return done(null, false, {message: "username taken"})
+      } else {
+          return done(null, u);
+        }
+      })
+    })
+)
+
+passport.use('login', new Strategy({usernameField: 'user', passwordField: 'pass', passReqToCallback: true}, function(req, user, pass, done) {
+  User
+    .findOne( { where: {username: user} } ).then( function(u) {
+      if (!u)
+        return done(null, false, {message: "user not found"})
+      if (!bcrypt.compareSync(pass, u.password))
+        return done(null, false, {message: "wrong password"})
+      return done(null, u)
+    })
+}))

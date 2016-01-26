@@ -28,11 +28,14 @@ passport.deserializeUser(function(id, done) {
 });
 
 passport.use('register', new Strategy({usernameField: 'user', passwordField: 'pass', passReqToCallback: true}, function(req, user, pass, done) {
+  console.log("REgister")
   User
     .findOrCreate({where: {username: user}, defaults: {password: pass, usertables: []} }).spread(function(u,c) {
       if (!c) {
+        console.log("fauikl")
         return done(null, false, {message: "username taken"})
       } else {
+        console.log("WHAT")
           return done(null, u);
         }
       })
