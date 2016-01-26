@@ -10,67 +10,242 @@ function isNumber(evt) {
 }
 
 
+function colDetectBarScatter(colElem1, colElem2, colElem3, colList){
+  for (var i = 0; i < colList.length; i++){
+    //console.log(colList[i].column_name.toLowerCase())
+    switch (colList[i].column_name.toLowerCase()){
+      case 'x':
+        colElem1.selectedIndex = i+1;
+        switch (colElem1[i+1].value){
+          case 'double precision':
+            generateNumericColumnFilter('#xColumn');
+            break;
+          case 'text':
+            generateTextColumnFilter('#xColumn');
+            break;
+          default:
+            break;
+        }
+        break;
+
+        // y column can potentially have less items than x, so need to check items
+      case 'y':
+        var index = 0;
+        console.log(colElem2.length);
+        if (colElem2.length-1 < colList.length){
+            for (index = 1; index < colElem2.length; index++){
+              if(colElem2[index].text == colList[i].column_name){
+
+                break;
+              }
+            }
+        }
+        else {
+          index = i+1;
+        }
+          colElem2.selectedIndex = index;
+          switch (colElem2[index].value){
+            case 'double precision':
+              generateNumericColumnFilter('#yColumn');
+              break;
+            case 'text':
+              generateTextColumnFilter('#yColumn');
+              break;
+            default:
+              break;
+          }
+          break;
+      case 'z':
+        colElem3.selectedIndex = i+1;
+        switch (colElem3[i+1].value){
+          case 'double precision':
+            generateNumericColumnFilter('#zColumn');
+            break;
+          case 'text':
+            generateTextColumnFilter('#zColumn');
+            break;
+          default:
+            break;
+        }
+        break;
+      default:
+        break;
+      }
+  }
+}
+
+function colDetectBasketball(colElem1, colElem2, colElem3, colList){
+  for (var i = 0; i < colList.length; i++){
+    //console.log(colList[i].column_name.toLowerCase())
+    switch (colList[i].column_name.toLowerCase()){
+      case 'loc_x':
+      case 'x':
+      case 'location_x':
+        colElem1.selectedIndex = i+1;
+        break;
+      case 'loc_y':
+      case 'y':
+      case 'location_y':
+          colElem2.selectedIndex = i+1;
+          break;
+      case 'shot_made':
+      case 'shot_flag':
+      case 'shot':
+        colElem3.selectedIndex = i+1;
+        break;
+      default:
+        break;
+      }
+  }
+}
+
+function setDefaultDropDownValue(visSelected, col1, col2, col3, colList){
+  var col1Elem = document.getElementById(col1);
+  var col2Elem = document.getElementById(col2);
+  var col3Elem = document.getElementById(col3);
+  //console.log(visSelected);
+  switch(visSelected){
+    case 'basketball':
+      colDetectBasketball(col1Elem, col2Elem, col3Elem, colList);
+      break;
+    case 'scatter':
+    case 'bar':
+      colDetectBarScatter(col1Elem, col2Elem, col3Elem, colList);
+      break;
+    default:
+      break;
+  }
+}
+
+$("#VisualList").change(function(){
+  var visualSelected =  $("#VisualList option:selected").val();
+  var tableSelected = $("#TableList option:selected").val();
+  switch(visualSelected){
+  // if we're switching to basketball, theres no filters, so make sure to remove all
+    case 'basketball':
+
+      $('#filters1').html("");
+      $('#filters2').html("");
+      $('#filters3').html("");
+      if (tableSelected != 'Choose Column')
+        createColsBasketball(visualSelected, tableSelected);
+      break;
+    case 'bar':
+      if (tableSelected != 'Choose Column')
+        createColsBar(visualSelected, tableSelected);
+      break;
+    case 'scatter':
+      if (tableSelected != 'Choose Column')
+        createColsScatter(visualSelected, tableSelected);
+      break;
+    default:
+      break;
+
+  }
+
+});
+
+function createColsBar(visualSelected, tableSelected){
+  var getColumnTypeQuery = "SELECT column_name ,data_type FROM information_schema.columns where table_name = '";
+  getColumnTypeQuery = getColumnTypeQuery.concat(tableSelected + "'");
+
+  $("#columnSelection.off-canvas-submenu").html("");
+  $.getJSON('/retrieveData', { myQuery : getColumnTypeQuery }, function(data){
+    // create a dropdown list
+    // default at "Choose Column" to make sure user actually chooses a column
+    var htmlStr = "<option value='' selected='selected' disabled='disabled'> Choose Column </option>";
+    var htmlStrForY = "<option value='' selected='selected' disabled='disabled'> Choose Column </option>";
+    // populate dropdown list with columnNames and Values
+    for (var i = 0; i < data.length; i++){
+      htmlStr = htmlStr.concat('<option value="' + data[i].data_type + '">' + data[i].column_name + '</option>');
+
+      // for Y Column since Y should not contain any text
+      if (data[i].data_type != 'text'){
+        htmlStrForY = htmlStrForY.concat('<option value="' + data[i].data_type + '">' + data[i].column_name + '</option>');
+      }
+    }
+
+    htmlStr = htmlStr.concat('</select></li>');
+    $("#columnSelection.off-canvas-submenu").append('<li><p>X</p> <select id="xColumn">' + htmlStr);
+    $("#columnSelection.off-canvas-submenu").append('<li><p>Y</p> <select id="yColumn">' + htmlStrForY);
+    $("#columnSelection.off-canvas-submenu").append('<li><p>Z</p> <select id="zColumn">' + htmlStr);
+
+    setDefaultDropDownValue(visualSelected, 'xColumn', 'yColumn','zColumn', data);
+    //generateBarFilters();
+
+  });
+}
+function createColsScatter(visualSelected, tableSelected){
+  var getColumnTypeQuery = "SELECT column_name ,data_type FROM information_schema.columns where table_name = '";
+  getColumnTypeQuery = getColumnTypeQuery.concat(tableSelected + "'");
+  getColumnTypeQuery = getColumnTypeQuery.concat(" and data_type = 'double precision'");
+
+  $("#columnSelection.off-canvas-submenu").html("");
+  $.getJSON('/retrieveData', { myQuery : getColumnTypeQuery }, function(data){
+    // create a dropdown list
+    // default at "Choose Column" to make sure user actually chooses a column
+    var htmlStr = "<option value='' selected='selected' disabled='disabled'> Choose Column </option>";
+
+    // populate dropdown list with columnNames and Values
+    for (var i = 0; i < data.length; i++){
+      htmlStr = htmlStr.concat('<option value="' + data[i].data_type + '">' + data[i].column_name + '</option>');
+    }
+
+    htmlStr = htmlStr.concat('</select></li>');
+    $("#columnSelection.off-canvas-submenu").append('<li><p>X</p> <select id="xColumn">' + htmlStr);
+    $("#columnSelection.off-canvas-submenu").append('<li><p>Y</p> <select id="yColumn">' + htmlStr);
+    $("#columnSelection.off-canvas-submenu").append('<li><p>Z</p> <select id="zColumn">' + htmlStr);
+
+    //generateBarFilters();
+    setDefaultDropDownValue(visualSelected, 'xColumn', 'yColumn','zColumn', data);
+  });
+}
+
+function createColsBasketball(visualSelected, tableSelected){
+  var getColumnTypeQuery = "SELECT column_name ,data_type FROM information_schema.columns where table_name = '";
+  getColumnTypeQuery = getColumnTypeQuery.concat(tableSelected + "'");
+  getColumnTypeQuery = getColumnTypeQuery.concat(" and data_type = 'double precision'");
+
+  $("#columnSelection.off-canvas-submenu").html("");
+  $.getJSON('/retrieveData', { myQuery : getColumnTypeQuery }, function(data){
+    // create a dropdown list
+    // default at "Choose Column" to make sure user actually chooses a column
+    var htmlStr = "<option value='' selected='selected' disabled='disabled'> Choose Column </option>";
+
+    // populate dropdown list with columnNames and Values
+    for (var i = 0; i < data.length; i++){
+      htmlStr = htmlStr.concat('<option value="' + data[i].data_type + '">' + data[i].column_name + '</option>');
+    }
+
+    htmlStr = htmlStr.concat('</select></li>');
+    $("#columnSelection.off-canvas-submenu").append('<li><p>Court X</p> <select id="courtXColumn">' + htmlStr);
+    $("#columnSelection.off-canvas-submenu").append('<li><p>Court Y</p> <select id="courtYColumn">' + htmlStr);
+    $("#columnSelection.off-canvas-submenu").append('<li><p>Shot Result</p> <select id="shotColumn">' + htmlStr);
+
+    setDefaultDropDownValue(visualSelected, 'courtXColumn', 'courtYColumn','shotColumn', data);
+    //generateBarFilters();
+
+  });
+}
 // table selected, time to show columns.. See what kind of Visualization was chosen first
 $("#TableList").change(function(){
 	var visualSelected =  $("#VisualList option:selected").val();
 	switch(visualSelected){
 		case 'bar':
       var tableSelected = $("#TableList option:selected").val();
-      var getColumnTypeQuery = "SELECT column_name ,data_type FROM information_schema.columns where table_name = '";
-      getColumnTypeQuery = getColumnTypeQuery.concat(tableSelected + "'");
-
-      $("#columnSelection.off-canvas-submenu").html("");
-      $.getJSON('/retrieveData', { myQuery : getColumnTypeQuery }, function(data){
-        // create a dropdown list
-        // default at "Choose Column" to make sure user actually chooses a column
-        var htmlStr = "<option value='' selected='selected' disabled='disabled'> Choose Column </option>";
-        var htmlStrForY = "<option value='' selected='selected' disabled='disabled'> Choose Column </option>";
-        // populate dropdown list with columnNames and Values
-        for (var i = 0; i < data.length; i++){
-          htmlStr = htmlStr.concat('<option value="' + data[i].data_type + '">' + data[i].column_name + '</option>');
-
-          // for Y Column since Y should not contain any text
-          if (data[i].data_type != 'text'){
-            htmlStrForY = htmlStrForY.concat('<option value="' + data[i].data_type + '">' + data[i].column_name + '</option>');
-          }
-        }
-
-        htmlStr = htmlStr.concat('</select></li>');
-        $("#columnSelection.off-canvas-submenu").append('<li><p>X</p> <select id="xColumn">' + htmlStr);
-        $("#columnSelection.off-canvas-submenu").append('<li><p>Y</p> <select id="yColumn">' + htmlStrForY);
-        $("#columnSelection.off-canvas-submenu").append('<li><p>Z</p> <select id="zColumn">' + htmlStr);
-
-        //generateBarFilters();
-
-      });
+      createColsBar(visualSelected, tableSelected);
       break;
 
 		case 'scatter':
-			var tableSelected = $("#TableList option:selected").val();
-			var getColumnTypeQuery = "SELECT column_name ,data_type FROM information_schema.columns where table_name = '";
-			getColumnTypeQuery = getColumnTypeQuery.concat(tableSelected + "'");
-      getColumnTypeQuery = getColumnTypeQuery.concat(" and data_type = 'double precision'");
-
-			$("#columnSelection.off-canvas-submenu").html("");
-			$.getJSON('/retrieveData', { myQuery : getColumnTypeQuery }, function(data){
-				// create a dropdown list
-				// default at "Choose Column" to make sure user actually chooses a column
-				var htmlStr = "<option value='' selected='selected' disabled='disabled'> Choose Column </option>";
-
-				// populate dropdown list with columnNames and Values
-				for (var i = 0; i < data.length; i++){
-					htmlStr = htmlStr.concat('<option value="' + data[i].data_type + '">' + data[i].column_name + '</option>');
-				}
-
-				htmlStr = htmlStr.concat('</select></li>');
-				$("#columnSelection.off-canvas-submenu").append('<li><p>X</p> <select id="xColumn">' + htmlStr);
-				$("#columnSelection.off-canvas-submenu").append('<li><p>Y</p> <select id="yColumn">' + htmlStr);
-				$("#columnSelection.off-canvas-submenu").append('<li><p>Z</p> <select id="zColumn">' + htmlStr);
-
-				//generateBarFilters();
-
-			});
+      var tableSelected = $("#TableList option:selected").val();
+      createColsScatter(visualSelected, tableSelected);
 			break;
+
+    case 'basketball':
+      var tableSelected = $("#TableList option:selected").val();
+      createColsBasketball(visualSelected, tableSelected);
+      break;
+
 
     case 'globe':
       var tableSelected = $("#TableList option:selected").val();
