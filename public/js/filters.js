@@ -40,7 +40,9 @@ function colDetectBarScatter(colElem1, colElem2, colElem3, colList){
               }
             }
         }
-        console.log(index);
+        else {
+          index = i+1;
+        }
           colElem2.selectedIndex = index;
           switch (colElem2[index].value){
             case 'double precision':

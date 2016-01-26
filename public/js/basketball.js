@@ -50,7 +50,27 @@ var zones = new Array(14);
 var zonesText = new Array(14);
 var zonesTextPerc = new Array(14);
 var FirstTime = true;
+var backboard;
+var court;
 
+function clearBasketballMesh(){
+  for (var i = 0; i < 14; i++){
+    if ((zones[i] != null) && (zones[i] != undefined)){
+      scene.remove(zones[i]);
+    }
+    if ((zonesText[i] != null) && (zonesText[i] != undefined)){
+      scene.remove(zonesText[i]);
+      scene.remove(zonesTextPerc[i]);
+    }
+  }
+  if ((court != null) && (court != undefined)){
+    scene.remove(court);
+  }
+  if ((backboard != null) && (backboard != undefined)){
+    scene.remove(backboard);
+  }
+  FirstTime = true;
+}
 // create floor and backboard
 function genCourt(){
   var geometry = new THREE.BoxGeometry( 940, 2, 500 );
@@ -60,7 +80,7 @@ function genCourt(){
   var backboardMaterial = new THREE.MeshBasicMaterial ( {map : THREE.ImageUtils.loadTexture("static/img/backboard.jpg")} );
 
 
-  var backboard = new THREE.Mesh(
+  backboard = new THREE.Mesh(
     new THREE.BoxGeometry( 60, 35, 3),
     backboardMaterial );
   backboard.position.set(450,100,0);

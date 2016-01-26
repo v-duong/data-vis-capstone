@@ -81,7 +81,7 @@ function generateBasketball(){
   //add effect
   effect = new THREE.StereoEffect(renderer);
   effect.setSize(window.innerWidth, window.innerHeight);
-  
+
   controls = new THREE.OrbitControls(camera, renderer.domElement);
   //parseBallShotData();
   var dataQuery = BasketballQuery();
@@ -247,6 +247,7 @@ function clearmeshes() {
     scene.remove(meshes[i]);
   }
   meshes = [];
+  clearBasketballMesh();
 }
 
 function onWindowResize() {

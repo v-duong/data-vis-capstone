@@ -3,7 +3,6 @@ var targetlist, mousetargetlist;
 var INTERSECTED;
 var mouseSphere = []
 var sphereToggle = false;
-var court;
 var INITIAL = false
 
 

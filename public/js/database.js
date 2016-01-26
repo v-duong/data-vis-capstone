@@ -13,14 +13,13 @@ var moment = require('moment');
 
 
 // connect to heroku's database
-var connectionString = "postgres://aaojwaabmvczuq:aHR5JA0-K0wmk6Q6k6VXXfhChO@ec2-54-197-241-239.compute-1.amazonaws.com:5432/d3so15mog50g7o?ssl=true";
+var connectionString = "postgres://uiruphueqmgtzy:MeDPu8elxoLOYZFhSP6JstEQGU@ec2-54-225-195-249.compute-1.amazonaws.com:5432/d4bm6q4qc2ha09?ssl=true";
 
 
 var client = new pg.Client(connectionString);
 client.connect(function(err) {
   if (err)
     console.log("DB ERROR");
-  //console.log("Set dbClient to NULL")
 });
 
 exports.queryDB = function(queryStr, callback) {
@@ -41,7 +40,7 @@ exports.queryDB = function(queryStr, callback) {
 
 exports.deleteTable = function(tableName, callback) {
   //drop table firsttest
-  console.log("trying to drop");
+
   var dropQuery = "drop table ".concat(tableName);
   client.query(dropQuery, function(err, rows) {
     if (err) {
@@ -92,9 +91,7 @@ function findType(dataSet, colNum){
 
 		if (isNaN(curRow[colNum]) && (curRow[colNum] !== undefined))  // found a non numerical number. Column will be text
 		{
-      console.log(curRow);
-      console.log(colNum);
-      console.log(curRow[colNum]);
+
       return 0;
     }
 		retVal = 2;
@@ -268,12 +265,9 @@ exports.insertTable = function(tableName, dataSet, callback){
 				}
 			}
 
-      //console.log(insertQuery);
-      console.log("God damit");
       client.query(insertQuery, function(err, rows){
         if (err){
           console.log("Count not insert query");
-          //console.log("Could not insert data", insertQuery);
         }
         else {
           console.log("insert Complete!");
