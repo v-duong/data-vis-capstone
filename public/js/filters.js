@@ -119,7 +119,8 @@ function setDefaultDropDownValue(visSelected, col1, col2, col3, colList){
 
 $("#VisualList").change(function(){
   var visualSelected =  $("#VisualList option:selected").val();
-  var tableSelected = $("#TableList option:selected").val();
+  var tableSelected = $("#TableList option:selected").text();
+  console.log(tableSelected);
   switch(visualSelected){
   // if we're switching to basketball, theres no filters, so make sure to remove all
     case 'basketball':
@@ -127,15 +128,15 @@ $("#VisualList").change(function(){
       $('#filters1').html("");
       $('#filters2').html("");
       $('#filters3').html("");
-      if (tableSelected != 'Choose Column')
+      if (tableSelected != 'Choose Table')
         createColsBasketball(visualSelected, tableSelected);
       break;
     case 'bar':
-      if (tableSelected != 'Choose Column')
+      if (tableSelected != 'Choose Table')
         createColsBar(visualSelected, tableSelected);
       break;
     case 'scatter':
-      if (tableSelected != 'Choose Column')
+      if (tableSelected != 'Choose Table')
         createColsScatter(visualSelected, tableSelected);
       break;
     default:
