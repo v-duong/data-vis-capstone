@@ -3,6 +3,18 @@ var app = express();
 var fs = require('fs');
 var multer = require('multer');
 var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser')
+var session = require('express-session')
+var passport = require('passport');
+var Strategy = require('passport-local').Strategy;
+var bcrypt = require('bcrypt');
+var flash = require("connect-flash");
+var db = require('./public/js/database.js')
+var Sequelize = require('sequelize');
+var sequelize = new Sequelize('postgres://uiruphueqmgtzy:MeDPu8elxoLOYZFhSP6JstEQGU@ec2-54-225-195-249.compute-1.amazonaws.com:5432/d4bm6q4qc2ha09?ssl=true');
+//TODO: MOVE DB URL SHIT TO CONFIG VAR
+
+require('./passport.js')(passport, Strategy, bcrypt, sequelize);
 
 
 app.set('port', (process.env.PORT || 4500));
@@ -17,10 +29,25 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ // to support URL-encoded bodies
   extended: true
 }));
+app.use(cookieParser());
+app.use(flash());
+app.use(session({secret: 'teststring', resave: false, saveUninitialized: false}));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.get('/', function(req, res) {
     res.render('index');
 });
+
+app.post('/login', function(req, res) {
+  var user = req.body.user;
+  var pass = req.body.pass;
+});
+
+app.post('/register', passport.authenticate('register', {
+  successRedirect: '/',
+  failureRedirect: '/fail'
+}));
 
 app.get('/files', function(req, res) {
   res.render('files');
