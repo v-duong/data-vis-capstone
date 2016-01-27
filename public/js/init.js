@@ -12,6 +12,7 @@ var mouseSphere = []
 var sphereToggle = false;
 var sprite1;
 var canvas1, context1, texture1;
+var hidecontrols
 
 function init() {
   scene = new THREE.Scene();
@@ -76,13 +77,17 @@ function generateBasketball(){
   $('.visual').append(renderer.domElement);
   genCourt();
   generateZones();
+  initbasketball();
+
   camera.position.y = 500;
   camera.lookAt(0,0,0);
   //add effect
   effect = new THREE.StereoEffect(renderer);
   effect.setSize(window.innerWidth, window.innerHeight);
 
-  controls = new THREE.OrbitControls(camera, renderer.domElement);
+  //controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+  
   //parseBallShotData();
   var dataQuery = BasketballQuery();
   $.getJSON('/retrieveData', {
@@ -166,10 +171,8 @@ function generateScatter() {
     scene.add(msphere);
     mouseSphere.push(msphere);
   }
-  camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
-  //add effect
-  effect = new THREE.StereoEffect(renderer);
-  effect.setSize(window.innerWidth, window.innerHeight);
+  
+  initscatter();
 
   targetlist = [];
   mousetargetlist = [];
@@ -262,10 +265,29 @@ function onWindowResize() {
   camera.bottom = -1 * windowHalfY;
   camera.updateProjectionMatrix();
 
+  hideCamera.aspect = window.innerWidth / window.innerHeight;
+  hideCamera.left = -1 * windowHalfX;
+  hideCamera.right = windowHalfX;
+  hideCamera.top = windowHalfY;
+  hideCamera.bottom = -1 * windowHalfY;
+  hideCamera.updateProjectionMatrix();
+
   renderer.setSize(window.innerWidth, window.innerHeight);
   effect.setSize(window.innerWidth, window.innerHeight);
 
 }
+
+
+function setOrientationControls(e) {
+  if (!e.alpha) {
+    return;
+  }
+  hidecontrols.connect();
+  hidecontrols.update();
+  window.removeEventListener('deviceorientation', setOrientationControls);
+}
+window.addEventListener('deviceorientation', setOrientationControls, true);
+
 
 
 function onDocumentMouseDown(event) //http://www.moczys.com/webGL/Experiment_02_V05.html

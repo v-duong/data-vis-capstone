@@ -72,6 +72,7 @@ if (document.getElementsByClassName('visual')[0].addEventListener)
 
 function enterVRMode(){
 	vrModeIsOn = true;
+	hidecontrols = new THREE.DeviceOrientationControls(hideCamera);
 	var element = document.getElementsByClassName('visual')[0];
 	if ( navigator.userAgent.indexOf('Chrome') != -1 ){			//Chrome
 		element.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
@@ -96,4 +97,12 @@ function enterVRMode(){
    		camera.position.y = 600;
   		camera.position.x = 600;
 	}
+	if (graphType === 'scatter'){
+	 	camera = hideCamera;
+	}
+	if (graphType == 'basketball'){
+		camera = hideCamera;
+		camera.position.y += 40;
+	}
+
 }
