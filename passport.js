@@ -34,6 +34,8 @@ module.exports = function(passport, Strategy, bcrypt, sequelize){
         if (!c) {
           return done(null, false, {message: "Username is already in use."})
         } else {
+
+            sequelize.createSchema("u"+u.id);
             return done(null, u);
           }
         })

@@ -1,9 +1,9 @@
 var camera, scene, renderer, effect;
 var targetlist, mousetargetlist;
 var INTERSECTED;
-var mouseSphere = []
+var mouseSphere = [];
 var sphereToggle = false;
-var INITIAL = false
+var INITIAL = false;
 
 
 
@@ -75,6 +75,7 @@ function generatePlainCourtTexture(){
     init();
     INITIAL = true;
   }
+  clearBasketballMesh();
   camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
 
 	//renderer = new THREE.WebGLRenderer();

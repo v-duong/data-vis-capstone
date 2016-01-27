@@ -38,10 +38,10 @@ exports.queryDB = function(queryStr, callback) {
 
 }
 
-exports.deleteTable = function(tableName, callback) {
+exports.deleteTable = function(tableName, schemaName, callback) {
   //drop table firsttest
 
-  var dropQuery = "drop table ".concat(tableName);
+  var dropQuery = "drop table ".concat(schemaName + '.' + tableName);
   client.query(dropQuery, function(err, rows) {
     if (err) {
       console.log("Could not drop table");
@@ -137,7 +137,8 @@ function CSVToArray( strData, strDelimiter ){
     return( arrData );
 }
 
-exports.insertTable = function(tableName, dataSet, callback){
+exports.insertTable = function(tableName, schemaName, dataSet, callback){
+
 
 //exports.insertTable = function(fileName, filePath, callback){
 	// make sure dataSet is not empty
@@ -154,12 +155,12 @@ exports.insertTable = function(tableName, dataSet, callback){
 	var colTypes = [];
 	//CREATE table firsttest (x TEXT, y TEXT, z TEXT);
 	var createTableQuery = "CREATE TABLE ";
-	createTableQuery = createTableQuery.concat(tableName + " (");
+	createTableQuery = createTableQuery.concat(schemaName+'.'+tableName + " (");
 
 	//insert into firsttest (x,y,z) values (1,3,4);
 	var insertBaseQuery = "INSERT INTO ";
 
-	insertBaseQuery = insertBaseQuery.concat(tableName + " (");
+	insertBaseQuery = insertBaseQuery.concat(schemaName+'.'+tableName + " (");
 
 	for (i = 0; i < columnNames.length - 1; i++){
 		colTypes.push(findType(dataSet, i));

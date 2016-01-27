@@ -30,7 +30,8 @@ block maintext
           th Table Name
           th Options
         tbody
-    
+
+
   script(src='https://code.jquery.com/jquery-2.1.4.min.js')
   script.
     function deleteFunc(btnID){
@@ -45,6 +46,7 @@ block maintext
         }
       }, 'json');
     }
+
     $.get('/tables', function(data){
       var d = JSON.parse(data);
       for (i = 0; i < d.length; i++)
@@ -52,9 +54,8 @@ block maintext
         <input class="button" type="button" class="delbutton" id='+ d[i].table_name +' value="Delete" onclick="deleteFunc(this.id)">\
         </td></tr>')
       })
-      
-    $( '.file-input' ).each( function()
-    {
+
+    $( '.file-input' ).each( function(){
       var $input   = $( this ),
         $label   = $input.next( 'label' ),
         labelVal = $label.html();
@@ -83,3 +84,6 @@ block maintext
       .on( 'focus', function(){ $input.addClass( 'has-focus' ); })
       .on( 'blur', function(){ $input.removeClass( 'has-focus' ); });
     });
+
+  
+  
