@@ -1,0 +1,25 @@
+extend navtemplate
+block maintext
+  .row
+    .center
+      - if (message != "")
+        .error #{message}
+      form(action='/auth/register' method='POST')
+        div.form-group
+          label username
+          input(type='text' name='user')
+        div.form-group
+          label password
+          input(type='password' name='pass')
+        input.button2(type='submit' value="Register" id="Register")
+      br
+      br
+      form(action='/auth/login' method='POST')
+        div.form-group
+          label username
+          input(type='text' name='user')
+        div.form-group
+          label password
+          input(type='password' name='pass')
+        input.button2(type='submit' value="Login" id="Login")
+  script(src='https://code.jquery.com/jquery-2.1.4.min.js')
