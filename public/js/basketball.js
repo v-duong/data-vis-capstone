@@ -118,8 +118,8 @@ function genZone10(){
   var geo = new THREE.Geometry();
   geo.vertices.push( new THREE.Vector3( 0+329, 4, 0-250 ) );
   geo.vertices.push( new THREE.Vector3( 140+329, 4, 0-250 ) );
-  geo.vertices.push( new THREE.Vector3( 140+329, 4, 30-250 ) );
-  geo.vertices.push( new THREE.Vector3( 0+329, 4, 30-250 ) ); // close the loop
+  geo.vertices.push( new THREE.Vector3( 140+329, 4, 26-250 ) );
+  geo.vertices.push( new THREE.Vector3( 0+329, 4, 26-250 ) ); // close the loop
   geo.faces.push(new THREE.Face3(0,1,2));
   geo.faces.push(new THREE.Face3(0,2,3));
 
@@ -138,8 +138,8 @@ function genZone10(){
 }
 function genZone9(){
   var geo = new THREE.Geometry();
-  geo.vertices.push( new THREE.Vector3( 0+329, 4, 0+220 ) );
-  geo.vertices.push( new THREE.Vector3( 140+329, 4, 0+220 ) );
+  geo.vertices.push( new THREE.Vector3( 0+329, 4, 4+220 ) );
+  geo.vertices.push( new THREE.Vector3( 140+329, 4, 4+220 ) );
   geo.vertices.push( new THREE.Vector3( 140+329, 4, 30+220 ) );
   geo.vertices.push( new THREE.Vector3( 0+329, 4, 30+220 ) ); // close the loop
   geo.faces.push(new THREE.Face3(0,1,2));
@@ -161,7 +161,6 @@ function genZone9(){
 
 }
 function genZone0(){
-  console.log("hhmmmm");
   var shape = new THREE.Shape();
   shape.moveTo( 87.5, 0 );
   shape.absarc( 0, 0, 87.5, 0, (240/180)* Math.PI, false );
@@ -291,10 +290,10 @@ function genZone11and13(){
   mymesh2.position.set(410,4,0);
   mymesh2.__dirtyPosition = true;
 
-  zones[13] = mymesh2;
+  zones[11] = mymesh2;
   scene.add(mymesh2);
 
-  zones[11] = mymesh;
+  zones[13] = mymesh;
   scene.add(mymesh);
 }
 
@@ -302,15 +301,15 @@ function genZone12(){
   var curve = new THREE.ArcCurve(
     0, 0,             // ax, aY
     240,            // xRadius, yRadius
-    -8*Math.PI/9, 8*Math.PI/9, // aStartAngle, aEndAngle
+    -8.03*Math.PI/9, 8.03*Math.PI/9, // aStartAngle, aEndAngle
     true             // aClockwise
   );
 
   var points = curve.getSpacedPoints(20);
   var path = new THREE.Path();
   var geometry = path.createGeometry(points);
-  geometry.vertices.push(new THREE.Vector3(-410,115,0));
-  geometry.vertices.push( new THREE.Vector3( -410, -115, 0 ) );
+  geometry.vertices.push(new THREE.Vector3(-410,113,0));
+  geometry.vertices.push( new THREE.Vector3( -410, -113, 0 ) );
   geometry.faces.push(new THREE.Face3(20,21,22));
   for (var i = 0; i < 20; i++){
     geometry.faces.push(new THREE.Face3(i,i+1,22));
@@ -339,7 +338,7 @@ function genZone4and8(){
   var curve = new THREE.ArcCurve(
     0, 0,             // ax, aY
     168,            // Radius
-    0.665  * Math.PI,  0.4*Math.PI, // aStartAngle, aEndAngle
+    0.665  * Math.PI,  0.42*Math.PI, // aStartAngle, aEndAngle
     true             // aClockwise
   );
 
@@ -457,25 +456,22 @@ function generateZoneColor(zoneMadeList, zoneMissList){
   var zoneList = zones;
   for (var i = 0; i < 14; i++){
     var shotPercent = zoneMadeList[i]/(zoneMadeList[i] + zoneMissList[i]);
-    console.log("zone" + i + ": " + shotPercent);
-    console.log("made: " + zoneMadeList[i] + '/' +   (zoneMadeList[i]+ zoneMissList[i]));
-    console.log("");
 
-
-    // red
+    // green
     if (shotPercent > 0.50){
-      zoneList[i].material.color.setHex( 0xff0000 );
+      zoneList[i].material.color.setHex( 0x00cc00 );
     }
     // yellow
     else if (shotPercent > 0.40){
       zoneList[i].material.color.setHex( 0xffff00 );
     }
-    // green
+    // orange
     else if (shotPercent > 0.30){
-      zoneList[i].material.color.setHex( 0x00cc00 );
+      zoneList[i].material.color.setHex( 0xff9900 );
     }
+    //red
     else{
-      zoneList[i].material.color.setHex( 0x00ccff );
+      zoneList[i].material.color.setHex( 0xff0000 );
     }
 
 
