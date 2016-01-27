@@ -77,13 +77,17 @@ function generateBasketball(){
   $('.visual').append(renderer.domElement);
   genCourt();
   generateZones();
+  initbasketball();
+
   camera.position.y = 500;
   camera.lookAt(0,0,0);
   //add effect
   effect = new THREE.StereoEffect(renderer);
   effect.setSize(window.innerWidth, window.innerHeight);
 
-  controls = new THREE.OrbitControls(camera, renderer.domElement);
+  //controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+  
   //parseBallShotData();
   var dataQuery = BasketballQuery();
   $.getJSON('/retrieveData', {
@@ -260,6 +264,13 @@ function onWindowResize() {
   camera.top = windowHalfY;
   camera.bottom = -1 * windowHalfY;
   camera.updateProjectionMatrix();
+
+  hideCamera.aspect = window.innerWidth / window.innerHeight;
+  hideCamera.left = -1 * windowHalfX;
+  hideCamera.right = windowHalfX;
+  hideCamera.top = windowHalfY;
+  hideCamera.bottom = -1 * windowHalfY;
+  hideCamera.updateProjectionMatrix();
 
   renderer.setSize(window.innerWidth, window.innerHeight);
   effect.setSize(window.innerWidth, window.innerHeight);

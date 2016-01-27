@@ -8,9 +8,6 @@ var INITIAL = false
 
 
 
-
-
-
 function generateNBACourt() {
 /*
   var seasonText = $("#Season option:selected").val();
@@ -101,6 +98,7 @@ function render() {
     if (vrModeIsOn) {
       effect.render(scene, camera);
     } else {
+     
       renderer.render(scene, camera);
     }
 }

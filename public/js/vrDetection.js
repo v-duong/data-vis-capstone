@@ -100,5 +100,9 @@ function enterVRMode(){
 	if (graphType === 'scatter'){
 	 	camera = hideCamera;
 	}
+	if (graphType == 'basketball'){
+		camera = hideCamera;
+		camera.position.y += 40;
+	}
 
 }
