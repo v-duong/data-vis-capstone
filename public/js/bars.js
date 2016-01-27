@@ -15,7 +15,7 @@ function initbars() {
   //        controls.damping = 0.2;
   if (!INITIAL) {
     controls.addEventListener('change', render);
-    hidecontrols.addEventListener('change', render);
+    //hidecontrols.addEventListener('change', render);
   }
 }
 
