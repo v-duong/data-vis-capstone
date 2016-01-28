@@ -79,28 +79,14 @@ app.get('/nba_visualize', function(req, res){
   res.render('nba_visualize');
 });
 
-app.get('/Uploaded_Files', function(req, res) {
-  //var fileList = fs.readdirSync('public_files');
-  var getTableQuery = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'";
-  var myDB = require('./public/js/database.js');
-  myDB.queryDB(getTableQuery, function(myTables) {
-    if (myTables == null) {
-    }
-    else {
-      res.render('Uploaded_Files', {
-        "showFiles": myTables
-      });
-    }
-
-  });
-  //fileList.splice(0,1);
-
-});
-
 
 
 app.get('/tables', function(req,res) {
-  var getTableQuery = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'";
+  var schemaName = 'public';
+  if (req.user)
+    schemaName = 'u'+req.user.id;
+  var getTableQuery = "SELECT table_name FROM information_schema.tables WHERE table_schema = '"+schemaName+"'";
+  console.log(getTableQuery);
   var myDB = require('./public/js/database.js');
   myDB.queryDB(getTableQuery, function(myTables) {
     if (myTables == null)
@@ -205,7 +191,10 @@ app.post('/files', file_uploaded.single('datafile'), function(req, res) {
 
       var myDB = require('./public/js/database.js');
       //console.log(textBuff);
-      myDB.insertTable(req.file.originalname, textBuff, function(myRows) {
+      var schemaName = 'public';
+      if (req.user)
+        schemaName = 'u' + req.user.id;
+      myDB.insertTable(req.file.originalname, schemaName ,textBuff, function(myRows) {
 
         if (myRows == true) {
           console.log("insert success");
@@ -229,54 +218,18 @@ app.post('/files', file_uploaded.single('datafile'), function(req, res) {
   }
 });
 
-app.get('/scatter', function(req, res) {
-  var client = require('./public/js/database.js');
-  if (client == null)
-    console.log("cannot get database");
-  else {
-    client.queryDB("select * from smartphonestestexcel", function(myRows) {
-      if (myRows == null) {
-        console.log("query fail");
-      } else {
-        res.render('scatter', {
-          _data: myRows
-        });
-      }
-    });
-  }
-});
-
-app.get('/bars', function(req, res) {
-  var client = require('./public/js/database.js');
-  if (client == null)
-    console.log("Where is Client?");
-  else {
-    client.queryDB("select * from randnum", function(myRows) {
-      if (myRows == null) {
-        console.log("Couldnt access database");
-      } else {
-        var currentRow;
-        for (var i in myRows) {
-          currentRow = myRows[i];
-        }
-        res.render('bars', {
-          _data: myRows
-        });
-      }
-    });
-  }
-});
 
 
 
-app.get('/displayData', function(req, res) {
-  res.render('displayData');
-});
+
 
 app.get('/visualize', function(req, res) {
   var client = require('./public/js/database.js');
   var tlist;
-  client.queryDB("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';", function(tlist) {
+  var schemaName = 'public';
+  if (req.user)
+    schemaName = 'u' + req.user.id;
+  client.queryDB("SELECT table_name FROM information_schema.tables WHERE table_schema = '"+ schemaName + "';", function(tlist) {
     res.render('visualize', {
       tables: tlist
     });
@@ -310,8 +263,92 @@ function getFiles(dir){
     return fileList;
 }
 
+function generateQuery(schemaName, tableName, colList, filterQuery){
+  console.log(tableName);
+  console.log(colList);
+  if ( ((tableName == null) || (tableName == undefined))
+      && ((colList == null) || (colList == undefined)) )
+      return '';
+
+  var query = 'SELECT ';
+
+  for (var i = 0; i < colList.length-1; i++){
+    query = query.concat(colList[i] + ', ');
+  }
+  query = query.concat(colList[colList.length-1] + ' FROM ' + schemaName + '.'+tableName);
+
+  console.log(query);
+  if ( (filterQuery == null) || (filterQuery == undefined) )
+    return query;
+  else {
+    query = query.concat(' WHERE ' + filterQuery);
+    return query;
+  }
+
+}
+
+app.get('/retrieveDistinctColValues', function(req, res){
+  var colName = req.query.columnName;
+  var tableName = req.query.tableName;
+  var schemaName = 'public';
+  if (req.user)
+    schemaName = 'u'+req.user.id;
+  var myQuery = 'select distinct ' + colName + ' from ' + schemaName + '.' + tableName + ' where ' + colName + 'is not null order by ' + colName;
+  //var getSelectionQuery = 'select distinct '+ColName+' from '+tableSelected+' where '+ColName+' is not null order by '+ColName;
+  myDB.queryDB(myQuery, function(myRows) {
+    if (myRows == null) {
+      console.log("Couldnt access database");
+    } else {
+
+      res.send(JSON.stringify(myRows));
+    }
+  });
+});
+
+app.get('/retrieveColumns', function(req, res) {
+  var myQuery = 'select column_name, data_type from information_schema.columns where ';
+  var tableName = req.query.tableName;
+  var dataTypes = req.query.dataType;
+  var schemaName = 'public';
+  if (req.user)
+    schemaName = 'u'+req.user.id;
+  myQuery = myQuery.concat("table_schema = '" + schemaName + "'" + " AND table_name = '" + tableName+ "'" );
+
+  if ((dataTypes != null) || (dataTypes != undefined)){
+    myQuery = myQuery.concat(" AND (");
+    for (var i = 0; i < dataTypes.length-1; i++){
+      myQuery = myQuery.concat("data_type = '" + dataTypes[i] + "' OR ");
+    }
+    myQuery = myQuery.concat("data_type = '" + dataTypes[dataTypes.length-1] + "')");
+  }
+  console.log("\n\n\n\n\n\nRetrieveColumnEndpoint!");
+  console.log(myQuery);
+
+  var myDB = require('./public/js/database.js');
+  myDB.queryDB(myQuery, function(myRows) {
+    if (myRows == null) {
+      console.log("Couldnt access database");
+    } else {
+
+      res.send(JSON.stringify(myRows));
+    }
+  });
+});
+
 app.get('/retrieveData', function(req, res) {
-  var myQuery = req.query.myQuery;
+  //var myQuery = req.query.myQuery;
+  var tableName = req.query.tableName;
+  var colList = req.query.columnList;
+  var filterQuery = req.query.filterQuery;
+
+  var schemaName = 'public';
+  if (req.user)
+    schemaName = 'u'+req.user.id;
+
+  var myQuery = generateQuery(schemaName, tableName, colList, filterQuery);
+  if (myQuery == '')
+    return;
+
   var myDB = require('./public/js/database.js');
   myDB.queryDB(myQuery, function(myRows) {
     if (myRows == null) {
@@ -324,10 +361,13 @@ app.get('/retrieveData', function(req, res) {
 });
 
 app.post('/delData', function(req, res) {
+  var schemaName = 'public';
+  if (req.user)
+    schemaName = 'u'+req.user.id;
   var tableName = req.body.tName;
   var myDB = require('./public/js/database.js');
   var dropSuccess = false;
-  myDB.deleteTable(tableName, function(dropErr) {
+  myDB.deleteTable(tableName,schemaName, function(dropErr) {
     res.send(JSON.stringify(dropErr));
   });
 

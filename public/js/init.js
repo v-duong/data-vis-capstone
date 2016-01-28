@@ -85,13 +85,16 @@ function generateBasketball(){
   effect = new THREE.StereoEffect(renderer);
   effect.setSize(window.innerWidth, window.innerHeight);
 
-  //controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-  
-  //parseBallShotData();
-  var dataQuery = BasketballQuery();
+  var tableSelected = $("#TableList option:selected").val();
+  var x = $("#courtXColumn option:selected").text();
+  var y = $("#courtYColumn option:selected").text();
+  var z = $("#shotColumn option:selected").text();
+
   $.getJSON('/retrieveData', {
-    myQuery: dataQuery
+    tableName: tableSelected,
+    columnList: [x,y,z]
   }, function(data) {
     calculateZones(data);
   });
@@ -99,21 +102,7 @@ function generateBasketball(){
   //calculateZones();
 	animate();
 }
-// Creates a query based on Table, Columns, and Filters for Bar and Scatter
-function BasketballQuery(){
-  var tableSelected = $("#TableList option:selected").val();
-  var x = $("#courtXColumn option:selected").text();
-  var y = $("#courtYColumn option:selected").text();
-  var z = $("#shotColumn option:selected").text();
 
-  var xType = $("#xColumn option:selected").val();
-  var yType = $("#yColumn option:selected").val();
-  var zType = $("#zColumn option:selected").val();
-
-  var dataQuery = "SELECT " + x + ", " + y + ", " + z + " from " + tableSelected
-  return dataQuery;
-
-}
 
 
 function calculateZones(data){
@@ -171,7 +160,7 @@ function generateScatter() {
     scene.add(msphere);
     mouseSphere.push(msphere);
   }
-  
+
   initscatter();
 
   targetlist = [];
@@ -180,12 +169,15 @@ function generateScatter() {
   var scales = [];
   setupScene();
   var normalMaterial = new THREE.MeshNormalMaterial();
+  var tableName = $("#TableList option:selected").val();
   var x = $("#xColumn option:selected").text();
   var y = $("#yColumn option:selected").text();
   var z = $("#zColumn option:selected").text();
-  var getColumnTypeQuery = BarScatterFilterQuery();
+  var FilterQuery = BarScatterFilterQuery();
   $.getJSON('/retrieveData', {
-    myQuery: getColumnTypeQuery
+    tableName: tableName,
+    columnList: [x,y,z],
+    filterQuery: FilterQuery
   }, function(data) {
     findScales(scales, data, x, y, z);
     displayNodes(data, x, y, z, scales);
@@ -227,17 +219,21 @@ function generateBar() {
   mousetargetlist = [];
   scater_check = 0;
   var tableSelected = $("#TableList option:selected").val();
-  var x = $("#x option:selected").text();
-  var y = $("#y option:selected").text();
-  var z = $("#z option:selected").text();
+  var x = $("#xColumn option:selected").text();
+  var y = $("#yColumn option:selected").text();
+  var z = $("#zColumn option:selected").text();
 
 
   // generate bar/Scatter Query Based on Filters
-
-  var displayQuery = BarScatterFilterQuery();
+  console.log(x);
+  console.log(y);
+  console.log(z);
+  var FilterQuery = BarScatterFilterQuery();
   var test;
   $.getJSON('/retrieveData', {
-    myQuery: displayQuery
+    tableName: tableSelected,
+    columnList: [x,y,z],
+    filterQuery: FilterQuery
   }, function(data) {
     renderData(data);
   });
