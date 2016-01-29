@@ -30,8 +30,9 @@ block maintext
           th Table Name
           th Options
         tbody
+          form#my-awesome-dropzone.dropzone(action='/files')
 
-
+  script(src='https://rawgit.com/enyo/dropzone/master/dist/dropzone.js')
   script(src='https://code.jquery.com/jquery-2.1.4.min.js')
   script.
     function deleteFunc(btnID){
