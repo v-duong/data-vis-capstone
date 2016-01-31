@@ -9,7 +9,7 @@ var INITIAL = false;
 
 
 function generateNBACourt() {
-/*
+
   var seasonText = $("#Season option:selected").val();
 
   if (seasonText == ""){
@@ -26,7 +26,7 @@ function generateNBACourt() {
     alert('Please choose a player');
     return;
   }
-*/
+
 
 
   generatePlainCourtTexture();
@@ -99,7 +99,7 @@ function render() {
     if (vrModeIsOn) {
       effect.render(scene, camera);
     } else {
-     
+
       renderer.render(scene, camera);
     }
 }
@@ -150,6 +150,13 @@ function genListOfTeam(yearSpan){
     });
 };
 
+function resetPlayerList(){
+  $("#playerSelection.off-canvas-list").html("");
+  var htmlStr = "<option value='' selected='selected' disabled='disabled'> Choose Player </option>";
+  htmlStr = htmlStr.concat('</select></li>');
+  $("#playerSelection.off-canvas-list").append('<li> <select id="PlayerName">' + htmlStr);
+}
+
 function genListOfPlayers(teamID){
   //2015 - 2016 -> 2015-16
   var yearSpanStr = $("#Season option:selected").text();
@@ -167,7 +174,7 @@ function genListOfPlayers(teamID){
     success: function(data) {
       var playerSet = data.resultSets[1].rowSet;
       $("#playerSelection.off-canvas-list").html("");
-      var htmlStr = "<option value='' selected='selected' disabled='disabled'> Choose Player </option>";;
+      var htmlStr = "<option value='' selected='selected' disabled='disabled'> Choose Player </option>";
       for (var i = 0; i < playerSet.length; i++ ){
         htmlStr = htmlStr.concat('<option value="' + playerSet[i][1] + '">' + playerSet[i][2] + '</option>');
 
@@ -182,6 +189,7 @@ function genListOfPlayers(teamID){
 // as the year change, we should generate a different list of teams
 $(document).on('change', '#Season', function(){
   genListOfTeam(this.value);
+  resetPlayerList();
 });
 
 $(document).on('change', '#TeamName', function(){
