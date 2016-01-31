@@ -111,6 +111,8 @@ var file_uploaded = multer({
   storage: storage
 });
 
+
+
 app.post('/files', file_uploaded.single('datafile'), function(req, res) {
 
   if (req.file == null) {
@@ -123,17 +125,15 @@ app.post('/files', file_uploaded.single('datafile'), function(req, res) {
   var target_path = 'public_files/' + req.file.originalname;
   var textBuff = "";
   var src = fs.createReadStream(tmp_path);
-
+  src.pipe(process.stdout);
   //If globe radiobutton selected
   if (visualType == 1){
-  var jsonFile = "";
+    var jsonFile = "";
+    src.on('data', function(fileData) {
+      jsonFile = jsonFile.concat(fileData.toString());
+    });
 
-  src.on('data', function(fileData) {
-    jsonFile = jsonFile.concat(fileData.toString());
-    // console.log(fileData.toString());
-  });
-
-  src.on('end', function() {
+    src.on('end', function() {
 
     jsonFile = jsonFile.slice(0,-1);
     jsonFile = jsonFile.split('\r\n');
@@ -158,7 +158,6 @@ app.post('/files', file_uploaded.single('datafile'), function(req, res) {
     }
 
     // console.log(max);
-
     name = req.file.originalname;
     name = name.substring(0, name.indexOf('.csv'));
     jsonFile = "[\"" + name + "\"," +max+",[" + jsonFile + "]]";
@@ -167,28 +166,30 @@ app.post('/files', file_uploaded.single('datafile'), function(req, res) {
         if (err){
           return console.log(err);
         }
-        console.log("Saved");
         res.render('files');
 
       });
 
     });
 
-  src.on('error', function(err) {
-    res.render('files');
-  });
+    src.on('error', function(err) {
+      res.render('files');
+    });
 
-  //If general data type radio button selected
-  } else if (visualType == 0){
+    //If general data type radio button selected
+  } // end of globe json data, to be deleted..
 
+
+  else {
   src.on('data', function(fileData) {
+
     textBuff = textBuff.concat(fileData.toString());
+
   });
 
     // uploaded successfully
     src.on('end', function() {
       // add textBuff into DB
-
       var myDB = require('./public/js/database.js');
       //console.log(textBuff);
       var schemaName = 'public';
@@ -211,6 +212,7 @@ app.post('/files', file_uploaded.single('datafile'), function(req, res) {
         fs.unlinkSync(target_path);
 
       });
+
     });
     src.on('error', function(err) {
       res.render('files');
@@ -264,8 +266,7 @@ function getFiles(dir){
 }
 
 function generateQuery(schemaName, tableName, colList, filterQuery){
-  console.log(tableName);
-  console.log(colList);
+
   if ( ((tableName == null) || (tableName == undefined))
       && ((colList == null) || (colList == undefined)) )
       return '';
@@ -293,8 +294,9 @@ app.get('/retrieveDistinctColValues', function(req, res){
   var schemaName = 'public';
   if (req.user)
     schemaName = 'u'+req.user.id;
-  var myQuery = 'select distinct ' + colName + ' from ' + schemaName + '.' + tableName + ' where ' + colName + 'is not null order by ' + colName;
-  //var getSelectionQuery = 'select distinct '+ColName+' from '+tableSelected+' where '+ColName+' is not null order by '+ColName;
+  var myQuery = 'select distinct ' + colName + ' from ' + schemaName + '.' + tableName + ' where ' + colName + ' is not null order by ' + colName;
+  var myDB = require('./public/js/database.js');
+  console.log(myQuery);
   myDB.queryDB(myQuery, function(myRows) {
     if (myRows == null) {
       console.log("Couldnt access database");
@@ -321,7 +323,7 @@ app.get('/retrieveColumns', function(req, res) {
     }
     myQuery = myQuery.concat("data_type = '" + dataTypes[dataTypes.length-1] + "')");
   }
-  console.log("\n\n\n\n\n\nRetrieveColumnEndpoint!");
+
   console.log(myQuery);
 
   var myDB = require('./public/js/database.js');
