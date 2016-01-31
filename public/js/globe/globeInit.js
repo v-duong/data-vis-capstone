@@ -1,10 +1,12 @@
 function generateGlobe(){
+  clearmeshes();
   console.log("generate_globe()");
   $('.visual').empty();
 
   var container = document.getElementById('vis');
   //renderer, camera, scene,  RENDERID
   var globe = new DAT.Globe(container, renderer, camera, scene, RENDERID, effect);
+  scene = globe.scene;
 
   var tableSelected = $("#TableList option:selected").val();
 
