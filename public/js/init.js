@@ -259,6 +259,8 @@ function clearmeshes() {
   clearBasketballMesh();
 }
 
+
+
 function onWindowResize() {
 
   windowHalfX = window.innerWidth / 2;
