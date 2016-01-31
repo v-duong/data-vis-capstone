@@ -13,9 +13,9 @@
 
 var DAT = DAT || {};
 
+
 DAT.Globe = function(container, renderer, camera, scene, animate, effect, opts) {
   opts = opts || {};
-  
   var colorFn = opts.colorFn || function(x) {
     var c = new THREE.Color();
     c.setHSL( ( 0.6 - ( x * 0.5 ) ), 1.0, 0.5 );
@@ -117,6 +117,7 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, opts) 
     mesh = new THREE.Mesh(geometry, material);
     mesh.rotation.y = Math.PI;
     scene.add(mesh);
+    meshes.push(mesh);
 
     shader = Shaders['atmosphere'];
     uniforms = THREE.UniformsUtils.clone(shader.uniforms);
@@ -135,6 +136,7 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, opts) 
     mesh = new THREE.Mesh(geometry, material);
     mesh.scale.set( 1.1, 1.1, 1.1 );
     scene.add(mesh);
+    meshes.push(mesh);
 
     geometry = new THREE.BoxGeometry(0.75, 0.75, 1);
     geometry.applyMatrix(new THREE.Matrix4().makeTranslation(0,0,-0.5));
@@ -252,6 +254,7 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, opts) 
             }));
       }
       scene.add(this.points);
+      meshes.push(this.points);
     }
   }
 
