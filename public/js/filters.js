@@ -203,21 +203,19 @@ function createColsScatter(visualSelected, tableSelected){
 }
 
 function createColsBasketball(visualSelected, tableSelected){
-  //var getColumnTypeQuery = "SELECT column_name ,data_type FROM information_schema.columns where table_name = '";
-  //getColumnTypeQuery = getColumnTypeQuery.concat(tableSelected + "'");
-  //getColumnTypeQuery = getColumnTypeQuery.concat(" and data_type = 'double precision'");
 
   $("#columnSelection.off-canvas-submenu").html("");
   $.getJSON('/retrieveColumns', {
-     tableName: tableSelected
+     tableName: tableSelected,
+     dataType: ['double precision']
   }, function(data){
     // create a dropdown list
     // default at "Choose Column" to make sure user actually chooses a column
     var htmlStr = "<option value='' selected='selected' disabled='disabled'> Choose Column </option>";
-
     // populate dropdown list with columnNames and Values
     for (var i = 0; i < data.length; i++){
       htmlStr = htmlStr.concat('<option value="' + data[i].data_type + '">' + data[i].column_name + '</option>');
+
     }
 
     htmlStr = htmlStr.concat('</select></li>');
