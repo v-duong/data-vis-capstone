@@ -4,7 +4,7 @@ function generateGlobe(){
 
   var container = document.getElementById('vis');
   //renderer, camera, scene,  RENDERID
-  var globe = new DAT.Globe(container);
+  var globe = new DAT.Globe(container, renderer, camera, scene, RENDERID, effect);
 
   var tableSelected = $("#TableList option:selected").val();
 

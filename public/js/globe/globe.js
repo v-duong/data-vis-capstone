@@ -13,7 +13,7 @@
 
 var DAT = DAT || {};
 
-DAT.Globe = function(container, opts) {
+DAT.Globe = function(container, renderer, camera, scene, animate, effect, opts) {
   opts = opts || {};
   
   var colorFn = opts.colorFn || function(x) {
@@ -68,7 +68,7 @@ DAT.Globe = function(container, opts) {
     }
   };
 
-  var camera, scene, renderer, w, h, effect;
+  var w, h;
   var mesh, atmosphere, point;
 
   var overRenderer;

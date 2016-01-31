@@ -39,14 +39,21 @@ $("#sphere").change(function() {
   }
 })
 
+function resetVisuals(){
+  $('.visual').empty();
+  INITIAL = false;
+}
+
 function generateVisuals() {
   var tableSelected = $("#VisualList option:selected").val();
   switch (tableSelected) {
     case 'bar':
+      resetVisuals();
       graphType = 'bar';
       generateBar();
       break;
     case 'scatter':
+      resetVisuals();
       graphType = 'scatter';
       generateScatter();
       break;
