@@ -60,7 +60,7 @@ function initbasketball() {
 
   hideCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  
+
 
   controls = new THREE.OrbitControls(camera, renderer.domElement);
   //        controls.damping = 0.2;
@@ -73,7 +73,7 @@ function initbasketball() {
 
   }
 
-} 
+}
 
 function clearBasketballMesh(){
   for (var i = 0; i < 14; i++){
@@ -519,7 +519,11 @@ function genPercentageText(zoneMadeList, zoneMissList){
 		,height:0
 		,size:10
 		});
-    var TextGeoPerc = new THREE.TextGeometry( String(((zoneMadeList[i]/(zoneMadeList[i]+zoneMissList[i]))*100).toFixed(2)) + '%', {
+    var shotPercentage = 0;
+    if (zoneMadeList[i]+zoneMissList[i]){
+      shotPercentage = ((zoneMadeList[i]/(zoneMadeList[i]+zoneMissList[i])) * 100).toFixed(2);
+    }
+    var TextGeoPerc = new THREE.TextGeometry( String(shotPercentage) + '%', {
 		font:  'helvetiker'
 		,height:0
 		,size:10
