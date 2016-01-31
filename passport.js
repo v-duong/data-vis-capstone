@@ -31,7 +31,7 @@ module.exports = function(passport, Strategy, bcrypt, sequelize){
 
   passport.use('register', new Strategy({usernameField: 'user', passwordField: 'pass', passReqToCallback: true},function(req, user, pass, done) {
     User
-      .findOrCreate({where: {username: user}, defaults: {password: bcrypt.hashSync(pass, 5), usertables: []} }).spread(function(u,c) {
+      .findOrCreate({where: {username: user.toLowerCase()}, defaults: {password: bcrypt.hashSync(pass, 5), usertables: []} }).spread(function(u,c) {
         if (!c) {
           return done(null, false, {message: "Username is already in use."})
         } else {
@@ -45,7 +45,7 @@ module.exports = function(passport, Strategy, bcrypt, sequelize){
 
   passport.use('login', new Strategy({usernameField: 'user', passwordField: 'pass', passReqToCallback: true}, function(req, user, pass, done) {
     User
-      .findOne( { where: {username: user} } ).then( function(u) {
+      .findOne( { where: {username: user.toLowerCase()} } ).then( function(u) {
         if (!u)
           return done(null, false, {message: "Login failed: Incorrect credentials."})
         if (!bcrypt.compareSync(pass, u.password))
