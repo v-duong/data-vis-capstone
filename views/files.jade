@@ -22,6 +22,7 @@ block maintext
           input.button2(type="submit" value="Upload" disabled="disabled" id="upload")
   br
   .row
+    form#my-awesome-dropzone.CustDropzone(action='/files', method='post')
     .center
       h3 Table List
       hr
@@ -30,11 +31,34 @@ block maintext
           th Table Name
           th Options
         tbody
-          form#my-awesome-dropzone.dropzone(action='/files')
 
   script(src='https://rawgit.com/enyo/dropzone/master/dist/dropzone.js')
   script(src='https://code.jquery.com/jquery-2.1.4.min.js')
   script.
+    var CustDropzone = new Dropzone(document.body, { // Make the whole body a dropzone
+      url: "/files", // Set the url
+      paramName: "datafile", // The name that will be used to transfer the file
+      maxFilesize: 2, // MB
+      init: function () {
+        // Set up any event handlers
+        this.on('complete', function () {
+            console.log("ON COMPLETE");
+            location.reload();
+        });
+      }
+    });
+    /*
+    Dropzone.options.myAwesomeDropzone = {
+      paramName: "datafile", // The name that will be used to transfer the file
+      maxFilesize: 2, // MB
+      init: function () {
+        // Set up any event handlers
+        this.on('complete', function () {
+            console.log("ON COMPLETE");
+            location.reload();
+        });
+      }
+    };*/
     function deleteFunc(btnID){
       var fileName = btnID;
       $.post('/delData', { tName: fileName }, function(data){
