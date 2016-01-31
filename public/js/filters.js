@@ -120,6 +120,11 @@ function setDefaultDropDownValue(visSelected, col1, col2, col3, colList){
 $("#VisualList").change(function(){
   var visualSelected =  $("#VisualList option:selected").val();
   var tableSelected = $("#TableList option:selected").text();
+
+  $('#filters').hide();
+  $('#columnOption').show();
+  $('#columnSelection').show();
+  $('#filtersOption').show();
   console.log(tableSelected);
   switch(visualSelected){
   // if we're switching to basketball, theres no filters, so make sure to remove all
@@ -139,16 +144,24 @@ $("#VisualList").change(function(){
       if (tableSelected != 'Choose Table')
         createColsScatter(visualSelected, tableSelected);
       break;
-    default:
+    case 'globe':
+      hideColumnOptions();
+
       break;
 
   }
 
 });
 
+function hideColumnOptions(){
+  $('#filters').hide();
+  $('#columnOption').hide();
+  $('#columnSelection').hide();
+  $('#filtersOption').hide();
+}
+
+
 function createColsBar(visualSelected, tableSelected){
-  //var getColumnTypeQuery = "SELECT column_name ,data_type FROM information_schema.columns where table_name = '";
-  //getColumnTypeQuery = getColumnTypeQuery.concat(tableSelected + "'");
 
   $("#columnSelection.off-canvas-submenu").html("");
   $.getJSON('/retrieveColumns', {
@@ -179,14 +192,11 @@ function createColsBar(visualSelected, tableSelected){
   });
 }
 function createColsScatter(visualSelected, tableSelected){
-  //var getColumnTypeQuery = "SELECT column_name ,data_type FROM information_schema.columns where table_name = '";
-  //getColumnTypeQuery = getColumnTypeQuery.concat(tableSelected + "'");
-  //getColumnTypeQuery = getColumnTypeQuery.concat(" and data_type = 'double precision'");
 
   $("#columnSelection.off-canvas-submenu").html("");
   $.getJSON('/retrieveColumns', {
      tableName: tableSelected,
-     dataType: 'double precision'
+     dataType: ['double precision']
   }, function(data){
     // create a dropdown list
     // default at "Choose Column" to make sure user actually chooses a column
