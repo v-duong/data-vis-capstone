@@ -54,6 +54,9 @@ function generateVisuals() {
       graphType = 'basketball';
       generateBasketball();
       break;
+    case 'globe':
+      graphType = 'globe';
+      generateGlobe();
     default:
       break;
   }

@@ -1,30 +1,27 @@
-var camera, scene, renderer
-
-function generateVisuals() {
-      generateGlobe();
-}
-
 function generateGlobe(){
+  console.log("generate_globe()");
   $('.visual').empty();
 
   var container = document.getElementById('vis');
+  //renderer, camera, scene,  RENDERID
   var globe = new DAT.Globe(container);
 
   var tableSelected = $("#TableList option:selected").val();
 
   var xhr = new XMLHttpRequest();
 
-  xhr.open( 'GET', 'static/globeData/' + tableSelected + '.json', true );
+  // xhr.open( 'GET', 'static/globeData/' + tableSelected + '.json', true );
+  xhr.open( 'GET', 'static/globeData/randnum.json', true );//
+
   xhr.onreadystatechange = function() {
     // If we've received the data
     if ( xhr.readyState === 4 && xhr.status === 200 ) {
       console.log("data received");
         // Parse the JSON
-        console.log(xhr.responseText);
+        // console.log(xhr.responseText);
         var data = JSON.parse( xhr.responseText );
         // Tell the globe about your JSON data
         globe.addData( data[2], {format: 'magnitude', name: data[0], max: data[1]} );
-
         // Create the geometry
         globe.createPoints();
 
