@@ -14,7 +14,11 @@ var Sequelize = require('sequelize');
 var sequelize = new Sequelize('postgres://uiruphueqmgtzy:MeDPu8elxoLOYZFhSP6JstEQGU@ec2-54-225-195-249.compute-1.amazonaws.com:5432/d4bm6q4qc2ha09', {
    dialectOptions: {
         ssl: true
-    }});
+    },
+    define: {
+      schema: "useraccount"
+    }
+  });
 //TODO: MOVE DB URL SHIT TO CONFIG VAR
 
 app.set('port', (process.env.PORT || 4500));

@@ -6,7 +6,8 @@ module.exports = function(passport, Strategy, bcrypt, sequelize){
   var User = sequelize.define('User', {
     username: {type: Sequelize.STRING, unique: true},
     password: Sequelize.STRING,
-    usertables: Sequelize.ARRAY(Sequelize.TEXT)
+    usertables: Sequelize.ARRAY(Sequelize.TEXT),
+
   });
 
   User.sync();
