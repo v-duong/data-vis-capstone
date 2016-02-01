@@ -37,13 +37,12 @@ For this script to work correctly, you need to do the following:
 See bars.js for reference.
 */
 
-var vrModeIsOn = false;
 
 function VRBottonPressed(){
-	if (vrModeIsOn)
-		fullScreenExitHandler();
-	else
+	if (!vrModeIsOn)
 		enterVRMode();
+	else
+		fullScreenExitHandler();
 
 }
 
@@ -51,14 +50,25 @@ function fullScreenExitHandler(){
     if ( !(document.webkitIsFullScreen || document.mozFullScreen || document.msFullScreen || document.fullScreen) ){
     	vrModeIsOn = false;
     	if (graphType === 'bar'){
-	 		var temp = hideCamera;
-			hideCamera = camera;
-			camera = temp;
+	 	// 	var temp = hideCamera;
+			// hideCamera = camera;
+			// camera = temp;
+			camera = ortho_camera
 			camera.position.z = 800;
   			camera.position.y = 600;
   			camera.position.x = 600;
+  			controls = orbit_ortho_controls
+  			if (isMobile == true)
+  				controls.addEventListener('change', render);
 		}
     }
+ //    if (isMobile == true && graphType === 'bar'){
+ //    	// var temp = hidecontrols;
+ //    	// hidecontrols = controls;
+ //    	// controls = temp;
+	// 	controls = new THREE.OrbitControls(hideCamera, renderer.domElement);
+ //    	controls.addEventListener('change', render);
+	// }
 
 }
 
@@ -72,7 +82,8 @@ if (document.getElementsByClassName('visual')[0].addEventListener)
 
 function enterVRMode(){
 	vrModeIsOn = true;
-	hidecontrols = new THREE.DeviceOrientationControls(hideCamera);
+	// if (isMobile == false)
+	// 	hidecontrols = new THREE.DeviceOrientationControls(hideCamera);
 	var element = document.getElementsByClassName('visual')[0];
 	if ( navigator.userAgent.indexOf('Chrome') != -1 ){			//Chrome
 		element.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
@@ -90,15 +101,32 @@ function enterVRMode(){
 		element.msRequestFullscreen();
 	}
 	if (graphType === 'bar'){
-	 	var temp = hideCamera;
-		hideCamera = camera;
-		camera = temp;
+	 // 	var temp = hideCamera;
+		// hideCamera = camera;
+		//camera = temp;
+		camera = persp_camera
 		camera.position.z = 800;
    		camera.position.y = 600;
   		camera.position.x = 600;
+  		if (isMobile == true){
+  			controls.removeEventListener('change', render);
+  			controls = device_controls
+  		}
+  		else {
+  			controls = orbit_persp_controls
+  		}
 	}
 	if (graphType === 'scatter'){
 	 	camera = hideCamera;
 	}
+	//if (isMobile == true && graphType === 'bar'){
+		// var temp = hidecontrols;
+  //   	hidecontrols = controls;
+  //   	controls = temp;
+	//	controls = new THREE.DeviceOrientationControls(hideCamera);
+    //	controls.addEventListener('change', render);
+	//}
+
+
 
 }
