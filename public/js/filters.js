@@ -120,6 +120,9 @@ function setDefaultDropDownValue(visSelected, col1, col2, col3, colList){
 $("#VisualList").change(function(){
   var visualSelected =  $("#VisualList option:selected").val();
   var tableSelected = $("#TableList option:selected").text();
+
+  $('#filters').hide();
+  $('#filtersOption').show();
   console.log(tableSelected);
   switch(visualSelected){
   // if we're switching to basketball, theres no filters, so make sure to remove all
@@ -139,12 +142,21 @@ $("#VisualList").change(function(){
       if (tableSelected != 'Choose Table')
         createColsScatter(visualSelected, tableSelected);
       break;
-    default:
+    case 'globe':
+      hideColumnOptions();
       break;
 
   }
 
 });
+
+function hideColumnOptions(){
+  $('#filters').hide();
+  $('#filtersOption').hide();
+  // $('#columnOption').hide();
+  // $('#columnSelection').hide();
+}
+
 
 function createColsBar(visualSelected, tableSelected){
 
