@@ -63,7 +63,7 @@ function generateVisuals() {
       break;
     case 'globe':
       graphType = 'globe';
-      generateGlobe();
+      createGlobe();
     default:
       break;
   }
@@ -248,6 +248,45 @@ function generateBar() {
     renderData(data);
   });
 
+}
+
+//for globe
+function createGlobe(){
+  var tableSelected = $("#TableList option:selected").val();
+  var lat = $("#xColumn option:selected").text();
+  var longi = $("#yColumn option:selected").text();
+  var mag = $("#zColumn option:selected").text();
+
+  $.getJSON('/retrieveData', {
+    tableName: tableSelected,
+    columnList: [lat,longi,mag],
+    // filterQuery: FilterQuery
+  }, function(data) {
+      var temp, points, max, json;
+      points = [];
+      max = 0;
+      for(var i in data)
+      {
+        temp = data[i];
+        // console.log(temp[lat]+ " "+temp[longi]+" "+temp[mag]);
+        points.push(temp[lat]);
+        points.push(temp[longi]);
+        points.push(temp[mag]);
+        if(temp[mag]>max){max = temp[mag];}
+      }
+      // points = "[" + points.join() + "]";
+      // json = "[\""+tableSelected+ "\"," +max+"," +points +"]";
+
+      json = [points, max, tableSelected];
+      generateGlobe(json);
+      // var fs = require('fs');
+      // fs.writeFile(__dirname + "/public/globeData/" + tableSelected + ".json", json, function(err){
+      // if (err){
+      //   return console.log(err);
+      // }
+      // console.log("json file for globe is written");
+      // });
+  });
 }
 
 

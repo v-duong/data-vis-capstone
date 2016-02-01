@@ -127,60 +127,60 @@ app.post('/files', file_uploaded.single('datafile'), function(req, res) {
   var src = fs.createReadStream(tmp_path);
   src.pipe(process.stdout);
   //If globe radiobutton selected
-  if (visualType == 1){
-    var jsonFile = "";
-    src.on('data', function(fileData) {
-      jsonFile = jsonFile.concat(fileData.toString());
-    });
+  // if (visualType == 1){
+  //   var jsonFile = "";
+  //   src.on('data', function(fileData) {
+  //     jsonFile = jsonFile.concat(fileData.toString());
+  //   });
 
-    src.on('end', function() {
+  //   src.on('end', function() {
 
-    jsonFile = jsonFile.slice(0,-1);
-    jsonFile = jsonFile.split('\r\n');
-    if(jsonFile.length==1){
-      jsonFile = jsonFile.join().split('\r');
-    }
-    columns = jsonFile.splice(0,1)[0];
+  //   jsonFile = jsonFile.slice(0,-1);
+  //   jsonFile = jsonFile.split('\r\n');
+  //   if(jsonFile.length==1){
+  //     jsonFile = jsonFile.join().split('\r');
+  //   }
+  //   columns = jsonFile.splice(0,1)[0];
 
-    //Check if there are not 3 columns (lat,long,magnitude)
-    if (columns.split(',').length != 3){
-      console.log("Invalid Globe Data");
-      return;
-    }
+  //   //Check if there are not 3 columns (lat,long,magnitude)
+  //   if (columns.split(',').length != 3){
+  //     console.log("Invalid Globe Data");
+  //     return;
+  //   }
 
-    var max = 0;
-    var temp;
-    var mag;
-    for(var i in jsonFile){
-      temp = jsonFile[i].split(",");
-      mag = parseFloat(temp[2]);
-      if(mag>max){max = mag;}
-    }
+  //   var max = 0;
+  //   var temp;
+  //   var mag;
+  //   for(var i in jsonFile){
+  //     temp = jsonFile[i].split(",");
+  //     mag = parseFloat(temp[2]);
+  //     if(mag>max){max = mag;}
+  //   }
 
-    // console.log(max);
-    name = req.file.originalname;
-    name = name.substring(0, name.indexOf('.csv'));
-    jsonFile = "[\"" + name + "\"," +max+",[" + jsonFile + "]]";
+  //   // console.log(max);
+  //   name = req.file.originalname;
+  //   name = name.substring(0, name.indexOf('.csv'));
+  //   jsonFile = "[\"" + name + "\"," +max+",[" + jsonFile + "]]";
 
-    var writer = fs.writeFile(__dirname + "/public/globeData/" + name + ".json", jsonFile, function(err){
-        if (err){
-          return console.log(err);
-        }
-        res.render('files');
+    // var writer = fs.writeFile(__dirname + "/public/globeData/" + name + ".json", jsonFile, function(err){
+    //     if (err){
+    //       return console.log(err);
+    //     }
+    //     res.render('files');
 
-      });
+    //   });
 
-    });
+  //   });
 
-    src.on('error', function(err) {
-      res.render('files');
-    });
+  //   src.on('error', function(err) {
+  //     res.render('files');
+  //   });
 
-    //If general data type radio button selected
-  } // end of globe json data, to be deleted..
+  //   //If general data type radio button selected
+  // } // end of globe json data, to be deleted..
 
 
-  else {
+  // else {
   src.on('data', function(fileData) {
 
     textBuff = textBuff.concat(fileData.toString());
@@ -217,7 +217,7 @@ app.post('/files', file_uploaded.single('datafile'), function(req, res) {
     src.on('error', function(err) {
       res.render('files');
     });
-  }
+  // }
 });
 
 

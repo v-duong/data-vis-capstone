@@ -145,8 +145,8 @@ $("#VisualList").change(function(){
         createColsScatter(visualSelected, tableSelected);
       break;
     case 'globe':
-      hideColumnOptions();
-
+      //hideColumnOptions();
+      
       break;
 
   }
