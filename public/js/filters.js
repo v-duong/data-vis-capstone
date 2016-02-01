@@ -122,8 +122,6 @@ $("#VisualList").change(function(){
   var tableSelected = $("#TableList option:selected").text();
 
   $('#filters').hide();
-  $('#columnOption').show();
-  $('#columnSelection').show();
   $('#filtersOption').show();
   console.log(tableSelected);
   switch(visualSelected){
@@ -145,8 +143,7 @@ $("#VisualList").change(function(){
         createColsScatter(visualSelected, tableSelected);
       break;
     case 'globe':
-      //hideColumnOptions();
-      
+      hideColumnOptions();
       break;
 
   }
@@ -155,9 +152,9 @@ $("#VisualList").change(function(){
 
 function hideColumnOptions(){
   $('#filters').hide();
-  $('#columnOption').hide();
-  $('#columnSelection').hide();
   $('#filtersOption').hide();
+  // $('#columnOption').hide();
+  // $('#columnSelection').hide();
 }
 
 
