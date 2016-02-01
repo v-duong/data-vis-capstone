@@ -9,7 +9,7 @@ var passport = require('passport');
 var Strategy = require('passport-local').Strategy;
 var bcrypt = require('bcrypt');
 var flash = require("connect-flash");
-var db = require('./public/js/database.js')
+var db = require('./database.js')
 var Sequelize = require('sequelize');
 var sequelize = new Sequelize('postgres://uiruphueqmgtzy:MeDPu8elxoLOYZFhSP6JstEQGU@ec2-54-225-195-249.compute-1.amazonaws.com:5432/d4bm6q4qc2ha09', {
    dialectOptions: {
@@ -91,8 +91,8 @@ app.get('/tables', function(req,res) {
     schemaName = 'u'+req.user.id;
   var getTableQuery = "SELECT table_name FROM information_schema.tables WHERE table_schema = '"+schemaName+"'";
   console.log(getTableQuery);
-  var myDB = require('./public/js/database.js');
-  myDB.queryDB(getTableQuery, function(myTables) {
+
+  db.queryDB(getTableQuery, function(myTables) {
     if (myTables == null)
       res.end("ERROR")
     else {
@@ -194,12 +194,12 @@ app.post('/files', file_uploaded.single('datafile'), function(req, res) {
     // uploaded successfully
     src.on('end', function() {
       // add textBuff into DB
-      var myDB = require('./public/js/database.js');
+
       //console.log(textBuff);
       var schemaName = 'public';
       if (req.user)
         schemaName = 'u' + req.user.id;
-      myDB.insertTable(req.file.originalname, schemaName ,textBuff, function(myRows) {
+      db.insertTable(req.file.originalname, schemaName ,textBuff, function(myRows) {
 
         if (myRows == true) {
           console.log("insert success");
@@ -230,12 +230,11 @@ app.post('/files', file_uploaded.single('datafile'), function(req, res) {
 
 
 app.get('/visualize', function(req, res) {
-  var client = require('./public/js/database.js');
   var tlist;
   var schemaName = 'public';
   if (req.user)
     schemaName = 'u' + req.user.id;
-  client.queryDB("SELECT table_name FROM information_schema.tables WHERE table_schema = '"+ schemaName + "';", function(tlist) {
+  db.queryDB("SELECT table_name FROM information_schema.tables WHERE table_schema = '"+ schemaName + "';", function(tlist) {
     res.render('visualize', {
       tables: tlist
     });
@@ -243,7 +242,6 @@ app.get('/visualize', function(req, res) {
 });
 
 app.get('/globe_visualize', function(req, res){
-  var client = require('./public/js/database.js');
   var tlist = getFiles(__dirname + '/public/globeData');
   //Removes .json from fileNames
   for (i = 0; i < tlist.length; i++){
@@ -299,9 +297,9 @@ app.get('/retrieveDistinctColValues', function(req, res){
   if (req.user)
     schemaName = 'u'+req.user.id;
   var myQuery = 'select distinct ' + colName + ' from ' + schemaName + '.' + tableName + ' where ' + colName + ' is not null order by ' + colName;
-  var myDB = require('./public/js/database.js');
+
   console.log(myQuery);
-  myDB.queryDB(myQuery, function(myRows) {
+  db.queryDB(myQuery, function(myRows) {
     if (myRows == null) {
       console.log("Couldnt access database");
     } else {
@@ -330,8 +328,8 @@ app.get('/retrieveColumns', function(req, res) {
 
   console.log(myQuery);
 
-  var myDB = require('./public/js/database.js');
-  myDB.queryDB(myQuery, function(myRows) {
+
+  db.queryDB(myQuery, function(myRows) {
     if (myRows == null) {
       console.log("Couldnt access database");
     } else {
@@ -355,8 +353,8 @@ app.get('/retrieveData', function(req, res) {
   if (myQuery == '')
     return;
 
-  var myDB = require('./public/js/database.js');
-  myDB.queryDB(myQuery, function(myRows) {
+
+  db.queryDB(myQuery, function(myRows) {
     if (myRows == null) {
       console.log("Couldnt access database");
     } else {
@@ -371,9 +369,9 @@ app.post('/delData', function(req, res) {
   if (req.user)
     schemaName = 'u'+req.user.id;
   var tableName = req.body.tName;
-  var myDB = require('./public/js/database.js');
+
   var dropSuccess = false;
-  myDB.deleteTable(tableName,schemaName, function(dropErr) {
+  db.deleteTable(tableName,schemaName, function(dropErr) {
     res.send(JSON.stringify(dropErr));
   });
 
