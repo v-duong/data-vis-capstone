@@ -7,6 +7,10 @@ function generateVisuals() {
 function generateGlobe(){
   $('.visual').empty();
 
+  document.body.style.backgroundImage="url('public/js/globe/loading.gif')";
+  document.body.style.backgroundPosition = "center center";
+  document.body.style.backgroundRepeat = "no repeat";
+
   var container = document.getElementById('vis');
   var globe = new DAT.Globe(container);
 
