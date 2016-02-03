@@ -1,12 +1,15 @@
 function generateGlobe(json){
   clearmeshes();
   console.log("generate_globe()");
-  $('.visual').empty();
+  $('.visual').empty();  
 
   var container = document.getElementById('vis');
+  //document.body.style.background = "#ffffff url('static/js/globe/ajax-loader.gif') no-repeat center center";
+  // container.style.background = "#ffffff url('static/js/globe/ajax-loader.gif') no-repeat center center";
   //renderer, camera, scene,  RENDERID
   var globe = new DAT.Globe(container, renderer, camera, scene, RENDERID, effect);
   scene = globe.scene;
+  
 
   // var tableSelected = $("#TableList option:selected").val();
 
@@ -30,7 +33,9 @@ function generateGlobe(json){
         globe.createPoints();
 
         // Begin animation
+
         globe.animate();
+        document.getElementById('vis').style.backgroundImage = "none";
   //   }
 
   // };
