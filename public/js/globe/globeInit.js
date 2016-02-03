@@ -1,12 +1,13 @@
 function generateGlobe(json){
   clearmeshes();
   console.log("generate_globe()");
-  $('.visual').empty();
+  $('.visual').empty();  
 
   var container = document.getElementById('vis');
   //renderer, camera, scene,  RENDERID
   var globe = new DAT.Globe(container, renderer, camera, scene, RENDERID, effect);
   scene = globe.scene;
+  
 
   // var tableSelected = $("#TableList option:selected").val();
 
@@ -30,7 +31,9 @@ function generateGlobe(json){
         globe.createPoints();
 
         // Begin animation
+
         globe.animate();
+        document.getElementById('vis').style.backgroundImage = "none";
   //   }
 
   // };
