@@ -53,6 +53,28 @@ var FirstTime = true;
 var backboard;
 var court;
 
+
+function initbasketball() {
+
+
+
+  hideCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+
+  controls = new THREE.OrbitControls(camera, renderer.domElement);
+  //        controls.damping = 0.2;
+  hidecontrols = new THREE.DeviceOrientationControls(hideCamera);
+  //hidecontrols = new THREE.OrbitControls(hideCamera, renderer.domElement);
+  //        controls.damping = 0.2;
+  if (!INITIAL) {
+    controls.addEventListener('change', render);
+    hidecontrols.addEventListener('change', render);
+
+  }
+
+}
+
 function clearBasketballMesh(){
   for (var i = 0; i < 14; i++){
     if ((zones[i] != null) && (zones[i] != undefined)){
@@ -105,20 +127,21 @@ function generateZones(){
     genZone7();
     genZone9();
     genZone10();
-    //genZone11();
-    //genZone12();
-    //genZone13();
+    genZone11and13();
+    genZone12();
 
   }
 };
+
+
 
 function genZone10(){
   // geometry
   var geo = new THREE.Geometry();
   geo.vertices.push( new THREE.Vector3( 0+329, 4, 0-250 ) );
   geo.vertices.push( new THREE.Vector3( 140+329, 4, 0-250 ) );
-  geo.vertices.push( new THREE.Vector3( 140+329, 4, 30-250 ) );
-  geo.vertices.push( new THREE.Vector3( 0+329, 4, 30-250 ) ); // close the loop
+  geo.vertices.push( new THREE.Vector3( 140+329, 4, 26-250 ) );
+  geo.vertices.push( new THREE.Vector3( 0+329, 4, 26-250 ) ); // close the loop
   geo.faces.push(new THREE.Face3(0,1,2));
   geo.faces.push(new THREE.Face3(0,2,3));
 
@@ -137,8 +160,8 @@ function genZone10(){
 }
 function genZone9(){
   var geo = new THREE.Geometry();
-  geo.vertices.push( new THREE.Vector3( 0+329, 4, 0+220 ) );
-  geo.vertices.push( new THREE.Vector3( 140+329, 4, 0+220 ) );
+  geo.vertices.push( new THREE.Vector3( 0+329, 4, 4+220 ) );
+  geo.vertices.push( new THREE.Vector3( 140+329, 4, 4+220 ) );
   geo.vertices.push( new THREE.Vector3( 140+329, 4, 30+220 ) );
   geo.vertices.push( new THREE.Vector3( 0+329, 4, 30+220 ) ); // close the loop
   geo.faces.push(new THREE.Face3(0,1,2));
@@ -160,7 +183,6 @@ function genZone9(){
 
 }
 function genZone0(){
-  console.log("hhmmmm");
   var shape = new THREE.Shape();
   shape.moveTo( 87.5, 0 );
   shape.absarc( 0, 0, 87.5, 0, (240/180)* Math.PI, false );
@@ -247,23 +269,20 @@ function genZone3(){
   //return mymesh;
 
 }
-
-//87.5, 167.5, 16, 2, 0, 80/180 * Math.PI
-function genZone4and8(){
-  var curve = new THREE.EllipseCurve(
+function genZone11and13(){
+  var curve = new THREE.ArcCurve(
     0, 0,             // ax, aY
-    80, 157.5,            // xRadius, yRadius
-    -1/35 * Math.PI, 4.6/18 * Math.PI, // aStartAngle, aEndAngle
-    false             // aClockwise
+    240,            // xRadius, yRadius
+    8*Math.PI/9, 0.61*Math.PI, // aStartAngle, aEndAngle
+    true             // aClockwise
   );
 
   var points = curve.getSpacedPoints(20);
   var path = new THREE.Path();
   var geometry = path.createGeometry(points);
-  geometry.vertices.push(new THREE.Vector3(125,150,0));
-  geometry.vertices.push( new THREE.Vector3( 135, 125, 0 ) );
-  geometry.vertices.push(new THREE.Vector3(135, -15, 0));
-  geometry.vertices.push(new THREE.Vector3(75, -15, 0));
+  geometry.vertices.push( new THREE.Vector3( -81, 250, 0 ) );
+  geometry.vertices.push( new THREE.Vector3( -410, 250, 0 ) );
+  geometry.vertices.push( new THREE.Vector3( -410, 115, 0 ) );
   geometry.faces.push(new THREE.Face3(20,21,22));
   for (var i = 0; i < 20; i++){
     geometry.faces.push(new THREE.Face3(i,i+1,22));
@@ -282,24 +301,114 @@ function genZone4and8(){
     transparent: true,
     opacity: 0.5
   });
+  var mymesh = new THREE.Mesh(geometry, material);
+  mymesh.rotation.set(-Math.PI/2, 0,0);
+  mymesh.position.set(410,4,0);
+  //mymesh.__dirtyPosition = true;
+
+
+  var mymesh2 = new THREE.Mesh(geometry, material2);
+  mymesh2.rotation.set(Math.PI/2, 0, 0);
+  mymesh2.position.set(410,4,0);
+  mymesh2.__dirtyPosition = true;
+
+  zones[11] = mymesh2;
+  scene.add(mymesh2);
+
+  zones[13] = mymesh;
+  scene.add(mymesh);
+}
+
+function genZone12(){
+  var curve = new THREE.ArcCurve(
+    0, 0,             // ax, aY
+    240,            // xRadius, yRadius
+    -8.03*Math.PI/9, 8.03*Math.PI/9, // aStartAngle, aEndAngle
+    true             // aClockwise
+  );
+
+  var points = curve.getSpacedPoints(20);
+  var path = new THREE.Path();
+  var geometry = path.createGeometry(points);
+  geometry.vertices.push(new THREE.Vector3(-410,113,0));
+  geometry.vertices.push( new THREE.Vector3( -410, -113, 0 ) );
+  geometry.faces.push(new THREE.Face3(20,21,22));
+  for (var i = 0; i < 20; i++){
+    geometry.faces.push(new THREE.Face3(i,i+1,22));
+  }
+
+  var material = new THREE.MeshBasicMaterial({
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.5
+  });
+  var material2 = new THREE.MeshBasicMaterial({
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.5
+  });
+  var mymesh = new THREE.Mesh(geometry, material);
+  mymesh.rotation.set(-Math.PI/2, 0,0);
+  mymesh.position.set(410,4,0);
+
+  zones[12] = mymesh;
+  scene.add(mymesh);
+}
+
+//87.5, 167.5, 16, 2, 0, 80/180 * Math.PI
+function genZone4and8(){
+  var curve = new THREE.ArcCurve(
+    0, 0,             // ax, aY
+    168,            // Radius
+    0.665  * Math.PI,  0.42*Math.PI, // aStartAngle, aEndAngle
+    true             // aClockwise
+  );
+
+  var points = curve.getSpacedPoints(20);
+  var path = new THREE.Path();
+  var geometry = path.createGeometry(points);
+  geometry.vertices.push(new THREE.Vector3(47,220,0));
+  geometry.vertices.push(new THREE.Vector3(-93,220,0));
+  geometry.vertices.push(new THREE.Vector3(-120,210,0));
+  //geometry.vertices.push( new THREE.Vector3( 135, 125, 0 ) );
+  //geometry.vertices.push(new THREE.Vector3(135, -15, 0));
+  //geometry.vertices.push(new THREE.Vector3(75, -15, 0));
+  geometry.faces.push(new THREE.Face3(0,21,22));
+  for (var i = 0; i < 20; i++){
+    geometry.faces.push(new THREE.Face3(i,i+1,21));
+  }
+  geometry.faces.push(new THREE.Face3(0,22,23));
+
+  var material = new THREE.MeshBasicMaterial({
+    //color: 0x0ffcc0,
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.5
+  });
+  var material2 = new THREE.MeshBasicMaterial({
+    //color: 0x0ffcc0,
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.5
+  });
   //zones[4] = new THREE.Line(geometry, new THREE.LineBasicMaterial({color: 0x0f00ff}));
   var mymesh = new THREE.Mesh(geometry, material);
-  mymesh.rotation.set(-Math.PI/2, 0,Math.PI/2);
-  mymesh.position.set(455,4,-87.5);
+  mymesh.rotation.set(-Math.PI/2, 0,0);
+  mymesh.position.set(422.5,4,0);
   mymesh.__dirtyPosition = true;
   //scene.add(zones[4]);
 
   //zone 5
   var mymesh2 = new THREE.Mesh(geometry, material2);
-  mymesh2.rotation.set(Math.PI/2, 0, Math.PI/2);
-  mymesh2.position.set(455,4,87.5);
+  mymesh2.rotation.set(Math.PI/2, 0, 0);
+  mymesh2.position.set(422.5,4,0);
   mymesh2.__dirtyPosition = true;
   //scene.add(zones[8]);
   //return [mymesh2, mymesh];
-  zones[4] = mymesh2;
-  scene.add(mymesh2);
-  zones[8] = mymesh;
+  zones[4] = mymesh;
   scene.add(mymesh);
+  zones[8] = mymesh2;
+  scene.add(mymesh2);
 }
 
 function genZone5(){
@@ -369,28 +478,22 @@ function generateZoneColor(zoneMadeList, zoneMissList){
   var zoneList = zones;
   for (var i = 0; i < 14; i++){
     var shotPercent = zoneMadeList[i]/(zoneMadeList[i] + zoneMissList[i]);
-    console.log("zone" + i + ": " + shotPercent);
-    console.log("made: " + zoneMadeList[i] + '/' +   (zoneMadeList[i]+ zoneMissList[i]));
-    console.log("");
 
-    // i don't have the mesh created for these yet
-    if ( i > 10)
-      continue;
-
-    // red
-    if (shotPercent > .50){
-      zoneList[i].material.color.setHex( 0xff0000 );
-    }
-    // yellow
-    else if (shotPercent > .40){
-      zoneList[i].material.color.setHex( 0xffff00 );
-    }
     // green
-    else if (shotPercent > .30){
+    if (shotPercent > 0.50){
       zoneList[i].material.color.setHex( 0x00cc00 );
     }
+    // yellow
+    else if (shotPercent > 0.40){
+      zoneList[i].material.color.setHex( 0xffff00 );
+    }
+    // orange
+    else if (shotPercent > 0.30){
+      zoneList[i].material.color.setHex( 0xff9900 );
+    }
+    //red
     else{
-      zoneList[i].material.color.setHex( 0x00ccff );
+      zoneList[i].material.color.setHex( 0xff0000 );
     }
 
 
@@ -416,7 +519,11 @@ function genPercentageText(zoneMadeList, zoneMissList){
 		,height:0
 		,size:10
 		});
-    var TextGeoPerc = new THREE.TextGeometry( String(((zoneMadeList[i]/(zoneMadeList[i]+zoneMissList[i]))*100).toFixed(2)) + '%', {
+    var shotPercentage = 0;
+    if (zoneMadeList[i]+zoneMissList[i]){
+      shotPercentage = ((zoneMadeList[i]/(zoneMadeList[i]+zoneMissList[i])) * 100).toFixed(2);
+    }
+    var TextGeoPerc = new THREE.TextGeometry( String(shotPercentage) + '%', {
 		font:  'helvetiker'
 		,height:0
 		,size:10

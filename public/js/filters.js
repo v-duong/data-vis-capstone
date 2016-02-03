@@ -119,7 +119,11 @@ function setDefaultDropDownValue(visSelected, col1, col2, col3, colList){
 
 $("#VisualList").change(function(){
   var visualSelected =  $("#VisualList option:selected").val();
-  var tableSelected = $("#TableList option:selected").val();
+  var tableSelected = $("#TableList option:selected").text();
+
+  $('#filters').hide();
+  $('#filtersOption').show();
+  console.log(tableSelected);
   switch(visualSelected){
   // if we're switching to basketball, theres no filters, so make sure to remove all
     case 'basketball':
@@ -127,30 +131,39 @@ $("#VisualList").change(function(){
       $('#filters1').html("");
       $('#filters2').html("");
       $('#filters3').html("");
-      if (tableSelected != 'Choose Column')
+      if (tableSelected != 'Choose Table')
         createColsBasketball(visualSelected, tableSelected);
       break;
     case 'bar':
-      if (tableSelected != 'Choose Column')
+      if (tableSelected != 'Choose Table')
         createColsBar(visualSelected, tableSelected);
       break;
     case 'scatter':
-      if (tableSelected != 'Choose Column')
+      if (tableSelected != 'Choose Table')
         createColsScatter(visualSelected, tableSelected);
       break;
-    default:
+    case 'globe':
+      hideColumnOptions();
       break;
 
   }
 
 });
 
+function hideColumnOptions(){
+  $('#filters').hide();
+  $('#filtersOption').hide();
+  // $('#columnOption').hide();
+  // $('#columnSelection').hide();
+}
+
+
 function createColsBar(visualSelected, tableSelected){
-  var getColumnTypeQuery = "SELECT column_name ,data_type FROM information_schema.columns where table_name = '";
-  getColumnTypeQuery = getColumnTypeQuery.concat(tableSelected + "'");
 
   $("#columnSelection.off-canvas-submenu").html("");
-  $.getJSON('/retrieveData', { myQuery : getColumnTypeQuery }, function(data){
+  $.getJSON('/retrieveColumns', {
+     tableName: tableSelected
+  }, function(data){
     // create a dropdown list
     // default at "Choose Column" to make sure user actually chooses a column
     var htmlStr = "<option value='' selected='selected' disabled='disabled'> Choose Column </option>";
@@ -176,12 +189,12 @@ function createColsBar(visualSelected, tableSelected){
   });
 }
 function createColsScatter(visualSelected, tableSelected){
-  var getColumnTypeQuery = "SELECT column_name ,data_type FROM information_schema.columns where table_name = '";
-  getColumnTypeQuery = getColumnTypeQuery.concat(tableSelected + "'");
-  getColumnTypeQuery = getColumnTypeQuery.concat(" and data_type = 'double precision'");
 
   $("#columnSelection.off-canvas-submenu").html("");
-  $.getJSON('/retrieveData', { myQuery : getColumnTypeQuery }, function(data){
+  $.getJSON('/retrieveColumns', {
+     tableName: tableSelected,
+     dataType: ['double precision']
+  }, function(data){
     // create a dropdown list
     // default at "Choose Column" to make sure user actually chooses a column
     var htmlStr = "<option value='' selected='selected' disabled='disabled'> Choose Column </option>";
@@ -202,19 +215,19 @@ function createColsScatter(visualSelected, tableSelected){
 }
 
 function createColsBasketball(visualSelected, tableSelected){
-  var getColumnTypeQuery = "SELECT column_name ,data_type FROM information_schema.columns where table_name = '";
-  getColumnTypeQuery = getColumnTypeQuery.concat(tableSelected + "'");
-  getColumnTypeQuery = getColumnTypeQuery.concat(" and data_type = 'double precision'");
 
   $("#columnSelection.off-canvas-submenu").html("");
-  $.getJSON('/retrieveData', { myQuery : getColumnTypeQuery }, function(data){
+  $.getJSON('/retrieveColumns', {
+     tableName: tableSelected,
+     dataType: ['double precision']
+  }, function(data){
     // create a dropdown list
     // default at "Choose Column" to make sure user actually chooses a column
     var htmlStr = "<option value='' selected='selected' disabled='disabled'> Choose Column </option>";
-
     // populate dropdown list with columnNames and Values
     for (var i = 0; i < data.length; i++){
       htmlStr = htmlStr.concat('<option value="' + data[i].data_type + '">' + data[i].column_name + '</option>');
+
     }
 
     htmlStr = htmlStr.concat('</select></li>');
@@ -251,11 +264,13 @@ $("#TableList").change(function(){
       var tableSelected = $("#TableList option:selected").val();
       console.log(tableSelected);//
 
-      var getColumnTypeQuery = "SELECT column_name ,data_type FROM information_schema.columns where table_name = '";
-      getColumnTypeQuery = getColumnTypeQuery.concat(tableSelected + "'");
+      //var getColumnTypeQuery = "SELECT column_name ,data_type FROM information_schema.columns where table_name = '";
+      //getColumnTypeQuery = getColumnTypeQuery.concat(tableSelected + "'");
 
       $("#columnSelection.off-canvas-submenu").html("");
-      $.getJSON('/retrieveData', { myQuery : getColumnTypeQuery }, function(data){
+      $.getJSON('/retrieveColumns', {
+         tableName: tableSelected
+      }, function(data){
         // create a dropdown list
         // default at "Choose Column" to make sure user actually chooses a column
         var htmlStr = "<option value='' selected='selected' disabled='disabled'> Choose Column </option>";
@@ -335,7 +350,7 @@ function generateTextColumnFilter(colID){
   var tableSelected = $("#TableList option:selected").val();
   var ColName = $(colID.concat(" option:selected")).text();
   //var getMinMaxQuery = 'select max(' + ColName + '), min(' + ColName + ') FROM ' + tableSelected;
-  var getSelectionQuery = 'select distinct '+ColName+' from '+tableSelected+' where '+ColName+' is not null order by '+ColName;
+  //var getSelectionQuery = 'select distinct '+ColName+' from '+tableSelected+' where '+ColName+' is not null order by '+ColName;
 
   var filterID;
   var formID;
@@ -357,7 +372,11 @@ function generateTextColumnFilter(colID){
   }
 
   // retrieve all items in column that's alphabeticalized. Then generate Check boxes.
-  $.getJSON('/retrieveData', { myQuery : getSelectionQuery }, function(data){
+  $.getJSON('/retrieveDistinctColValues', {
+      tableName: tableSelected,
+      columnName: ColName
+
+  }, function(data){
     $(filterID).html("");
     //$(filterID).append('<input id=' + amountName.substring(1) + ' type=text onkeypress=”return isNumber(event);” ></input>' + '<div id=' + slideName.substring(1) + '></div>');
     var randomStr = formID + ':<form class="filterselect" id='+ formID + '><div class="fbox">'
@@ -419,7 +438,11 @@ function generateNumericColumnFilter(colID){
       break;
   }
 
-  $.getJSON('/retrieveData', { myQuery : getMinMaxQuery }, function(data){
+  $.getJSON('/retrieveData', {
+    tableName: tableSelected,
+    columnList: ['max(' + ColName + ')', 'min(' + ColName + ')']
+
+  }, function(data){
     $(filterID).html("");
     $(filterID).append(filterLabel + ':<input id=' + amountName.substring(1) + ' type=text onkeypress=”return isNumber(event);” readonly></input>' + '<div id=' + slideName.substring(1) + '></div>');
     var stepValue = 1;
@@ -451,7 +474,7 @@ function generateNumericColumnFilter(colID){
 
 // Creates a query based on Table, Columns, and Filters for Bar and Scatter
 function BarScatterFilterQuery(){
-  var tableSelected = $("#TableList option:selected").val();
+//  var tableSelected = $("#TableList option:selected").val();
   var x = $("#xColumn option:selected").text();
   var y = $("#yColumn option:selected").text();
   var z = $("#zColumn option:selected").text();
@@ -464,9 +487,9 @@ function BarScatterFilterQuery(){
   var tempTo;
 
   // start of query
-  var getColumnTypeQuery = "SELECT " + x + ", " + y + ", " + z + " from " + tableSelected;
-
-  var startWord = " where";
+//  var getColumnTypeQuery = "SELECT " + x + ", " + y + ", " + z + " from " + tableSelected;
+  var getColumnTypeQuery = "";
+  var startWord = "";
 
   /*
   select manufacturer_pregen, model, cpu_speed, _price from tryagainsmartphone where _price >= 200 and _price <= 400 and (manufacturer_pregen = 'Samsung'or manufacturer_pregen = 'HTC');
@@ -478,7 +501,7 @@ function BarScatterFilterQuery(){
       tempFrom = $( "#sliderX" ).slider( "values", 0 );
     	tempTo = $( "#sliderX" ).slider( "values", 1 );
     	if(tempFrom!=""){
-    	 	getColumnTypeQuery = getColumnTypeQuery.concat(" where "+x+" >= " + tempFrom);
+    	 	getColumnTypeQuery = getColumnTypeQuery.concat(x+" >= " + tempFrom);
         startWord = " and";
       }
       if(tempTo!=""){
@@ -563,6 +586,7 @@ function BarScatterFilterQuery(){
       break;
   }
 
+  console.log(getColumnTypeQuery);
   return getColumnTypeQuery;
 
 }

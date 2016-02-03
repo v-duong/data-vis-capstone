@@ -24,10 +24,13 @@ head
             li
               a(href='/visualize') Visualization
             li
-              a(href='/globe_visualize') Globe
-            li
               a(href='/nba_visualize') NBA
-            li
-              a(href='/about') About
+            - if (logged) {
+              li
+                a(href='/logout') Logout
+            - } else { 
+              li
+                a(href='/login') Login
+            - }
     block maintext
       

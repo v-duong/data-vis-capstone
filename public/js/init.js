@@ -56,14 +56,21 @@ $("#sphere").change(function() {
   }
 })
 
+function resetVisuals(){
+  $('.visual').empty();
+  INITIAL = false;
+}
+
 function generateVisuals() {
   var tableSelected = $("#VisualList option:selected").val();
   switch (tableSelected) {
     case 'bar':
+      resetVisuals();
       graphType = 'bar';
       generateBar();
       break;
     case 'scatter':
+      resetVisuals();
       graphType = 'scatter';
       generateScatter();
       break;
@@ -71,6 +78,9 @@ function generateVisuals() {
       graphType = 'basketball';
       generateBasketball();
       break;
+    case 'globe':
+      graphType = 'globe';
+      createGlobe();
     default:
       break;
   }
@@ -94,6 +104,8 @@ function generateBasketball(){
   $('.visual').append(renderer.domElement);
   genCourt();
   generateZones();
+  initbasketball();
+
   camera.position.y = 500;
   camera.lookAt(0,0,0);
   //add effect
@@ -101,10 +113,15 @@ function generateBasketball(){
   effect.setSize(window.innerWidth, window.innerHeight);
 
   controls = new THREE.OrbitControls(camera, renderer.domElement);
-  //parseBallShotData();
-  var dataQuery = BasketballQuery();
+
+  var tableSelected = $("#TableList option:selected").val();
+  var x = $("#courtXColumn option:selected").text();
+  var y = $("#courtYColumn option:selected").text();
+  var z = $("#shotColumn option:selected").text();
+
   $.getJSON('/retrieveData', {
-    myQuery: dataQuery
+    tableName: tableSelected,
+    columnList: [x,y,z]
   }, function(data) {
     calculateZones(data);
   });
@@ -112,21 +129,7 @@ function generateBasketball(){
   //calculateZones();
 	animate();
 }
-// Creates a query based on Table, Columns, and Filters for Bar and Scatter
-function BasketballQuery(){
-  var tableSelected = $("#TableList option:selected").val();
-  var x = $("#courtXColumn option:selected").text();
-  var y = $("#courtYColumn option:selected").text();
-  var z = $("#shotColumn option:selected").text();
 
-  var xType = $("#xColumn option:selected").val();
-  var yType = $("#yColumn option:selected").val();
-  var zType = $("#zColumn option:selected").val();
-
-  var dataQuery = "SELECT " + x + ", " + y + ", " + z + " from " + tableSelected
-  return dataQuery;
-
-}
 
 
 function calculateZones(data){
@@ -184,7 +187,7 @@ function generateScatter() {
     scene.add(msphere);
     mouseSphere.push(msphere);
   }
-  
+
   initscatter();
 
   targetlist = [];
@@ -193,12 +196,15 @@ function generateScatter() {
   var scales = [];
   setupScene();
   var normalMaterial = new THREE.MeshNormalMaterial();
+  var tableName = $("#TableList option:selected").val();
   var x = $("#xColumn option:selected").text();
   var y = $("#yColumn option:selected").text();
   var z = $("#zColumn option:selected").text();
-  var getColumnTypeQuery = BarScatterFilterQuery();
+  var FilterQuery = BarScatterFilterQuery();
   $.getJSON('/retrieveData', {
-    myQuery: getColumnTypeQuery
+    tableName: tableName,
+    columnList: [x,y,z],
+    filterQuery: FilterQuery
   }, function(data) {
     findScales(scales, data, x, y, z);
     displayNodes(data, x, y, z, scales);
@@ -240,21 +246,67 @@ function generateBar() {
   mousetargetlist = [];
   scater_check = 0;
   var tableSelected = $("#TableList option:selected").val();
-  var x = $("#x option:selected").text();
-  var y = $("#y option:selected").text();
-  var z = $("#z option:selected").text();
+  var x = $("#xColumn option:selected").text();
+  var y = $("#yColumn option:selected").text();
+  var z = $("#zColumn option:selected").text();
 
 
   // generate bar/Scatter Query Based on Filters
-
-  var displayQuery = BarScatterFilterQuery();
+  console.log(x);
+  console.log(y);
+  console.log(z);
+  var FilterQuery = BarScatterFilterQuery();
   var test;
   $.getJSON('/retrieveData', {
-    myQuery: displayQuery
+    tableName: tableSelected,
+    columnList: [x,y,z],
+    filterQuery: FilterQuery
   }, function(data) {
     renderData(data);
   });
 
+}
+
+//for globe
+function createGlobe(){
+  var tableSelected = $("#TableList option:selected").val();
+  var lat = $("#xColumn option:selected").text();
+  var longi = $("#yColumn option:selected").text();
+  var mag = $("#zColumn option:selected").text();
+
+  document.getElementById('vis').style.background = "#ffffff url('static/js/globe/ajax-loader.gif') no-repeat center center";
+
+
+  $.getJSON('/retrieveData', {
+    tableName: tableSelected,
+    columnList: [lat,longi,mag],
+    // filterQuery: FilterQuery
+  }, function(data) {
+      var temp, points, max, json;
+      points = [];
+      max = 0;
+      for(var i in data)
+      {
+        temp = data[i];
+        // console.log(temp[lat]+ " "+temp[longi]+" "+temp[mag]);
+        points.push(temp[lat]);
+        points.push(temp[longi]);
+        points.push(temp[mag]);
+        if(temp[mag]>max){max = temp[mag];}
+      }
+      // points = "[" + points.join() + "]";
+      // json = "[\""+tableSelected+ "\"," +max+"," +points +"]";
+
+      json = [points, max, tableSelected];
+      generateGlobe(json);
+      // var fs = require('fs');
+      // fs.writeFile(__dirname + "/public/globeData/" + tableSelected + ".json", json, function(err){
+      // if (err){
+      //   return console.log(err);
+      // }
+      // console.log("json file for globe is written");
+      // });
+  });
 }
 
 
@@ -265,6 +317,8 @@ function clearmeshes() {
   meshes = [];
   clearBasketballMesh();
 }
+
+
 
 function onWindowResize() {
 
@@ -277,6 +331,13 @@ function onWindowResize() {
   camera.top = windowHalfY;
   camera.bottom = -1 * windowHalfY;
   camera.updateProjectionMatrix();
+
+  hideCamera.aspect = window.innerWidth / window.innerHeight;
+  hideCamera.left = -1 * windowHalfX;
+  hideCamera.right = windowHalfX;
+  hideCamera.top = windowHalfY;
+  hideCamera.bottom = -1 * windowHalfY;
+  hideCamera.updateProjectionMatrix();
 
   renderer.setSize(window.innerWidth, window.innerHeight);
   effect.setSize(window.innerWidth, window.innerHeight);

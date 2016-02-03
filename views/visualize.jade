@@ -8,6 +8,7 @@ block sidelist
 				option(value='' selected='selected' disabled="disabled") Choose Visual
 				option(value='bar') bar
 				option(value='scatter') scatter
+				option(value='globe') globe
 				option(value='basketball') basketball
 		li
 			label Table
@@ -16,12 +17,12 @@ block sidelist
 				option(value='' selected='selected' disabled="disabled") Choose Table
 				each item in tables
 					option(value=item.table_name) #{item.table_name}
-		li
+		li#columnOption
 			a.off-canvas-submenu-call(href='#')
 				| Column Selection
 				span.right -
 		ul#columnSelection.off-canvas-submenu
-		li
+		li#filtersOption
 			a.off-canvas-submenu-call(href='#')
 				| Filters
 				span.right -
@@ -51,5 +52,8 @@ block scripts
 	script(src='static/js/scatter.js')
 	script(src='static/js/vrDetection.js')
 	script(src='static/js/bars.js')
+	script(src='static/js/globe/globe.js')
+	script(src='static/js/globe/globeInit.js')
+
 	link(rel='stylesheet', href='//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css')
 	script(src='//code.jquery.com/ui/1.11.4/jquery-ui.js')

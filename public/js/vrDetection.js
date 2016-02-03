@@ -119,6 +119,7 @@ function enterVRMode(){
 	if (graphType === 'scatter'){
 	 	camera = hideCamera;
 	}
+
 	//if (isMobile == true && graphType === 'bar'){
 		// var temp = hidecontrols;
   //   	hidecontrols = controls;
@@ -127,6 +128,9 @@ function enterVRMode(){
     //	controls.addEventListener('change', render);
 	//}
 
-
+	if (graphType == 'basketball'){
+		camera = hideCamera;
+		camera.position.y += 40;
+	}
 
 }
