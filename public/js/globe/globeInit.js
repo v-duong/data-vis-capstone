@@ -4,8 +4,6 @@ function generateGlobe(json){
   $('.visual').empty();  
 
   var container = document.getElementById('vis');
-  //document.body.style.background = "#ffffff url('static/js/globe/ajax-loader.gif') no-repeat center center";
-  // container.style.background = "#ffffff url('static/js/globe/ajax-loader.gif') no-repeat center center";
   //renderer, camera, scene,  RENDERID
   var globe = new DAT.Globe(container, renderer, camera, scene, RENDERID, effect);
   scene = globe.scene;

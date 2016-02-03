@@ -257,8 +257,6 @@ function createGlobe(){
   var longi = $("#yColumn option:selected").text();
   var mag = $("#zColumn option:selected").text();
 
-   // var container = document.getElementById('vis');
-  // container.style.background = "#ffffff url('static/js/globe/ajax-loader.gif') no-repeat center center";
   document.getElementById('vis').style.background = "#ffffff url('static/js/globe/ajax-loader.gif') no-repeat center center";
 
 
