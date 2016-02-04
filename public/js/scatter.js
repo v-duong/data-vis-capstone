@@ -23,9 +23,9 @@
     device_persp_controls.addEventListener('change', render);
   }
 
-  // orbit_persp_controls.enabled = false;
-  // device_persp_controls.enabled = false;
-  // controls.enabled = true;
+  orbit_persp_controls.enabled = false;
+  device_persp_controls.enabled = false;
+  controls.enabled = true;
 
  }
 
