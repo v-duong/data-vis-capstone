@@ -57,21 +57,48 @@ var court;
 function initbasketball() {
 
 
+  orbit_persp_camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
+  device_persp_camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
+  camera = orbit_persp_camera;
 
-  hideCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  renderer.setSize(window.innerWidth, window.innerHeight);
 
+  //add effect
+  effect = new THREE.StereoEffect(renderer);
+  effect.setSize(window.innerWidth, window.innerHeight);
 
-  controls = new THREE.OrbitControls(camera, renderer.domElement);
+  orbit_persp_controls = new THREE.OrbitControls(orbit_persp_camera, renderer.domElement);
   //        controls.damping = 0.2;
-  hidecontrols = new THREE.DeviceOrientationControls(hideCamera);
+  device_persp_controls = new THREE.DeviceOrientationControls(device_persp_camera);
   //hidecontrols = new THREE.OrbitControls(hideCamera, renderer.domElement);
   //        controls.damping = 0.2;
-  if (!INITIAL) {
-    controls.addEventListener('change', render);
-    hidecontrols.addEventListener('change', render);
+  controls = orbit_persp_controls;
 
+  if (!INITIAL) {
+    orbit_persp_controls.addEventListener('change', render);
+    device_persp_controls.addEventListener('change', render);
   }
+
+  orbit_persp_controls.enabled = false;
+  orbit_ortho_controls.enabled = false;
+  device_persp_controls.enabled = false;
+  controls.enabled = true;
+
+
+  // hideCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  // camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+
+  // controls = new THREE.OrbitControls(camera, renderer.domElement);
+  // //        controls.damping = 0.2;
+  // hidecontrols = new THREE.DeviceOrientationControls(hideCamera);
+  // //hidecontrols = new THREE.OrbitControls(hideCamera, renderer.domElement);
+  // //        controls.damping = 0.2;
+  // if (!INITIAL) {
+  //   controls.addEventListener('change', render);
+  //   hidecontrols.addEventListener('change', render);
+
+  // }
 
 }
 

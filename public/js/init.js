@@ -373,8 +373,6 @@ function setOrientationControls(e) {
   if (!e.alpha) {
     return;
   }
-  //hidecontrols.connect();
-  //hidecontrols.update();
   device_persp_controls.connect();
   device_persp_controls.update();
   window.removeEventListener('deviceorientation', setOrientationControls);

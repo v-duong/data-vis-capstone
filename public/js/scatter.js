@@ -1,42 +1,49 @@
  //renderer render the whole scene and camera
  var initscatter = function() {
 
-  hideCamera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
- 	camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
- 	
+  orbit_persp_camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
+  device_persp_camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
+  camera = orbit_persp_camera;
+
   renderer.setSize(window.innerWidth, window.innerHeight);
 
   //add effect
   effect = new THREE.StereoEffect(renderer);
   effect.setSize(window.innerWidth, window.innerHeight);
 
-  controls = new THREE.OrbitControls(camera, renderer.domElement);
+  orbit_persp_controls = new THREE.OrbitControls(orbit_persp_camera, renderer.domElement);
   //        controls.damping = 0.2;
-  hidecontrols = new THREE.DeviceOrientationControls(hideCamera);
+  device_persp_controls = new THREE.DeviceOrientationControls(device_persp_camera);
   //hidecontrols = new THREE.OrbitControls(hideCamera, renderer.domElement);
   //        controls.damping = 0.2;
+  controls = orbit_persp_controls;
+
   if (!INITIAL) {
-    controls.addEventListener('change', render);
-    hidecontrols.addEventListener('change', render);
-
-
-
-
+    orbit_persp_controls.addEventListener('change', render);
+    device_persp_controls.addEventListener('change', render);
   }
 
+  orbit_persp_controls.enabled = false;
+  orbit_ortho_controls.enabled = false;
+  device_persp_controls.enabled = false;
+  controls.enabled = true;
+
  }
+ 
  var renderScatter = function () {
 	RENDERID = requestAnimationFrame(renderScatter);
 	textFaceCamera(texts);
 	if (vrModeIsOn) {
-		  //hideCamera = new THREE.PerspectiveCamera(85, window.innerWidth / window.innerHeight, 1, 10000);
-    	effect.render(scene, camera);
+		if (isMobile){
+    		effect.render(scene, device_persp_camera);
+    	} else {
+    		effect.render(scene, orbit_persp_camera);
+    	}
   	}
   	else {
-    	renderer.render(scene, camera);
+    	renderer.render(scene, orbit_persp_camera);
   	}
-	controls.update();
-	hidecontrols.update();
+	//controls.update();
 }
 
 //draw line according to two points and color
@@ -214,10 +221,14 @@ var setupScene = function()
 	var camFactor = 130;
 
  
-	camera.position.set(10,10,10);
-	hideCamera.position.set(10,10,10);
-	scene.add(hideCamera);
-	scene.add(camera);
+	// camera.position.set(10,10,10);
+	// hideCamera.position.set(10,10,10);
+	// scene.add(hideCamera);
+	// scene.add(camera);
+	scene.add(orbit_persp_camera);
+	scene.add(device_persp_camera);
+	orbit_persp_camera.position.set(10, 10, 10);
+	device_persp_camera.position.set(10, 10, 10);
 
 	
 	var geometry = new THREE.PlaneGeometry( 5, 5);

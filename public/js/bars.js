@@ -37,6 +37,11 @@ function initbars() {
      orbit_ortho_controls.addEventListener('change', render);
      orbit_persp_controls.addEventListener('change', render);
   }
+
+  orbit_persp_controls.enabled = false;
+  orbit_ortho_controls.enabled = false;
+  device_persp_controls.enabled = false;
+  controls.enabled = true;
 }
 
 function animate() {
@@ -47,7 +52,7 @@ function animate() {
 
 function render() {
   if (vrModeIsOn) {
-    if (isMobile) { 
+    if (isMobile) {
       effect.render(scene, device_persp_camera); 
     }
     else { 
