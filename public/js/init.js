@@ -69,6 +69,10 @@ function generateVisuals() {
   }
 }
 
+function changeColsLable(first, second, third){
+  
+}
+
 
 function generateBasketball(){
   clearmeshes();
@@ -256,6 +260,9 @@ function createGlobe(){
   var lat = $("#xColumn option:selected").text();
   var longi = $("#yColumn option:selected").text();
   var mag = $("#zColumn option:selected").text();
+
+  document.getElementById('vis').style.background = "#ffffff url('static/js/globe/ajax-loader.gif') no-repeat center center";
+
 
   $.getJSON('/retrieveData', {
     tableName: tableSelected,
