@@ -19,8 +19,8 @@
   controls = orbit_persp_controls;
 
   if (!INITIAL) {
-    orbit_persp_controls.addEventListener('change', render);
-    device_persp_controls.addEventListener('change', render);
+    orbit_persp_controls.addEventListener('change', renderScatter);
+    device_persp_controls.addEventListener('change', renderScatter);
   }
 
   orbit_persp_controls.enabled = false;
@@ -219,11 +219,6 @@ var setupScene = function()
 
 	var camFactor = 130;
 
- 
-	// camera.position.set(10,10,10);
-	// hideCamera.position.set(10,10,10);
-	// scene.add(hideCamera);
-	// scene.add(camera);
 	scene.add(orbit_persp_camera);
 	scene.add(device_persp_camera);
 	orbit_persp_camera.position.set(10, 10, 10);

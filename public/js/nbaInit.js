@@ -88,32 +88,19 @@ function generatePlainCourtTexture(){
 
 }
 
-
-
 function animate() {
   RENDERID = requestAnimationFrame(animate);
   render();
 }
 
-
-
 function render() {
-  if (vrModeIsOn) {
-    if (isMobile){
-        effect.render(scene, device_persp_camera);
-      } else {
-        effect.render(scene, orbit_persp_camera);
-      }
-    }
-    else {
-      renderer.render(scene, orbit_persp_camera);
-    }
-    // if (vrModeIsOn) {
-    //   effect.render(scene, camera);
-    // } else {
+    if (vrModeIsOn) {
+      effect.render(scene, camera);
+    } else {
 
-    //   renderer.render(scene, camera);
-    // }
+      renderer.render(scene, camera);
+    }
+    controls.update();
 }
 
 function generateYears(){

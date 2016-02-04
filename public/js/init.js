@@ -103,9 +103,8 @@ function generateBasketball(){
     INITIAL = true;
 
   }
-  camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+  //camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
 
-	//renderer = new THREE.WebGLRenderer();
 	renderer.setSize( window.innerWidth, window.innerHeight );
 
   $('.visual').append(renderer.domElement);
@@ -113,13 +112,8 @@ function generateBasketball(){
   generateZones();
   initbasketball();
 
-  camera.position.y = 500;
-  camera.lookAt(0,0,0);
-  //add effect
-  effect = new THREE.StereoEffect(renderer);
-  effect.setSize(window.innerWidth, window.innerHeight);
-
-  controls = new THREE.OrbitControls(camera, renderer.domElement);
+   camera.position.y = 800;
+   camera.lookAt(0,0,0);
 
   var tableSelected = $("#TableList option:selected").val();
   var x = $("#courtXColumn option:selected").text();
@@ -134,7 +128,7 @@ function generateBasketball(){
   });
 
   //calculateZones();
-	animate();
+	renderBasketball();
 }
 
 
@@ -247,7 +241,8 @@ function generateBar() {
 
   }
   initbars();
-  animate();
+  //animate();
+  renderBars();
 
   targetlist = [];
   mousetargetlist = [];

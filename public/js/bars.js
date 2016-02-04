@@ -34,8 +34,8 @@ function initbars() {
   controls = orbit_ortho_controls
 
   if (!INITIAL) {
-     orbit_ortho_controls.addEventListener('change', render);
-     orbit_persp_controls.addEventListener('change', render);
+     orbit_ortho_controls.addEventListener('change', renderBar);
+     orbit_persp_controls.addEventListener('change', renderBar);
   }
 
   orbit_persp_controls.enabled = false;
@@ -45,13 +45,14 @@ function initbars() {
 
 }
 
-function animate() {
-  RENDERID = requestAnimationFrame(animate);
-  render();
-}
+// function animate() {
+//   RENDERID = requestAnimationFrame(animate);
+//   render();
+// }
 
 
-function render() {
+function renderBars() {
+  RENDERID = requestAnimationFrame(renderBars);
   if (vrModeIsOn) {
     if (isMobile) {
       effect.render(scene, device_persp_camera); 
