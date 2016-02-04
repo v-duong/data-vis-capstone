@@ -1,4 +1,4 @@
-var camera, scene, renderer, effect;
+//var camera, scene, renderer, effect;
 var targetlist, mousetargetlist;
 var INTERSECTED;
 var mouseSphere = [];
@@ -95,13 +95,25 @@ function animate() {
   render();
 }
 
-function render() {
-    if (vrModeIsOn) {
-      effect.render(scene, camera);
-    } else {
 
-      renderer.render(scene, camera);
+
+function render() {
+  if (vrModeIsOn) {
+    if (isMobile){
+        effect.render(scene, device_persp_camera);
+      } else {
+        effect.render(scene, orbit_persp_camera);
+      }
     }
+    else {
+      renderer.render(scene, orbit_persp_camera);
+    }
+    // if (vrModeIsOn) {
+    //   effect.render(scene, camera);
+    // } else {
+
+    //   renderer.render(scene, camera);
+    // }
 }
 
 function generateYears(){

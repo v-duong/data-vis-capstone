@@ -3,6 +3,10 @@ function generateGlobe(json){
   console.log("generate_globe()");
   $('.visual').empty();  
 
+  document.body.style.backgroundImage="url('public/js/globe/loading.gif')";
+  document.body.style.Position = "center center";
+  document.body.style.backgroundRepeat = "no repeat";
+
   var container = document.getElementById('vis');
   //renderer, camera, scene,  RENDERID
   var globe = new DAT.Globe(container, renderer, camera, scene, RENDERID, effect);
