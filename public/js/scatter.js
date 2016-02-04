@@ -19,8 +19,8 @@
   controls = orbit_persp_controls;
 
   if (!INITIAL) {
-    orbit_persp_controls.addEventListener('change', render);
-    device_persp_controls.addEventListener('change', render);
+    orbit_persp_controls.addEventListener('change', renderScatter);
+    device_persp_controls.addEventListener('change', renderScatter);
   }
 
   orbit_persp_controls.enabled = false;
