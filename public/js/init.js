@@ -22,9 +22,12 @@ var vrModeIsOn
 //201601281441
 var orbit_ortho_controls
 var orbit_persp_controls
-var device_controls
-var persp_camera
-var ortho_camera
+var device_persp_controls
+// var persp_camera
+// var ortho_camera
+var orbit_ortho_camera
+var orbit_persp_camera
+var device_persp_camera
 
 function init() {
   scene = new THREE.Scene();
@@ -332,12 +335,33 @@ function onWindowResize() {
   camera.bottom = -1 * windowHalfY;
   camera.updateProjectionMatrix();
 
-  hideCamera.aspect = window.innerWidth / window.innerHeight;
-  hideCamera.left = -1 * windowHalfX;
-  hideCamera.right = windowHalfX;
-  hideCamera.top = windowHalfY;
-  hideCamera.bottom = -1 * windowHalfY;
-  hideCamera.updateProjectionMatrix();
+  // hideCamera.aspect = window.innerWidth / window.innerHeight;
+  // hideCamera.left = -1 * windowHalfX;
+  // hideCamera.right = windowHalfX;
+  // hideCamera.top = windowHalfY;
+  // hideCamera.bottom = -1 * windowHalfY;
+  // hideCamera.updateProjectionMatrix();
+
+  // orbit_persp_camera.aspect = window.innerWidth / window.innerHeight;
+  // orbit_persp_camera.left = -1 * windowHalfX;
+  // orbit_persp_camera.right = windowHalfX;
+  // orbit_persp_camera.top = windowHalfY;
+  // orbit_persp_camera.bottom = -1 * windowHalfY;
+  // orbit_persp_camera.updateProjectionMatrix();
+
+  // device_persp_camera.aspect = window.innerWidth / window.innerHeight;
+  // device_persp_camera.left = -1 * windowHalfX;
+  // device_persp_camera.right = windowHalfX;
+  // device_persp_camera.top = windowHalfY;
+  // device_persp_camera.bottom = -1 * windowHalfY;
+  // device_persp_camera.updateProjectionMatrix();
+
+  // orbit_ortho_camera.aspect = window.innerWidth / window.innerHeight;
+  // orbit_ortho_camera.left = -1 * windowHalfX;
+  // orbit_ortho_camera.right = windowHalfX;
+  // orbit_ortho_camera.top = windowHalfY;
+  // orbit_ortho_camera.bottom = -1 * windowHalfY;
+  // orbit_ortho_camera.updateProjectionMatrix();
 
   renderer.setSize(window.innerWidth, window.innerHeight);
   effect.setSize(window.innerWidth, window.innerHeight);
@@ -351,8 +375,8 @@ function setOrientationControls(e) {
   }
   //hidecontrols.connect();
   //hidecontrols.update();
-  device_controls.connect();
-  device_controls.update();
+  device_persp_controls.connect();
+  device_persp_controls.update();
   window.removeEventListener('deviceorientation', setOrientationControls);
 }
 window.addEventListener('deviceorientation', setOrientationControls, true);

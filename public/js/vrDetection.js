@@ -53,13 +53,17 @@ function fullScreenExitHandler(){
 	 	// 	var temp = hideCamera;
 			// hideCamera = camera;
 			// camera = temp;
-			camera = ortho_camera
+			camera = orbit_ortho_camera;
 			camera.position.z = 800;
   			camera.position.y = 600;
   			camera.position.x = 600;
-  			controls = orbit_ortho_controls
-  			if (isMobile == true)
-  				controls.addEventListener('change', render);
+  			camera.lookAt(new THREE.Vector3(0,0,0));
+
+  			controls = orbit_ortho_controls;
+
+  			if (isMobile == true) {
+  				
+     		}
 		}
     }
  //    if (isMobile == true && graphType === 'bar'){
@@ -100,36 +104,34 @@ function enterVRMode(){
 	} else if (element.msRequestFullscreen) {
 		element.msRequestFullscreen();
 	}
+
 	if (graphType === 'bar'){
-	 // 	var temp = hideCamera;
-		// hideCamera = camera;
-		//camera = temp;
-		camera = persp_camera
-		camera.position.z = 800;
-   		camera.position.y = 600;
-  		camera.position.x = 600;
-  		if (isMobile == true){
-  			controls.removeEventListener('change', render);
-  			controls = device_controls
+
+  		if (isMobile){
+  			camera = device_persp_camera;
+  			controls = device_persp_controls;
   		}
   		else {
-  			controls = orbit_persp_controls
+  			camera = orbit_persp_camera;
+  			controls = orbit_persp_controls;
   		}
-	}
-	if (graphType === 'scatter'){
-	 	camera = hideCamera;
-	}
 
-	//if (isMobile == true && graphType === 'bar'){
-		// var temp = hidecontrols;
-  //   	hidecontrols = controls;
-  //   	controls = temp;
-	//	controls = new THREE.DeviceOrientationControls(hideCamera);
-    //	controls.addEventListener('change', render);
-	//}
+  		camera.position.z = 800;
+   		camera.position.y = 600;
+  		camera.position.x = 600;
+  		camera.lookAt(new THREE.Vector3(0,0,0));
 
-	if (graphType == 'basketball'){
-		camera = hideCamera;
+	} 
+	else if (graphType === 'scatter' ){
+	 	// var temp1 = camera;
+	 	// camera = hideCamera;
+	 	// hidecamera = temp1;
+	}
+	else if (graphType == 'basketball'){
+		var temp = hidecontrols;
+     	hidecontrols = controls;
+     	controls = temp;
+		// camera = hideCamera;
 		camera.position.y += 40;
 	}
 
