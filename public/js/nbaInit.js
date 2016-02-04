@@ -88,14 +88,10 @@ function generatePlainCourtTexture(){
 
 }
 
-
-
 function animate() {
   RENDERID = requestAnimationFrame(animate);
   render();
 }
-
-
 
 function render() {
     if (vrModeIsOn) {

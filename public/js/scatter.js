@@ -219,11 +219,6 @@ var setupScene = function()
 
 	var camFactor = 130;
 
- 
-	// camera.position.set(10,10,10);
-	// hideCamera.position.set(10,10,10);
-	// scene.add(hideCamera);
-	// scene.add(camera);
 	scene.add(orbit_persp_camera);
 	scene.add(device_persp_camera);
 	orbit_persp_camera.position.set(10, 10, 10);

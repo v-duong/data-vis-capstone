@@ -110,11 +110,6 @@ function generateBasketball(){
 
    camera.position.y = 800;
    camera.lookAt(0,0,0);
-  //add effect
-  // effect = new THREE.StereoEffect(renderer);
-  // effect.setSize(window.innerWidth, window.innerHeight);
-
-  // controls = new THREE.OrbitControls(camera, renderer.domElement);
 
   var tableSelected = $("#TableList option:selected").val();
   var x = $("#courtXColumn option:selected").text();

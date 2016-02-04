@@ -82,22 +82,6 @@ function initbasketball() {
   orbit_persp_controls.enabled = false;
   device_persp_controls.enabled = false;
   controls.enabled = true;
-
-  // hideCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  // camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-
-
-  // controls = new THREE.OrbitControls(camera, renderer.domElement);
-  // //        controls.damping = 0.2;
-  // hidecontrols = new THREE.DeviceOrientationControls(hideCamera);
-  // //hidecontrols = new THREE.OrbitControls(hideCamera, renderer.domElement);
-  // //        controls.damping = 0.2;
-  // if (!INITIAL) {
-  //   controls.addEventListener('change', render);
-  //   hidecontrols.addEventListener('change', render);
-
-  // }
-
 }
 
  var renderBasketball = function () {

@@ -76,8 +76,6 @@ if (document.getElementsByClassName('visual')[0].addEventListener)
 
 function enterVRMode(){
 	vrModeIsOn = true;
-	// if (isMobile == false)
-	// 	hidecontrols = new THREE.DeviceOrientationControls(hideCamera);
 	var element = document.getElementsByClassName('visual')[0];
 	if ( navigator.userAgent.indexOf('Chrome') != -1 ){			//Chrome
 		element.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
@@ -132,7 +130,7 @@ function enterVRMode(){
   			controls = orbit_persp_controls;
   		}
   		camera.position.set(600, 640, 800);
-		//camera.position.y += 40;
+  		camera.lookAt(new THREE.Vector3(0,0,0));
 	}
 
 	controls.enabled = true;
