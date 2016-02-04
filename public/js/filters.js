@@ -143,7 +143,11 @@ $("#VisualList").change(function(){
         createColsScatter(visualSelected, tableSelected);
       break;
     case 'globe':
+      if (tableSelected != 'Choose Table'){
+        createColsGlobe(tableSelected);
+      }
       hideColumnOptions();
+      console.log("globe is called");
       break;
 
   }
@@ -157,6 +161,37 @@ function hideColumnOptions(){
   // $('#columnSelection').hide();
 }
 
+
+function createColsGlobe(tableSelected){
+  console.log("createColsGlobe is called");
+  $("#columnSelection.off-canvas-submenu").html("");
+  $.getJSON('/retrieveColumns', {
+     tableName: tableSelected,
+     dataType: ['double precision']
+  }, function(data){
+
+    // var htmlStr = "<option value='' selected='selected' disabled='disabled'> Choose Column </option>";
+    var htmlStr_1 = "<option value='' selected='selected' disabled='disabled'> Choose latitude</option>";
+    var htmlStr_2 = "<option value='' selected='selected' disabled='disabled'> Choose longitude</option>";
+    var htmlStr_3 = "<option value='' selected='selected' disabled='disabled'> Choose magnitude</option>";
+
+    for (var i = 0; i < data.length; i++){
+      htmlStr_1 = htmlStr_1.concat('<option value="' + data[i].data_type + '">' + data[i].column_name + '</option>');
+      htmlStr_2 = htmlStr_2.concat('<option value="' + data[i].data_type + '">' + data[i].column_name + '</option>');
+      htmlStr_3 = htmlStr_3.concat('<option value="' + data[i].data_type + '">' + data[i].column_name + '</option>');
+
+    }
+
+    htmlStr_1 = htmlStr_1.concat('</select></li>');
+    htmlStr_2 = htmlStr_2.concat('</select></li>');
+    htmlStr_3 = htmlStr_3.concat('</select></li>');
+    $("#columnSelection.off-canvas-submenu").append('<li><p>Latitude</p> <select id="xColumn">' + htmlStr_1);
+    $("#columnSelection.off-canvas-submenu").append('<li><p>Longititude</p> <select id="yColumn">' + htmlStr_2);
+    $("#columnSelection.off-canvas-submenu").append('<li><p>Magnitude</p> <select id="zColumn">' + htmlStr_3);
+
+    // setDefaultDropDownValue(visualSelected, 'xColumn', 'yColumn','zColumn', data);
+  });
+}
 
 function createColsBar(visualSelected, tableSelected){
 
@@ -189,7 +224,6 @@ function createColsBar(visualSelected, tableSelected){
   });
 }
 function createColsScatter(visualSelected, tableSelected){
-
   $("#columnSelection.off-canvas-submenu").html("");
   $.getJSON('/retrieveColumns', {
      tableName: tableSelected,
@@ -267,30 +301,8 @@ $("#TableList").change(function(){
       //var getColumnTypeQuery = "SELECT column_name ,data_type FROM information_schema.columns where table_name = '";
       //getColumnTypeQuery = getColumnTypeQuery.concat(tableSelected + "'");
 
-      $("#columnSelection.off-canvas-submenu").html("");
-      $.getJSON('/retrieveColumns', {
-         tableName: tableSelected
-      }, function(data){
-        // create a dropdown list
-        // default at "Choose Column" to make sure user actually chooses a column
-        var htmlStr = "<option value='' selected='selected' disabled='disabled'> Choose Column </option>";
-        var htmlStrForY = "<option value='' selected='selected' disabled='disabled'> Choose Column </option>";
-        // populate dropdown list with columnNames and Values
-        for (var i = 0; i < data.length; i++){
-          htmlStr = htmlStr.concat('<option value="' + data[i].data_type + '">' + data[i].column_name + '</option>');
+      createColsGlobe(tableSelected);
 
-          // for Y Column since Y should not contain any text
-          if (data[i].data_type != 'text'){
-            htmlStrForY = htmlStrForY.concat('<option value="' + data[i].data_type + '">' + data[i].column_name + '</option>');
-          }
-        }
-
-        htmlStr = htmlStr.concat('</select></li>');
-        $("#columnSelection.off-canvas-submenu").append('<li><p>X</p> <select id="xColumn">' + htmlStr);
-        $("#columnSelection.off-canvas-submenu").append('<li><p>Y</p> <select id="yColumn">' + htmlStrForY);
-        $("#columnSelection.off-canvas-submenu").append('<li><p>Z</p> <select id="zColumn">' + htmlStr);
-
-      });
       break;
 
 		default:

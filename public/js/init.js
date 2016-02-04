@@ -69,6 +69,10 @@ function generateVisuals() {
   }
 }
 
+function changeColsLable(first, second, third){
+  
+}
+
 
 function generateBasketball(){
   clearmeshes();
