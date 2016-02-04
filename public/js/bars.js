@@ -42,6 +42,7 @@ function initbars() {
   orbit_ortho_controls.enabled = false;
   device_persp_controls.enabled = false;
   controls.enabled = true;
+
 }
 
 function animate() {
@@ -62,6 +63,7 @@ function render() {
   else {
     renderer.render(scene, orbit_ortho_camera);
   }
+  controls.update();
 }
 
 

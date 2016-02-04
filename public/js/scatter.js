@@ -23,13 +23,12 @@
     device_persp_controls.addEventListener('change', render);
   }
 
-  orbit_persp_controls.enabled = false;
-  orbit_ortho_controls.enabled = false;
-  device_persp_controls.enabled = false;
-  controls.enabled = true;
+  // orbit_persp_controls.enabled = false;
+  // device_persp_controls.enabled = false;
+  // controls.enabled = true;
 
  }
- 
+
  var renderScatter = function () {
 	RENDERID = requestAnimationFrame(renderScatter);
 	textFaceCamera(texts);
@@ -43,7 +42,7 @@
   	else {
     	renderer.render(scene, orbit_persp_camera);
   	}
-	//controls.update();
+	controls.update();
 }
 
 //draw line according to two points and color
