@@ -117,7 +117,7 @@ function setDefaultDropDownValue(visSelected, col1, col2, col3, colList){
   }
 }
 
-$("#VisualList").change(function(){
+function visChange(){
   var visualSelected =  $("#VisualList option:selected").val();
   var tableSelected = $("#TableList option:selected").text();
 
@@ -151,7 +151,10 @@ $("#VisualList").change(function(){
       break;
 
   }
+}
 
+$("#VisualList").change(function(){
+  visChange();
 });
 
 function hideColumnOptions(){
@@ -274,9 +277,9 @@ function createColsBasketball(visualSelected, tableSelected){
 
   });
 }
-// table selected, time to show columns.. See what kind of Visualization was chosen first
-$("#TableList").change(function(){
-	var visualSelected =  $("#VisualList option:selected").val();
+
+function tableChange(){
+  var visualSelected =  $("#VisualList option:selected").val();
 	switch(visualSelected){
 		case 'bar':
       var tableSelected = $("#TableList option:selected").val();
@@ -310,6 +313,10 @@ $("#TableList").change(function(){
 			$("#TableList").val('');	// set it back to default
 			break;
 	}
+}
+// table selected, time to show columns.. See what kind of Visualization was chosen first
+$("#TableList").change(function(){
+  tableChange();
 });
 
 // Changes for Dynamic Column

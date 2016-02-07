@@ -29,8 +29,43 @@ var orbit_ortho_camera
 var orbit_persp_camera
 var device_persp_camera
 
+
+
+function parseURLArg(){
+  var visSelect = GetURLParameter('visualization');
+  console.log(visSelect);
+  switch(visSelect){
+    case "globe" :
+      $("#VisualList").val("globe");
+      break;
+    case "scatter" :
+      $("#VisualList").val("scatter");
+      break;
+    case "bar" :
+      $("#VisualList").val("bar");
+      break;
+    case "basketball" :
+      $("#VisualList").val("basketball");
+      break;
+    default :
+      return;
+    visChange();
+  }
+
+  var tableSelect = GetURLParameter('table');
+  // make sure it exist in dropdown list
+  $("#TableList option").each(function(){
+    // Add $(this).val() to your list
+    console.log($(this).val());
+    if (tableSelect == $(this).val()){
+      $("#TableList").val(tableSelect);
+      tableChange();
+    }
+  });
+
+}
 $(document).ready( function () {
-  console.log(GetURLParameter('login'));
+  parseURLArg();
 });
 
 function GetURLParameter(sParam){
