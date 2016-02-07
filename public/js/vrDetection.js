@@ -37,27 +37,31 @@ For this script to work correctly, you need to do the following:
 See bars.js for reference.
 */
 
-var vrModeIsOn = false;
 
 function VRBottonPressed(){
-	if (vrModeIsOn)
-		fullScreenExitHandler();
-	else
+	if (!vrModeIsOn)
 		enterVRMode();
+	else
+		fullScreenExitHandler();
 
 }
 
 function fullScreenExitHandler(){
     if ( !(document.webkitIsFullScreen || document.mozFullScreen || document.msFullScreen || document.fullScreen) ){
     	vrModeIsOn = false;
+    	controls.enabled = false;
     	if (graphType === 'bar'){
-	 		var temp = hideCamera;
-			hideCamera = camera;
-			camera = temp;
-			camera.position.z = 800;
-  			camera.position.y = 600;
-  			camera.position.x = 600;
+			camera = orbit_ortho_camera;
+  			controls = orbit_ortho_controls;
+			camera.position.set(600, 600, 800);
+  			camera.lookAt(new THREE.Vector3(0,0,0));
 		}
+		else {
+			camera = orbit_persp_camera;
+			controls = orbit_persp_controls;
+  			camera.lookAt(new THREE.Vector3(0,0,0));
+		}
+		controls.enabled = true;
     }
 
 }
@@ -72,7 +76,6 @@ if (document.getElementsByClassName('visual')[0].addEventListener)
 
 function enterVRMode(){
 	vrModeIsOn = true;
-	hidecontrols = new THREE.DeviceOrientationControls(hideCamera);
 	var element = document.getElementsByClassName('visual')[0];
 	if ( navigator.userAgent.indexOf('Chrome') != -1 ){			//Chrome
 		element.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
@@ -89,20 +92,47 @@ function enterVRMode(){
 	} else if (element.msRequestFullscreen) {
 		element.msRequestFullscreen();
 	}
-	if (graphType === 'bar'){
-	 	var temp = hideCamera;
-		hideCamera = camera;
-		camera = temp;
-		camera.position.z = 800;
-   		camera.position.y = 600;
-  		camera.position.x = 600;
+	controls.enabled = false;
+
+	if (graphType == 'bar'){
+
+  		if (isMobile){
+  			camera = device_persp_camera;
+  			controls = device_persp_controls;
+
+  		}
+  		else {
+  			camera = orbit_persp_camera;
+  			controls = orbit_persp_controls;
+  		}
+
+  		camera.position.set(600, 600, 800);
+  		camera.lookAt(new THREE.Vector3(0,0,0));
+
+	} 
+	else if (graphType == 'scatter' ){
+	 	if (isMobile){
+  			camera = device_persp_camera;
+  			controls = device_persp_controls;
+  		}
+  		else {
+  			camera = orbit_persp_camera;
+  			controls = orbit_persp_controls;
+  		}
 	}
-	if (graphType === 'scatter'){
-	 	camera = hideCamera;
+	else if (graphType == 'basketball'){
+		if (isMobile){
+  			camera = device_persp_camera;
+  			controls = device_persp_controls;
+  		}
+  		else {
+  			camera = orbit_persp_camera;
+  			controls = orbit_persp_controls;
+  		}
+  		camera.position.set(600, 640, 800);
+  		camera.lookAt(new THREE.Vector3(0,0,0));
 	}
-	if (graphType == 'basketball'){
-		camera = hideCamera;
-		camera.position.y += 40;
-	}
+
+	controls.enabled = true;
 
 }

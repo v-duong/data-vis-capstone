@@ -1,7 +1,12 @@
 function initbars() {
 
-  hideCamera = new THREE.PerspectiveCamera(85, window.innerWidth / window.innerHeight, 1, 10000);
-  camera = new THREE.OrthographicCamera(window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, 1, 100000);
+  // hideCamera = new THREE.PerspectiveCamera(85, window.innerWidth / window.innerHeight, 1, 10000);
+  // camera = new THREE.OrthographicCamera(window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, 1, 100000);
+  orbit_ortho_camera = new THREE.OrthographicCamera(window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, 1, 100000);
+  orbit_persp_camera = new THREE.PerspectiveCamera(85, window.innerWidth / window.innerHeight, 1, 10000);
+  device_persp_camera = new THREE.PerspectiveCamera(85, window.innerWidth / window.innerHeight, 1, 10000);
+  
+  camera = orbit_ortho_camera
 
   renderer.setSize(window.innerWidth, window.innerHeight);
 
@@ -9,28 +14,57 @@ function initbars() {
   effect = new THREE.StereoEffect(renderer);
   effect.setSize(window.innerWidth, window.innerHeight);
 
-  controls = new THREE.OrbitControls(camera, renderer.domElement);
+  // controls = new THREE.OrbitControls(camera, renderer.domElement);
+  // //        controls.damping = 0.2;
+  // if (isMobile = true)
+  //   hidecontrols = new THREE.DeviceOrientationControls(hideCamera);
+  // else
+  //   hidecontrols = new THREE.OrbitControls(hideCamera, renderer.domElement);
   //        controls.damping = 0.2;
-  hidecontrols = new THREE.OrbitControls(hideCamera, renderer.domElement);
-  //        controls.damping = 0.2;
+  // if (!INITIAL) {
+  //   controls.addEventListener('change', render);
+  //   //hidecontrols.addEventListener('change', render);
+  // }
+
+  //201601281444
+  orbit_ortho_controls = new THREE.OrbitControls( orbit_ortho_camera, renderer.domElement );
+  orbit_persp_controls = new THREE.OrbitControls( orbit_persp_camera, renderer.domElement);
+  device_persp_controls = new THREE.DeviceOrientationControls(device_persp_camera);
+  
+  controls = orbit_ortho_controls
+
   if (!INITIAL) {
-    controls.addEventListener('change', render);
-    //hidecontrols.addEventListener('change', render);
+     orbit_ortho_controls.addEventListener('change', renderBar);
+     orbit_persp_controls.addEventListener('change', renderBar);
   }
+
+  orbit_persp_controls.enabled = false;
+  orbit_ortho_controls.enabled = false;
+  device_persp_controls.enabled = false;
+  controls.enabled = true;
+
 }
 
-function animate() {
-  RENDERID = requestAnimationFrame(animate);
-  render();
-}
+// function animate() {
+//   RENDERID = requestAnimationFrame(animate);
+//   render();
+// }
 
 
-function render() {
+function renderBars() {
+  RENDERID = requestAnimationFrame(renderBars);
   if (vrModeIsOn) {
-    effect.render(scene, camera);
-  } else {
-    renderer.render(scene, camera);
+    if (isMobile) {
+      effect.render(scene, device_persp_camera); 
+    }
+    else { 
+      effect.render(scene, orbit_persp_camera);
+    }
+  } 
+  else {
+    renderer.render(scene, orbit_ortho_camera);
   }
+  controls.update();
 }
 
 
@@ -261,10 +295,19 @@ function setCameraPosition(num) {
   camera.position.y = num;
   camera.position.x = num;
   camera.lookAt(new THREE.Vector3(0, 0, 0));
-  hideCamera.position.z = num;
-  hideCamera.position.y = num;
-  hideCamera.position.x = num;
-  hideCamera.lookAt(new THREE.Vector3(0, 0, 0));
+  // hideCamera.position.z = num;
+  // hideCamera.position.y = num;
+  // hideCamera.position.x = num;
+  // hideCamera.lookAt(new THREE.Vector3(0, 0, 0));
+
+  // ortho_camera.position.z = num;
+  // ortho_camera.position.y = num;
+  // ortho_camera.position.x = num;
+  // ortho_camera.lookAt(new THREE.Vector3(0, 0, 0));
+  // persp_camera.position.z = num;
+  // persp_camera.position.y = num;
+  // persp_camera.position.x = num;
+  // persp_camera.lookAt(new THREE.Vector3(0, 0, 0));
 }
 
 function createText(x, y, z, string, rotx, roty, rotz) {

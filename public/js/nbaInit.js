@@ -1,4 +1,4 @@
-var camera, scene, renderer, effect;
+//var camera, scene, renderer, effect;
 var targetlist, mousetargetlist;
 var INTERSECTED;
 var mouseSphere = [];
@@ -88,8 +88,6 @@ function generatePlainCourtTexture(){
 
 }
 
-
-
 function animate() {
   RENDERID = requestAnimationFrame(animate);
   render();
@@ -102,6 +100,7 @@ function render() {
 
       renderer.render(scene, camera);
     }
+    controls.update();
 }
 
 function generateYears(){
