@@ -344,6 +344,7 @@ app.get('/retrieveData', function(req, res) {
   var tableName = req.query.tableName;
   var colList = req.query.columnList;
   var filterQuery = req.query.filterQuery;
+  var orderBy = req.query.orderBy; 
 
   var schemaName = 'public';
   if (req.user)
@@ -353,6 +354,9 @@ app.get('/retrieveData', function(req, res) {
   if (myQuery == '')
     return;
 
+  console.log("orderby "+orderBy);
+
+  if(orderBy != null && orderBy != undefined) { myQuery += orderBy;}
 
   db.queryDB(myQuery, function(myRows) {
     if (myRows == null) {

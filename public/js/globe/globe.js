@@ -70,6 +70,9 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, opts) 
 
   var w, h;
   var mesh, atmosphere, point;
+  var findNthAnimation = false;
+  var ROTATE_SPEED = 0.01;
+  var xz_n, y_n, dxz, dy;
 
   var overRenderer;
 
@@ -366,6 +369,62 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, opts) 
     distanceTarget = distanceTarget < 350 ? 350 : distanceTarget;
   }
 
+  function cameraWalk(){
+    if(findNthAnimation){
+      target.x = rotation.x + dxz;
+      target.y = rotation.y + dy;
+
+      findNthAnimation = false;
+    }
+  }
+
+  function getTotalRotateAngle(lat,lon){
+    var destCoor = getDestLatLon(lat,lon);
+    var deltaY = getDeltaY(destCoor);
+    var deltaXZ = getDeltaXZ(destCoor);
+    // console.log("cameraX: "+camera.position.x);
+    // console.log("cameraY: "+camera.position.y);
+    // console.log("cameraZ: "+camera.position.z);
+    // console.log(deltaY);
+    // console.log("getTotal caleed");
+    // console.log(destLatlon);
+    // console.log(deltaXZ);
+    dxz = deltaXZ;
+    dy = deltaY;
+
+    findNthAnimation = true;
+  }
+
+  function getDeltaXZ(destCoor){
+    var r = Math.sqrt(Math.pow(destCoor[0], 2) + Math.pow(destCoor[2],2));
+    var cameraR = Math.sqrt(Math.pow(camera.position.x, 2) + Math.pow(camera.position.z,2));
+    var c = Math.asin(camera.position.x/cameraR);
+    var c_ = Math.asin(destCoor[0]/r);
+    // var c = Math.sqrt(Math.pow(camera.position.x-destCoor[0],2) + Math.pow(camera.position.z-destCoor[2],2));
+    // var deltaXZ = Math.acos((r*r+cameraR*cameraR-c*c)/(2*r*cameraR));
+    return c_ - c;
+  }
+
+  function getDeltaY(destCoor){
+    var r = Math.sqrt(Math.pow(destCoor[0], 2) + Math.pow(destCoor[1], 2) + Math.pow(destCoor[2],2));
+    var cameraR = Math.sqrt(Math.pow(camera.position.x, 2) + Math.pow(camera.position.y, 2) + Math.pow(camera.position.z,2));
+    var angleY_ = Math.asin(destCoor[1]/r);
+    var angleY = Math.asin(camera.position.y/cameraR);
+    // console.log(angleY_);
+    // console.log(angleY);
+    return angleY_ - angleY;
+  }
+
+  function getDestLatLon(lat, lon){
+    var phi = (90 - lat) * Math.PI / 180;
+    var theta = (180 - lon) * Math.PI / 180;
+
+    var x = 200 * Math.sin(phi) * Math.cos(theta);
+    var y = 200 * Math.cos(phi);
+    var z = 200 * Math.sin(phi) * Math.sin(theta);
+    return [x, y, z];
+  }
+
   function animate() {
     requestAnimationFrame(animate);
     render();
@@ -377,6 +436,7 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, opts) 
     rotation.x += (target.x - rotation.x) * 0.1;
     rotation.y += (target.y - rotation.y) * 0.1;
     distance += (distanceTarget - distance) * 0.3;
+    cameraWalk();
 
     camera.position.x = distance * Math.sin(rotation.x) * Math.cos(rotation.y);
     camera.position.y = distance * Math.sin(rotation.y);
@@ -428,6 +488,7 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, opts) 
   this.createPoints = createPoints;
   this.renderer = renderer;
   this.scene = scene;
+  this.getTotalRotateAngle=getTotalRotateAngle;
 
   return this;
 

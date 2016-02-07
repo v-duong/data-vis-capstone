@@ -17,6 +17,9 @@ var sprite1;
 var canvas1, context1, texture1
 var isMobile = false
 var vrModeIsOn
+var cities_, data_;
+var globeText;
+var globe;
 
 
 //201601281441
@@ -275,13 +278,20 @@ function createGlobe(){
   var lat = $("#xColumn option:selected").text();
   var longi = $("#yColumn option:selected").text();
   var mag = $("#zColumn option:selected").text();
-
+  var order = " ORDER BY "+mag+" DESC";
   document.getElementById('vis').style.background = "#ffffff url('static/js/globe/ajax-loader.gif') no-repeat center center";
-
+  createFindNthLarge();
 
   $.getJSON('/retrieveData', {
+    // tableName: "cities",
+    // columnList: ["lat","long"]
+    tableName: "cities_name",
+    columnList: ["city","latitude","longitude"]
+  }, function(cities) {
+    $.getJSON('/retrieveData', {
     tableName: tableSelected,
     columnList: [lat,longi,mag],
+    orderBy: order
     // filterQuery: FilterQuery
   }, function(data) {
       var temp, points, max, json;
@@ -296,21 +306,73 @@ function createGlobe(){
         points.push(temp[mag]);
         if(temp[mag]>max){max = temp[mag];}
       }
-      // points = "[" + points.join() + "]";
-      // json = "[\""+tableSelected+ "\"," +max+"," +points +"]";
-
       json = [points, max, tableSelected];
-      generateGlobe(json);
-      // var fs = require('fs');
-      // fs.writeFile(__dirname + "/public/globeData/" + tableSelected + ".json", json, function(err){
-      // if (err){
-      //   return console.log(err);
-      // }
-      // console.log("json file for globe is written");
-      // });
+      generateGlobe(json,cities);
+      cities_ = cities;
+      data_ = data;
   });
+  });  
 }
 
+function findNthLargest(){
+  if(data_==null || data_==undefined){return;}
+  var index = document.getElementById("nth").value;
+  findMatchCity(cities_,data_,index);
+}
+
+function findMatchCity(cities, data, index){
+  var lat = $("#xColumn option:selected").text();
+  var longi = $("#yColumn option:selected").text();
+  while(data[index-1][lat]==null || data[index-1][longi]==null){index++;}
+  var destLocation = [data[index-1][lat], data[index-1][longi]]
+  globe.getTotalRotateAngle(destLocation[0],destLocation[1]);
+  var geocoder = new google.maps.Geocoder();
+  // var tempLat, tempLong;
+  // var shortestDist, tempDist;
+  // var destCityName;
+  console.log(destLocation);
+  var latlng = {lat:destLocation[0], lng:destLocation[1]}
+  var adress, i, findData, cityAddress;
+  // console.log(geocoder);
+  findData = false;
+  geocoder.geocode({'location': latlng}, function(results, status) {
+    if (status === google.maps.GeocoderStatus.OK) {
+      address = results[0].address_components;
+      address = address.slice(2, -1);
+      cityAddress = [];
+      for(i = 0; i<address.length;i++){
+        cityAddress.push(address[i].long_name);
+      }
+      cityAddress = cityAddress.join(",");
+      globeText.innerHTML = cityAddress;
+      console.log(cityAddress);
+
+
+    } else {
+      window.alert('Geocoder failed due to: ' + status);
+    }
+  });
+
+
+
+  // shortestDist = 999999;
+  // destCityName = "";
+  // for(var i in cities){
+  //   tempLat = cities[i]["latitude"];
+  //   tempLong = cities[i]["longitude"];
+  //   tempDist = Math.sqrt( Math.pow((destLocation[0]-tempLat),2) + Math.pow((destLocation[1]-tempLong),2));
+  //   if(tempDist<shortestDist){
+  //     shortestDist = tempDist;
+  //     destCityName = cities[i]['city']; 
+  //   }
+  //   // console.log(tempLat+" "+tempLong);
+  //   // console.log(tempDist);
+  //   // console.log(shortestDist);
+  //   // console.log(destCityName);
+  // }
+  // console.log(destCityName);
+
+}
 
 function clearmeshes() {
   for (var i = 0; i < meshes.length; i++) {
