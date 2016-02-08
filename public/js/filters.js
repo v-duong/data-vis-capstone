@@ -74,6 +74,32 @@ function colDetectBarScatter(colElem1, colElem2, colElem3, colList){
   }
 }
 
+function colDetectGlobe(col1Elem, col2Elem, col3Elem, colList){
+  for (var i = 0; i < colList.length; i++){
+    //console.log(colList[i].column_name.toLowerCase())
+    switch (colList[i].column_name.toLowerCase()){
+      case 'lat':
+      case 'latitude':
+      case 'lati':
+        col1Elem.selectedIndex = i+1;
+        break;
+      case 'long':
+      case 'longi':
+      case 'longitude':
+          col2Elem.selectedIndex = i+1;
+          break;
+      case 'mag':
+      case 'magnitude':
+      case 'magni':
+        col3Elem.selectedIndex = i+1;
+        break;
+      default:
+        break;
+      }
+  }
+}
+
+
 function colDetectBasketball(colElem1, colElem2, colElem3, colList){
   for (var i = 0; i < colList.length; i++){
     //console.log(colList[i].column_name.toLowerCase())
@@ -112,6 +138,8 @@ function setDefaultDropDownValue(visSelected, col1, col2, col3, colList){
     case 'bar':
       colDetectBarScatter(col1Elem, col2Elem, col3Elem, colList);
       break;
+    case 'globe':
+      colDetectGlobe(col1Elem, col2Elem, col3Elem, colList);
     default:
       break;
   }
@@ -145,7 +173,7 @@ $("#VisualList").change(function(){
       break;
     case 'globe':
       if (tableSelected != 'Choose Table'){
-        createColsGlobe(tableSelected);
+        createColsGlobe(visualSelected,tableSelected);
       }
       hideColumnOptions();
       createFindNthLarge();
@@ -164,7 +192,7 @@ function hideColumnOptions(){
 }
 
 
-function createColsGlobe(tableSelected){
+function createColsGlobe(visualSelected ,tableSelected){
   console.log("createColsGlobe is called");
   $("#columnSelection.off-canvas-submenu").html("");
   $.getJSON('/retrieveColumns', {
@@ -191,7 +219,7 @@ function createColsGlobe(tableSelected){
     $("#columnSelection.off-canvas-submenu").append('<li><p>Longititude</p> <select id="yColumn">' + htmlStr_2);
     $("#columnSelection.off-canvas-submenu").append('<li><p>Magnitude</p> <select id="zColumn">' + htmlStr_3);
 
-    // setDefaultDropDownValue(visualSelected, 'xColumn', 'yColumn','zColumn', data);
+    setDefaultDropDownValue(visualSelected, 'xColumn', 'yColumn','zColumn', data);
   });
 }
 
@@ -313,7 +341,7 @@ $("#TableList").change(function(){
       //var getColumnTypeQuery = "SELECT column_name ,data_type FROM information_schema.columns where table_name = '";
       //getColumnTypeQuery = getColumnTypeQuery.concat(tableSelected + "'");
 
-      createColsGlobe(tableSelected);
+      createColsGlobe(visualSelected,tableSelected);
 
       break;
 
