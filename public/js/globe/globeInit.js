@@ -1,4 +1,4 @@
-function generateGlobe(json,cities){
+function generateGlobe(json){
   clearmeshes();
   console.log("generate_globe()");
   $('.visual').empty();  
@@ -42,7 +42,6 @@ function generateGlobe(json,cities){
         // Parse the JSON
         // console.log(xhr.responseText);
         console.log(json);
-        console.log(cities);
         // var data = JSON.parse( json );
         // // Tell the globe about your JSON data
         // globe.addData( data[2], {format: 'magnitude', name: data[0], max: data[1]} );

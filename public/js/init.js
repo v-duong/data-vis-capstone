@@ -283,12 +283,6 @@ function createGlobe(){
   createFindNthLarge();
 
   $.getJSON('/retrieveData', {
-    // tableName: "cities",
-    // columnList: ["lat","long"]
-    tableName: "cities_name",
-    columnList: ["city","latitude","longitude"]
-  }, function(cities) {
-    $.getJSON('/retrieveData', {
     tableName: tableSelected,
     columnList: [lat,longi,mag],
     orderBy: order
@@ -307,11 +301,9 @@ function createGlobe(){
         if(temp[mag]>max){max = temp[mag];}
       }
       json = [points, max, tableSelected];
-      generateGlobe(json,cities);
-      cities_ = cities;
+      generateGlobe(json);
       data_ = data;
   });
-  });  
 }
 
 function findNthLargest(){
