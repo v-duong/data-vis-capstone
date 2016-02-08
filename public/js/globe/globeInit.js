@@ -3,13 +3,28 @@ function generateGlobe(json){
   console.log("generate_globe()");
   $('.visual').empty();  
 
+  globeText = document.createElement('div');
+  globeText.style.position = 'absolute';
+  //text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
+  globeText.style.width = 900;
+  globeText.style.height = 40;
+  globeText.style.backgroundColor = "blue";
+  globeText.innerHTML = "Search Result Show Here :)";
+  globeText.style.top = 20 + 'px';
+  globeText.style.left = 70 + 'px';
+  globeText.style.backgroundColor = 'white';
+  globeText.style.color = 'black';
+  globeText.style.fontSize = '25px';
+  // globeText.style.margin = "50px -400px 0px 0px";
+  document.getElementById('vis').appendChild(globeText);
+
   document.body.style.backgroundImage="url('public/js/globe/loading.gif')";
   document.body.style.Position = "center center";
   document.body.style.backgroundRepeat = "no repeat";
 
   var container = document.getElementById('vis');
   //renderer, camera, scene,  RENDERID
-  var globe = new DAT.Globe(container, renderer, camera, scene, RENDERID, effect);
+  globe = new DAT.Globe(container, renderer, camera, scene, RENDERID, effect);
   scene = globe.scene;
   
 
