@@ -679,7 +679,7 @@ function createColsNBA(){
 
 // as the year change, we should generate a different list of teams
 $(document).on('change', '#Season', function(){
-
+  resetTeamList();
   genListOfTeam(this.value);
   resetPlayerList();
 });
@@ -713,9 +713,17 @@ function genListOfTeam(yearSpan){
     });
 };
 
-function resetPlayerList(){
+function resetTeamList(){
+  var col = document.getElementById('TeamName');
+  $('#TeamName').children('option:not(:first)').remove();
+  col.selectedIndex = 0;
 
-  $('PlayerName').children('option:not(:first)').remove();
+}
+
+function resetPlayerList(){
+  var col = document.getElementById('PlayerName');
+  $('#PlayerName').children('option:not(:first)').remove();
+  col.selectedIndex = 0;
 
 }
 
@@ -729,6 +737,8 @@ function genListOfPlayers(teamID){
   + teamID
   + '&VsConference=&VsDivision=';
 
+  // EMPTY list of players first
+  resetPlayerList();
   $.ajax({
     type: "GET",
     dataType: "jsonp",
