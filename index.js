@@ -75,16 +75,6 @@ app.get('/files', function(req, res) {
   res.render('files');
 });
 
-app.get('/about', function(req, res) {
-  res.render('about');
-});
-
-app.get('/nba_visualize', function(req, res){
-  res.render('nba_visualize');
-});
-
-
-
 app.get('/tables', function(req,res) {
   var schemaName = 'public';
   if (req.user)
@@ -232,25 +222,18 @@ app.post('/files', file_uploaded.single('datafile'), function(req, res) {
 app.get('/visualize', function(req, res) {
   var tlist;
   var schemaName = 'public';
-  if (req.user)
+  var a = ""
+  if (req.user) {
     schemaName = 'u' + req.user.id;
-  db.queryDB("SELECT table_name FROM information_schema.tables WHERE table_schema = '"+ schemaName + "';", function(tlist) {
+    a = "OR table_schema = 'public'"
+  }
+  db.queryDB("SELECT table_name FROM information_schema.tables WHERE table_schema = '"+ schemaName + "' " + a + ";", function(tlist) {
     res.render('visualize', {
       tables: tlist
     });
   });
 });
 
-app.get('/globe_visualize', function(req, res){
-  var tlist = getFiles(__dirname + '/public/globeData');
-  //Removes .json from fileNames
-  for (i = 0; i < tlist.length; i++){
-    tlist[i] = tlist[i].substring(0, tlist[i].length-5);
-  }
-  res.render('globe_visualize', {
-      tables: tlist
-    });
-});
 
 //Returns list of files from a directory
 function getFiles(dir){
@@ -344,7 +327,7 @@ app.get('/retrieveData', function(req, res) {
   var tableName = req.query.tableName;
   var colList = req.query.columnList;
   var filterQuery = req.query.filterQuery;
-  var orderBy = req.query.orderBy; 
+  var orderBy = req.query.orderBy;
 
   var schemaName = 'public';
   if (req.user)

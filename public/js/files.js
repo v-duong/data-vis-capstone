@@ -46,7 +46,7 @@ var CustDropzone = new Dropzone(document.body, { // Make the whole body a dropzo
     // Set up any event handlers
     this.on('complete', function () {
         console.log("ON COMPLETE");
-        location.reload();
+        window.location.replace('/files');
     });
   }
 });
