@@ -223,6 +223,7 @@ function createColsGlobe(visualSelected ,tableSelected){
     $("#columnSelection.off-canvas-submenu").append('<li><p>Magnitude</p> <select id="zColumn">' + htmlStr_3);
 
     setDefaultDropDownValue(visualSelected, 'xColumn', 'yColumn','zColumn', data);
+    detectGlobeColsURL();
   });
 }
 
