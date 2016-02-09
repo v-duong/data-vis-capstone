@@ -22,6 +22,7 @@ block sidelist
 				| Column Selection
 				span.right -
 		ul#columnSelection.off-canvas-submenu
+		ul#globeFindNth.off-canvas-submenu
 		li#filtersOption
 			a.off-canvas-submenu-call(href='#')
 				| Filters
@@ -54,6 +55,7 @@ block scripts
 	script(src='static/js/bars.js')
 	script(src='static/js/globe/globe.js')
 	script(src='static/js/globe/globeInit.js')
+	script(async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA4sQwoKMP1Dh7pn32-rIGMZ5m6fOQTh3U&callback=initMap")
 
 	link(rel='stylesheet', href='//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css')
 	script(src='//code.jquery.com/ui/1.11.4/jquery-ui.js')
