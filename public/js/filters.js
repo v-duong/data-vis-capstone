@@ -156,7 +156,8 @@ $("#VisualList").change(function(){
   switch(visualSelected){
   // if we're switching to basketball, theres no filters, so make sure to remove all
     case 'basketball':
-
+      // add NBA into Table
+      $("#TableList").append('<option value="NBA">NBA</option>');
       $('#filters1').html("");
       $('#filters2').html("");
       $('#filters3').html("");
@@ -164,14 +165,20 @@ $("#VisualList").change(function(){
         createColsBasketball(visualSelected, tableSelected);
       break;
     case 'bar':
+      // remove NBA from table List
+      $("#TableList option[value='NBA']").remove();
       if (tableSelected != 'Choose Table')
         createColsBar(visualSelected, tableSelected);
       break;
     case 'scatter':
+      // remove NBA from table List
+      $("#TableList option[value='NBA']").remove();
       if (tableSelected != 'Choose Table')
         createColsScatter(visualSelected, tableSelected);
       break;
     case 'globe':
+      // remove NBA from table List
+      $("#TableList option[value='NBA']").remove();
       if (tableSelected != 'Choose Table'){
         createColsGlobe(visualSelected,tableSelected);
       }
@@ -288,6 +295,8 @@ function createColsScatter(visualSelected, tableSelected){
   });
 }
 
+
+
 function createColsBasketball(visualSelected, tableSelected){
 
   $("#columnSelection.off-canvas-submenu").html("");
@@ -330,7 +339,11 @@ $("#TableList").change(function(){
 
     case 'basketball':
       var tableSelected = $("#TableList option:selected").val();
-      createColsBasketball(visualSelected, tableSelected);
+      if (tableSelected == 'NBA')
+        createColsNBA();
+      else{
+        createColsBasketball(visualSelected, tableSelected);
+      }
       break;
 
 
@@ -641,4 +654,169 @@ function BarScatterFilterQuery(){
   console.log(getColumnTypeQuery);
   return getColumnTypeQuery;
 
+}
+
+
+// for NBA ONLY
+
+function createColsNBA(){
+    var curYear = new Date().getFullYear();
+    var yearsSinceBeginning = curYear - 1990;
+    $("#columnSelection.off-canvas-submenu").html("");
+    var htmlStr = '<li><label>Year</label></li><li><select id="Season">';
+    htmlStr = htmlStr.concat("<option value='' selected='selected' disabled='disabled'> Choose Season </option>");
+    for (var i = 0; i < yearsSinceBeginning; i++){
+      tempStr = (curYear - (i+1)).toString() + " - " + (curYear - (i)).toString();
+      htmlStr = htmlStr.concat('<option value="' + tempStr + '">' + tempStr + '</option>');
+
+    }
+    htmlStr = htmlStr.concat('</select></li>');
+    htmlStr = htmlStr.concat('<li><label>Team</label></li><li><select id="TeamName"><option value="" selected="selected" disabled="disabled"> Choose Team </option></select></li>');
+    htmlStr = htmlStr.concat('<li><label>Player</label></li><li><select id="PlayerName"><option value="" selected="selected" disabled="disabled"> Choose Player </option></select></li>');
+    $("#columnSelection.off-canvas-submenu").append(htmlStr);
+}
+
+
+// as the year change, we should generate a different list of teams
+$(document).on('change', '#Season', function(){
+
+  genListOfTeam(this.value);
+  resetPlayerList();
+});
+
+$(document).on('change', '#TeamName', function(){
+  genListOfPlayers(this.value);
+});
+
+function genListOfTeam(yearSpan){
+  console.log("what the fuck");
+  var yearSpanStr = yearSpan.toString();
+
+  //2015 - 2016 -> 2015-16
+  var yearID = yearSpanStr.slice(0,4) + "-" + yearSpanStr.slice(-2);
+
+  var teamUrl = 'http://stats.nba.com/stats/leaguedashteamstats?Conference=&DateFrom=&DateTo=&Division=&GameScope=&GameSegment=&LastNGames=0&LeagueID=00&Location=&MeasureType=Base&Month=0&OpponentTeamID=0&Outcome=&PORound=0&PaceAdjust=N&PerMode=PerGame&Period=0&PlayerExperience=&PlayerPosition=&PlusMinus=N&Rank=N&Season='
+    + yearID +
+    '&SeasonSegment=&SeasonType=Regular+Season&ShotClockRange=&StarterBench=&TeamID=0&VsConference=&VsDivision=';
+    $.ajax({
+      type: "GET",
+      dataType: "jsonp",
+      url: teamUrl,
+      success: function(data) {
+        var teamSet = data.resultSets[0].rowSet;
+        for (var i = 0; i < teamSet.length; i++ ){
+          //htmlStr = htmlStr.concat('<option value="' + teamSet[i][0] + '">' + teamSet[i][1] + '</option>');
+          $("#TeamName").append('<option value="' + teamSet[i][0]+ '">' + teamSet[i][1]+ '</option>');
+        }
+
+      }
+    });
+};
+
+function resetPlayerList(){
+
+  $('PlayerName').children('option:not(:first)').remove();
+
+}
+
+function genListOfPlayers(teamID){
+  //2015 - 2016 -> 2015-16
+  var yearSpanStr = $("#Season option:selected").text();
+  var yearID = yearSpanStr.slice(0,4) + "-" + yearSpanStr.slice(-2);
+  var playerURL = 'http://stats.nba.com/stats/teamplayerdashboard?DateFrom=&DateTo=&GameSegment=&LastNGames=0&LeagueID=00&Location=&MeasureType=Base&Month=0&OpponentTeamID=0&Outcome=&PaceAdjust=N&PerMode=PerGame&Period=0&PlusMinus=N&Rank=N&Season='
+  + yearID
+  + '&SeasonSegment=&SeasonType=Regular+Season&TeamID='
+  + teamID
+  + '&VsConference=&VsDivision=';
+
+  $.ajax({
+    type: "GET",
+    dataType: "jsonp",
+    url: playerURL,
+    success: function(data) {
+      var playerSet = data.resultSets[1].rowSet;
+      var htmlStr = "<option value='' selected='selected' disabled='disabled'> Choose Player </option>";
+      for (var i = 0; i < playerSet.length; i++ ){
+        //htmlStr = htmlStr.concat('<option value="' + playerSet[i][1] + '">' + playerSet[i][2] + '</option>');
+        $("#PlayerName").append('<option value="' + playerSet[i][1]+ '">' + playerSet[i][2]+ '</option>');
+      }
+    }
+  });
+
+}
+
+
+
+function retreiveNBAData() {
+  var patt = /\"resultSets\":\[/i;
+  var seasonText = $("#Season option:selected").val();
+  var seasonID = seasonText.slice(0,4) + "-" + seasonText.slice(-2);
+  //var teamID = $("#TeamName option:selected").val();
+  var playerID = $("#PlayerName option:selected").val();
+  //console.log(seasonID);
+  //console.log(teamID);
+  //console.log(playerID);
+
+  var webpage = 'http://stats.nba.com/stats/shotchartdetail?CFID=33&CFPARAMS='
+  + seasonID
+  + '&ContextFilter=&ContextMeasure=FGA&DateFrom=&DateTo=&GameID=&GameSegment=&LastNGames=0&LeagueID=00&Location=&MeasureType=Base&Month=0&OpponentTeamID=0&Outcome=&PaceAdjust=N&PerMode=PerGame&Period=0&PlayerID='
+  + playerID
+  + '&PlusMinus=N&Position=&Rank=N&RookieYear=&Season='
+  + seasonID
+  + '&SeasonSegment=&SeasonType=Regular+Season&TeamID=0&VsConference=&VsDivision=&mode=Advanced&showDetails=0&showShots=1&showZones=0';
+
+
+  var bodycontent;
+  $.ajax({
+    type: "GET",
+    dataType: "jsonp",
+    url: webpage
+  })
+    .done(function(data) {
+      parseShotData(data);
+    });
+
+
+}
+
+
+function parseShotData(data){
+  var shotList = data.resultSets[0].rowSet;
+  var shotListLen = shotList.length;
+  var zonesMiss = new Array(14);
+  var zonesMade = new Array(14);
+  // reset zonesMade/Miss array
+  for (var i = 0; i < 14; i++){
+    zonesMade[i] = 0;
+    zonesMiss[i] = 0;
+  }
+
+  // going through each one and start doing computation
+  for (var i = 0; i < shotListLen; i++){
+    var indexX=0;
+    var indexY=0;
+    // if its a make
+    if (shotList[i][10] == 'Made Shot'){
+       indexX = Math.round((shotList[i][17]+250 )/10);
+       indexY =Math.round((shotList[i][18] + 40)/10);  // add 40 to include the distance from base line to rim
+
+      // for now we won't include shots from back court
+       if (indexY >= 47)
+        continue;
+      zonesMade[PointToZone[indexY][indexX]]++;
+    }
+    else {
+      indexX =  Math.round((shotList[i][17]+250 )/10);
+      indexY = Math.round((shotList[i][18] + 40)/10) ; // add 40 to include the distance from base line to rim
+
+      // for now we won't include shots from back court
+      if (indexY >= 47)
+        continue;
+
+      zonesMiss[PointToZone[indexY][indexX]]++;
+    }
+  }
+
+  generateZoneColor(zonesMade, zonesMiss);
+  genPercentageText(zonesMade, zonesMiss);
 }
