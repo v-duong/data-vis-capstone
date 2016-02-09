@@ -50,7 +50,8 @@ function parseURLArg(){
     case "basketball" :
       $("#VisualList").val("basketball");
       break;
-    default :
+    default:
+      console.log("no URL parameters used");
       return;
     visChange();
   }
@@ -601,7 +602,7 @@ function findMatchCity(cities, data, index){
   //   tempDist = Math.sqrt( Math.pow((destLocation[0]-tempLat),2) + Math.pow((destLocation[1]-tempLong),2));
   //   if(tempDist<shortestDist){
   //     shortestDist = tempDist;
-  //     destCityName = cities[i]['city']; 
+  //     destCityName = cities[i]['city'];
   //   }
   //   // console.log(tempLat+" "+tempLong);
   //   // console.log(tempDist);
