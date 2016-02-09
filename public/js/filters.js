@@ -193,6 +193,7 @@ function createColsGlobe(tableSelected){
     $("#columnSelection.off-canvas-submenu").append('<li><p>Magnitude</p> <select id="zColumn">' + htmlStr_3);
 
     // setDefaultDropDownValue(visualSelected, 'xColumn', 'yColumn','zColumn', data);
+    detectGlobeColsURL();
   });
 }
 
@@ -221,7 +222,9 @@ function createColsBar(visualSelected, tableSelected){
     $("#columnSelection.off-canvas-submenu").append('<li><p>Y</p> <select id="yColumn">' + htmlStrForY);
     $("#columnSelection.off-canvas-submenu").append('<li><p>Z</p> <select id="zColumn">' + htmlStr);
 
-    setDefaultDropDownValue(visualSelected, 'xColumn', 'yColumn','zColumn', data);
+    console.log("I don't fucken get it ");
+    detectXYZGenVis();
+    //setDefaultDropDownValue(visualSelected, 'xColumn', 'yColumn','zColumn', data);
     //generateBarFilters();
 
   });
@@ -273,12 +276,14 @@ function createColsBasketball(visualSelected, tableSelected){
     $("#columnSelection.off-canvas-submenu").append('<li><p>Shot Result</p> <select id="shotColumn">' + htmlStr);
 
     setDefaultDropDownValue(visualSelected, 'courtXColumn', 'courtYColumn','shotColumn', data);
-    //generateBarFilters();
+    // if theres parameters in URL, set to those
+    detectBasketballColsURL();
 
   });
 }
 
 function tableChange(){
+  console.log("table CHange");
   var visualSelected =  $("#VisualList option:selected").val();
 	switch(visualSelected){
 		case 'bar':
@@ -487,6 +492,8 @@ function generateNumericColumnFilter(colID){
 
     	});
     	$( amountName ).val(  $( slideName ).slider( "values", 0 ) + " - " + $( slideName ).slider( "values", 1 ) );
+
+      // set value for filters if applicable
 
   });
 };
