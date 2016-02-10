@@ -8,13 +8,12 @@ function generateGlobe(json){
   //text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
   globeText.style.width = 900;
   globeText.style.height = 40;
-  globeText.style.backgroundColor = "blue";
-  globeText.innerHTML = "Search Result Show Here :)";
+  globeText.innerHTML = "";
   globeText.style.top = 20 + 'px';
   globeText.style.left = 70 + 'px';
-  globeText.style.backgroundColor = 'white';
+  globeText.style.backgroundColor = 'rgba(255,255, 255,0.6)'
   globeText.style.color = 'black';
-  globeText.style.fontSize = '25px';
+  globeText.style.fontSize = '20px';
   // globeText.style.margin = "50px -400px 0px 0px";
   document.getElementById('vis').appendChild(globeText);
 

@@ -348,18 +348,23 @@ function generateBasketball(){
    camera.position.y = 800;
    camera.lookAt(0,0,0);
 
+
   var tableSelected = $("#TableList option:selected").val();
-  var x = $("#courtXColumn option:selected").text();
-  var y = $("#courtYColumn option:selected").text();
-  var z = $("#shotColumn option:selected").text();
+  if (tableSelected == 'NBA'){
+    retreiveNBAData();
+  }
+  else {
+    var x = $("#courtXColumn option:selected").text();
+    var y = $("#courtYColumn option:selected").text();
+    var z = $("#shotColumn option:selected").text();
 
-  $.getJSON('/retrieveData', {
-    tableName: tableSelected,
-    columnList: [x,y,z]
-  }, function(data) {
-    calculateZones(data);
-  });
-
+    $.getJSON('/retrieveData', {
+      tableName: tableSelected,
+      columnList: [x,y,z]
+    }, function(data) {
+      calculateZones(data);
+    });
+  }
   //calculateZones();
 	renderBasketball();
 }
