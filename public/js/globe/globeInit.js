@@ -12,7 +12,7 @@ function generateGlobe(json){
   globeText.innerHTML = "Search Result Show Here :)";
   globeText.style.top = 20 + 'px';
   globeText.style.left = 70 + 'px';
-  globeText.style.backgroundColor = 'white';
+  globeText.style.backgroundColor = rgba(255, 255, 255, 0.0);
   globeText.style.color = 'black';
   globeText.style.fontSize = '25px';
   // globeText.style.margin = "50px -400px 0px 0px";
