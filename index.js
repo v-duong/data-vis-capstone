@@ -225,7 +225,7 @@ app.get('/visualize', function(req, res) {
   var a = ""
   if (req.user) {
     schemaName = 'u' + req.user.id;
-    a = "OR table_schema = 'public'"
+    a = ""
   }
   db.queryDB("SELECT table_name FROM information_schema.tables WHERE table_schema = '"+ schemaName + "' " + a + ";", function(tlist) {
     res.render('visualize', {
