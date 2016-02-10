@@ -145,7 +145,7 @@ function setDefaultDropDownValue(visSelected, col1, col2, col3, colList){
   }
 }
 
-$("#VisualList").change(function(){
+function visChange(){
   var visualSelected =  $("#VisualList option:selected").val();
   var tableSelected = $("#TableList option:selected").text();
 
@@ -188,7 +188,10 @@ $("#VisualList").change(function(){
       break;
 
   }
+}
 
+$("#VisualList").change(function(){
+  visChange();
 });
 
 function hideColumnOptions(){
@@ -227,6 +230,7 @@ function createColsGlobe(visualSelected ,tableSelected){
     $("#columnSelection.off-canvas-submenu").append('<li><p>Magnitude</p> <select id="zColumn">' + htmlStr_3);
 
     setDefaultDropDownValue(visualSelected, 'xColumn', 'yColumn','zColumn', data);
+    detectGlobeColsURL();
   });
 }
 
@@ -265,7 +269,9 @@ function createColsBar(visualSelected, tableSelected){
     $("#columnSelection.off-canvas-submenu").append('<li><p>Y</p> <select id="yColumn">' + htmlStrForY);
     $("#columnSelection.off-canvas-submenu").append('<li><p>Z</p> <select id="zColumn">' + htmlStr);
 
-    setDefaultDropDownValue(visualSelected, 'xColumn', 'yColumn','zColumn', data);
+    console.log("I don't fucken get it ");
+    detectXYZGenVis();
+    //setDefaultDropDownValue(visualSelected, 'xColumn', 'yColumn','zColumn', data);
     //generateBarFilters();
 
   });
@@ -319,13 +325,15 @@ function createColsBasketball(visualSelected, tableSelected){
     $("#columnSelection.off-canvas-submenu").append('<li><p>Shot Result</p> <select id="shotColumn">' + htmlStr);
 
     setDefaultDropDownValue(visualSelected, 'courtXColumn', 'courtYColumn','shotColumn', data);
-    //generateBarFilters();
+    // if theres parameters in URL, set to those
+    detectBasketballColsURL();
 
   });
 }
-// table selected, time to show columns.. See what kind of Visualization was chosen first
-$("#TableList").change(function(){
-	var visualSelected =  $("#VisualList option:selected").val();
+
+function tableChange(){
+  console.log("table CHange");
+  var visualSelected =  $("#VisualList option:selected").val();
 	switch(visualSelected){
 		case 'bar':
       var tableSelected = $("#TableList option:selected").val();
@@ -363,6 +371,10 @@ $("#TableList").change(function(){
 			$("#TableList").val('');	// set it back to default
 			break;
 	}
+}
+// table selected, time to show columns.. See what kind of Visualization was chosen first
+$("#TableList").change(function(){
+  tableChange();
 });
 
 // Changes for Dynamic Column
@@ -521,11 +533,55 @@ function generateNumericColumnFilter(colID){
     }
 
 
+    var filterFrom = null;
+    var filterTo = null;
+
+    switch(colID){
+      case '#xColumn':
+        filterFrom = GetURLParameter('xFrom');
+        filterTo = GetURLParameter('xTo');
+        break;
+      case '#yColumn':
+        filterFrom = GetURLParameter('yFrom');
+        filterTo = GetURLParameter('yTo');
+        break;
+      case '#zColumn':
+        filterFrom = GetURLParameter('zFrom');
+        filterTo = GetURLParameter('zTo');
+        break;
+    }
+    console.log("fuck: " + Math.floor(parseFloat(data[0].min)));
+    var defautFrom;
+    defaultFrom = Math.floor(parseFloat(data[0].min));
+    var defaultTo;
+    defaultTo = Math.ceil(parseFloat(data[0].max));
+    console.log(defaultFrom);
+    console.log(defaultTo);
+    if (filterFrom != null){
+      var fromNum = parseFloat(filterFrom);
+      if ((fromNum >= defaultFrom) && (fromNum <= defaultTo)){
+        defaultFrom = fromNum;
+        console.log("new from: " + defaultFrom);
+      }
+    }
+    if (filterTo != null){
+      var toNum = parseFloat(filterTo);
+      if ((toNum >= defaultFrom) && (toNum <= defaultTo)){
+        defaultTo = toNum;
+        console.log("new To: " + defaultTo);
+      }
+
+    }
+
+
+
+
+
     $( slideName ).slider({
     	range: true,
     	min: Math.floor(parseFloat(data[0].min)),
     	max: Math.ceil(parseFloat(data[0].max)),
-    	values: [ Math.floor(parseFloat(data[0].min)), Math.ceil(parseFloat(data[0].max)) ],
+    	values: [defaultFrom, defaultTo ],
       step: stepValue,
     	slide: function( event, ui ) {
     		$( amountName ).val(  ui.values[ 0 ] + " - " + ui.values[ 1 ] );
@@ -533,6 +589,9 @@ function generateNumericColumnFilter(colID){
 
     	});
     	$( amountName ).val(  $( slideName ).slider( "values", 0 ) + " - " + $( slideName ).slider( "values", 1 ) );
+
+      // set value for filters if applicable
+    //  detectGenNumFiltersURL( colID, Math.floor(parseFloat(data[0].min), Math.ceil(parseFloat(data[0].max))));
 
   });
 };

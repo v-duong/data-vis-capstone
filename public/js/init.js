@@ -32,6 +32,235 @@ var orbit_ortho_camera
 var orbit_persp_camera
 var device_persp_camera
 
+
+
+function parseURLArg(){
+  var visSelect = GetURLParameter('visualization');
+  console.log(visSelect);
+  switch(visSelect){
+    case "globe" :
+      $("#VisualList").val("globe");
+      break;
+    case "scatter" :
+      $("#VisualList").val("scatter");
+      break;
+    case "bar":
+      $("#VisualList").val("bar");
+      break;
+    case "basketball" :
+      $("#VisualList").val("basketball");
+      break;
+    default:
+      console.log("no URL parameters used");
+      return;
+    visChange();
+  }
+
+  var tableSelect = GetURLParameter('table');
+  if (tableSelect == null)
+    return;
+
+  var isTure = 0;
+  // make sure it exist in dropdown list
+  $("#TableList option").each(function(){
+    console.log($(this).val());
+    if (tableSelect == $(this).val()){
+      $("#TableList").val(tableSelect);
+      tableChange();
+
+    }
+  });
+
+}
+
+// generate Columns based on URL for Globe
+function detectBasketballColsURL(){
+  var xSelect = GetURLParameter('coutX');
+  var ySelect = GetURLParameter('courtY');
+  var shotSelect = GetURLParameter('shot');
+
+
+  var count = 0;
+
+  if (xSelect != null) {
+    console.log("fuck still entered here");
+    $("#courtXColumn option").each(function(){
+      console.log($(this).text());
+      if (xSelect == $(this).text()){
+        var colElem1 = document.getElementById('courtXColumn');
+        colElem1.selectedIndex = count;
+      }
+      count++;
+    });
+  }
+
+  if (ySelect != null){
+    count = 0;
+    $("#courtYColumn option").each(function(){
+      if (ySelect == $(this).text()){
+        var colElem2 = document.getElementById('courtYColumn');
+        colElem2.selectedIndex = count;
+      }
+      count ++;
+    });
+  }
+
+  if (shotSelect){
+    count = 0;
+    $("#shotColumn option").each(function(){
+      if (shotSelect == $(this).text()){
+        var colElem3 = document.getElementById('shotColumn');
+        colElem3.selectedIndex = count;
+      }
+      count ++;
+    });
+  }
+}
+
+// generate Filters based on URL for Gen Graphs
+
+//  var xFrom = GetURLParameter('xFrom');
+//  var xTo = GetURLParameter('xTo');
+//  var yFrom = GetURLParameter('yFrom');
+//  var yTo = GetURLParameter('yTo');
+//  var zFrom = GetURLParameter('zFrom');
+//  var zTo = GetURLParameter('zTo');
+
+
+
+
+// generate Columns based on URL for Globe
+function detectGlobeColsURL(){
+  var latSelect = GetURLParameter('lat');
+  var longSelect = GetURLParameter('long');
+  var magSelect = GetURLParameter('mag');
+
+  var count = 0;
+
+  if (latSelect != null){
+    $("#xColumn option").each(function(){
+      console.log($(this).text());
+      if (latSelect == $(this).text()){
+        var colElem1 = document.getElementById('xColumn');
+        colElem1.selectedIndex = count;
+      }
+      count++;
+    });
+  }
+
+  if (longSelect != null){
+    count = 0;
+    $("#yColumn option").each(function(){
+      if (longSelect == $(this).text()){
+        var colElem2 = document.getElementById('yColumn');
+        colElem2.selectedIndex = count;
+      }
+      count ++;
+    });
+  }
+  if (magSelect != null){
+    count = 0;
+    $("#zColumn option").each(function(){
+      if (magSelect == $(this).text()){
+        var colElem3 = document.getElementById('zColumn');
+        colElem3.selectedIndex = count;
+      }
+      count ++;
+    });
+  }
+
+}
+
+// generate columns based on URL for Gen Graphs
+function detectXYZGenVis(){
+  //Get Column
+  var xSelect = GetURLParameter('x');
+  var ySelect = GetURLParameter('y');
+  var zSelect = GetURLParameter('z');
+console.log("print everything: " + xSelect + ySelect + zSelect);
+  var count = 0;
+  $("#xColumn option").each(function(){
+    console.log($(this).text());
+    if (xSelect == $(this).text()){
+      var colElem1 = document.getElementById('xColumn');
+      colElem1.selectedIndex = count;
+      switch (colElem1[count].value){
+        case 'double precision':
+          generateNumericColumnFilter('#xColumn');
+          break;
+        case 'text':
+          generateTextColumnFilter('#xColumn');
+          break;
+        default:
+          break;
+      }
+    }
+    count++;
+  });
+  count = 0;
+  $("#yColumn option").each(function(){
+    if (ySelect == $(this).text()){
+      var colElem2 = document.getElementById('yColumn');
+      colElem2.selectedIndex = count;
+      switch (colElem2[count].value){
+        case 'double precision':
+          generateNumericColumnFilter('#yColumn');
+          break;
+        case 'text':
+          generateTextColumnFilter('#yColumn');
+          break;
+        default:
+          break;
+      }
+    }
+    count ++;
+  });
+  count = 0;
+  $("#zColumn option").each(function(){
+    if (zSelect == $(this).text()){
+      var colElem3 = document.getElementById('zColumn');
+      colElem3.selectedIndex = count;
+      switch (colElem3[count].value){
+        case 'double precision':
+          generateNumericColumnFilter('#zColumn');
+          break;
+        case 'text':
+          generateTextColumnFilter('#zColumn');
+          break;
+        default:
+          break;
+      }
+    }
+    count ++;
+  });
+
+  visSelect =   $("#VisualList").val();
+  switch(visSelect){
+    case "scatter":
+    case "bar":
+      //detectXYZGenVis();
+      //generateVisuals();
+      break;
+    default:
+      break;
+  }
+
+}
+$(document).ready( function () {
+  parseURLArg();
+});
+
+function GetURLParameter(sParam){
+    var sPageURL = window.location.search.substring(1);
+    var sURLVariables = sPageURL.split('&');
+    console.log(sURLVariables);
+    for (var i = 0; i < sURLVariables.length; i++) {
+        var sParameterName = sURLVariables[i].split('=');
+        if (sParameterName[0] == sParam){
+            return sParameterName[1];
+        }
+    }
+  }
 function init() {
   scene = new THREE.Scene();
   window.addEventListener('resize', onWindowResize, false);
@@ -68,6 +297,7 @@ function resetVisuals(){
 }
 
 function generateVisuals() {
+  console.log("GenerateingVisuals");
   var tableSelected = $("#VisualList option:selected").val();
   switch (tableSelected) {
     case 'bar':
@@ -232,6 +462,7 @@ function generateScatter() {
 
 
 function generateBar() {
+  console.log("generateBar()");
   clearmeshes();
   if (RENDERID != null)
     cancelAnimationFrame(RENDERID);
@@ -251,7 +482,7 @@ function generateBar() {
   initbars();
   //animate();
   renderBars();
-
+  console.log("After renderBars()");
   targetlist = [];
   mousetargetlist = [];
   scater_check = 0;
@@ -260,7 +491,7 @@ function generateBar() {
   var y = $("#yColumn option:selected").text();
   var z = $("#zColumn option:selected").text();
 
-
+  console.log("wtf");
   // generate bar/Scatter Query Based on Filters
   console.log(x);
   console.log(y);
