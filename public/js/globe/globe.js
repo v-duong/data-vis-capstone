@@ -371,6 +371,8 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, opts) 
 
   function cameraWalk(){
     if(findNthAnimation){
+      console.log(dxz);
+      console.log(dy);
       target.x = rotation.x + dxz;
       target.y = rotation.y + dy;
 
@@ -379,7 +381,7 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, opts) 
   }
 
   function getTotalRotateAngle(lat,lon){
-    var destCoor = getDestLatLon(lat,lon);
+    var destCoor = getDestXYZ(lat,lon);
     var deltaY = getDeltaY(destCoor);
     var deltaXZ = getDeltaXZ(destCoor);
     // console.log("cameraX: "+camera.position.x);
@@ -399,10 +401,32 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, opts) 
     var r = Math.sqrt(Math.pow(destCoor[0], 2) + Math.pow(destCoor[2],2));
     var cameraR = Math.sqrt(Math.pow(camera.position.x, 2) + Math.pow(camera.position.z,2));
     var c = Math.asin(camera.position.x/cameraR);
+    c = adjustAngle(camera.position.x,camera.position.z,c);
     var c_ = Math.asin(destCoor[0]/r);
+    c_ = adjustAngle(destCoor[0], destCoor[2],c_);
+    console.log(camera.position);
+    console.log(destCoor);
+    console.log(c);
+    console.log(c_);
+    console.log(c_-c);
+    // if(destCoor[2]<0){c_ = -c_;}
     // var c = Math.sqrt(Math.pow(camera.position.x-destCoor[0],2) + Math.pow(camera.position.z-destCoor[2],2));
     // var deltaXZ = Math.acos((r*r+cameraR*cameraR-c*c)/(2*r*cameraR));
     return c_ - c;
+  }
+
+  function adjustAngle(x,z, result){
+    if(x>0 && z<0){
+      result = Math.PI - result;
+    }
+    else if(x<0 && z<0){
+      result = Math.PI - result;
+    }
+    else if(x<0 && z>0){
+      result = 2*Math.PI + result;
+    }
+
+    return result;
   }
 
   function getDeltaY(destCoor){
@@ -415,7 +439,7 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, opts) 
     return angleY_ - angleY;
   }
 
-  function getDestLatLon(lat, lon){
+  function getDestXYZ(lat, lon){
     var phi = (90 - lat) * Math.PI / 180;
     var theta = (180 - lon) * Math.PI / 180;
 
