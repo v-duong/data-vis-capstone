@@ -520,11 +520,55 @@ function generateNumericColumnFilter(colID){
     }
 
 
+    var filterFrom = null;
+    var filterTo = null;
+
+    switch(colID){
+      case '#xColumn':
+        filterFrom = GetURLParameter('xFrom');
+        filterTo = GetURLParameter('xTo');
+        break;
+      case '#yColumn':
+        filterFrom = GetURLParameter('yFrom');
+        filterTo = GetURLParameter('yTo');
+        break;
+      case '#zColumn':
+        filterFrom = GetURLParameter('zFrom');
+        filterTo = GetURLParameter('zTo');
+        break;
+    }
+    console.log("fuck: " + Math.floor(parseFloat(data[0].min)));
+    var defautFrom;
+    defaultFrom = Math.floor(parseFloat(data[0].min));
+    var defaultTo;
+    defaultTo = Math.ceil(parseFloat(data[0].max));
+    console.log(defaultFrom);
+    console.log(defaultTo);
+    if (filterFrom != null){
+      var fromNum = parseFloat(filterFrom);
+      if ((fromNum >= defaultFrom) && (fromNum <= defaultTo)){
+        defaultFrom = fromNum;
+        console.log("new from: " + defaultFrom);
+      }
+    }
+    if (filterTo != null){
+      var toNum = parseFloat(filterTo);
+      if ((toNum >= defaultFrom) && (toNum <= defaultTo)){
+        defaultTo = toNum;
+        console.log("new To: " + defaultTo);
+      }
+
+    }
+
+
+
+
+
     $( slideName ).slider({
     	range: true,
     	min: Math.floor(parseFloat(data[0].min)),
     	max: Math.ceil(parseFloat(data[0].max)),
-    	values: [ Math.floor(parseFloat(data[0].min)), Math.ceil(parseFloat(data[0].max)) ],
+    	values: [defaultFrom, defaultTo ],
       step: stepValue,
     	slide: function( event, ui ) {
     		$( amountName ).val(  ui.values[ 0 ] + " - " + ui.values[ 1 ] );
@@ -534,6 +578,7 @@ function generateNumericColumnFilter(colID){
     	$( amountName ).val(  $( slideName ).slider( "values", 0 ) + " - " + $( slideName ).slider( "values", 1 ) );
 
       // set value for filters if applicable
+    //  detectGenNumFiltersURL( colID, Math.floor(parseFloat(data[0].min), Math.ceil(parseFloat(data[0].max))));
 
   });
 };

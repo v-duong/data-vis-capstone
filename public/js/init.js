@@ -117,40 +117,17 @@ function detectBasketballColsURL(){
   }
 }
 
-// generate Columns based on URL for Globe
-function detectGlobeColsURL(){
-  var latSelect = GetURLParameter('lat');
-  var longSelect = GetURLParameter('long');
-  var magSelect = GetURLParameter('mag');
+// generate Filters based on URL for Gen Graphs
 
-  var count = 0;
-  $("#xColumn option").each(function(){
-    console.log($(this).text());
-    if (latSelect == $(this).text()){
-      var colElem1 = document.getElementById('xColumn');
-      colElem1.selectedIndex = count;
-    }
-    count++;
-  });
+//  var xFrom = GetURLParameter('xFrom');
+//  var xTo = GetURLParameter('xTo');
+//  var yFrom = GetURLParameter('yFrom');
+//  var yTo = GetURLParameter('yTo');
+//  var zFrom = GetURLParameter('zFrom');
+//  var zTo = GetURLParameter('zTo');
 
-  count = 0;
-  $("#yColumn option").each(function(){
-    if (longSelect == $(this).text()){
-      var colElem2 = document.getElementById('yColumn');
-      colElem2.selectedIndex = count;
-    }
-    count ++;
-  });
-  count = 0;
-  $("#zColumn option").each(function(){
-    if (magSelect == $(this).text()){
-      var colElem3 = document.getElementById('zColumn');
-      colElem3.selectedIndex = count;
-    }
-    count ++;
-  });
 
-}
+
 
 // generate Columns based on URL for Globe
 function detectGlobeColsURL(){
@@ -159,31 +136,38 @@ function detectGlobeColsURL(){
   var magSelect = GetURLParameter('mag');
 
   var count = 0;
-  $("#xColumn option").each(function(){
-    console.log($(this).text());
-    if (latSelect == $(this).text()){
-      var colElem1 = document.getElementById('xColumn');
-      colElem1.selectedIndex = count;
-    }
-    count++;
-  });
 
-  count = 0;
-  $("#yColumn option").each(function(){
-    if (longSelect == $(this).text()){
-      var colElem2 = document.getElementById('yColumn');
-      colElem2.selectedIndex = count;
-    }
-    count ++;
-  });
-  count = 0;
-  $("#zColumn option").each(function(){
-    if (magSelect == $(this).text()){
-      var colElem3 = document.getElementById('zColumn');
-      colElem3.selectedIndex = count;
-    }
-    count ++;
-  });
+  if (latSelect != null){
+    $("#xColumn option").each(function(){
+      console.log($(this).text());
+      if (latSelect == $(this).text()){
+        var colElem1 = document.getElementById('xColumn');
+        colElem1.selectedIndex = count;
+      }
+      count++;
+    });
+  }
+
+  if (longSelect != null){
+    count = 0;
+    $("#yColumn option").each(function(){
+      if (longSelect == $(this).text()){
+        var colElem2 = document.getElementById('yColumn');
+        colElem2.selectedIndex = count;
+      }
+      count ++;
+    });
+  }
+  if (magSelect != null){
+    count = 0;
+    $("#zColumn option").each(function(){
+      if (magSelect == $(this).text()){
+        var colElem3 = document.getElementById('zColumn');
+        colElem3.selectedIndex = count;
+      }
+      count ++;
+    });
+  }
 
 }
 
