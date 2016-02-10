@@ -11,7 +11,11 @@ function generateGlobe(json){
   globeText.innerHTML = "";
   globeText.style.top = 20 + 'px';
   globeText.style.left = 70 + 'px';
-  globeText.style.backgroundColor = 'rgba(255,255, 255,0.6)'
+<<<<<<< HEAD
+  globeText.style.backgroundColor = 'rgba(255,255, 255,0.0)'
+=======
+  globeText.style.backgroundColor = rgba(255, 255, 255, 0.0);
+>>>>>>> 7069dc7e45224619c4e1b931dcf6de803f1131b6
   globeText.style.color = 'black';
   globeText.style.fontSize = '20px';
   // globeText.style.margin = "50px -400px 0px 0px";
