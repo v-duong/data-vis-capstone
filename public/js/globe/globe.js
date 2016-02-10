@@ -172,6 +172,12 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, opts) 
     container.addEventListener('mouseout', function() {
       overRenderer = false;
     }, false);
+
+    controls = new THREE.DeviceOrientationControls(camera);
+
+    console.log(Math.asin(2/3));
+    console.log(Math.asin(-2/3));
+
   }
 
   function addData(data, opts) {
