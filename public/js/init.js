@@ -117,17 +117,51 @@ function detectBasketballColsURL(){
   }
 }
 
-// generate Filters based on URL for Gen Graphs
+function generateURLForSharing(){
 
-//  var xFrom = GetURLParameter('xFrom');
-//  var xTo = GetURLParameter('xTo');
-//  var yFrom = GetURLParameter('yFrom');
-//  var yTo = GetURLParameter('yTo');
-//  var zFrom = GetURLParameter('zFrom');
-//  var zTo = GetURLParameter('zTo');
+  var genURL = window.location.href + "?";
+  var visualSelected =  $("#VisualList option:selected").val();
+  if (visualSelected != null)
+    genURL = genURL.concat('visualization=' + visualSelected + '&');
+  var tableSelected = $("#TableList option:selected").text();
+  if (tableSelected != null)
+    genURL = genURL.concat('table=' + tableSelected+ '&');
 
+  switch(visualSelected){
+    case 'bar':
+      console.log("hmM");
+    case 'scatter':
+      var col1 = $("#xColumn option:selected").text();
+      var col2 = $("#yColumn option:selected").text();
+      var col3 = $("#zColumn option:selected").text();
+      console.log("Wtf" + col1);
+      if (col1 != null)
+        genURL = genURL.concat('x=' + col1+ '&');
+      if (col2 != null)
+        genURL = genURL.concat('y=' + col2+ '&');
+      if (col3 != null)
+        genURL = genURL.concat('z=' + col3+ '&');
+    break;
 
+    case 'globe':
+      console.log("Globe");
+      break;
+    case 'basketball':
+     var col1 = $("#courtXColumn option:selected").text();
+     var col2 = $("#courtYColumn option:selected").text();
+     var col3 = $("#shotColumn option:selected").text();
+     console.log("basketball");
+     break;
+    default:
+      console.log("matched nothign: " + tableSelected);
+      break;
+  }
 
+  // create text box for link and paste link inside
+  $("#columnSelection.off-canvas-submenu").html("");
+  $("#shareLink").html('<form>Link:<br><input type="text" name="sharelink" value = "' + genURL + '"><br></form>');
+
+}
 
 // generate Columns based on URL for Globe
 function detectGlobeColsURL(){

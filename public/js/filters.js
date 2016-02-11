@@ -269,7 +269,6 @@ function createColsBar(visualSelected, tableSelected){
     $("#columnSelection.off-canvas-submenu").append('<li><p>Y</p> <select id="yColumn">' + htmlStrForY);
     $("#columnSelection.off-canvas-submenu").append('<li><p>Z</p> <select id="zColumn">' + htmlStr);
 
-    console.log("I don't fucken get it ");
     detectXYZGenVis();
     //setDefaultDropDownValue(visualSelected, 'xColumn', 'yColumn','zColumn', data);
     //generateBarFilters();
