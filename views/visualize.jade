@@ -34,6 +34,8 @@ block sidelist
 		li.b
 			input.button(id='apply', type='button', value='Apply', onclick='generateVisuals()')
 			input.button(type='button', value='Enter VR', onclick='VRBottonPressed()')
+			input.button(type='button', value='Share', onclick='generateURLForSharing()')
+			li#shareLink
 		li.c
 			input(id="sphere" type='checkbox', checked=false)
 			p Sphere Toggle

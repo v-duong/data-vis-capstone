@@ -269,7 +269,6 @@ function createColsBar(visualSelected, tableSelected){
     $("#columnSelection.off-canvas-submenu").append('<li><p>Y</p> <select id="yColumn">' + htmlStrForY);
     $("#columnSelection.off-canvas-submenu").append('<li><p>Z</p> <select id="zColumn">' + htmlStr);
 
-    console.log("I don't fucken get it ");
     detectXYZGenVis();
     //setDefaultDropDownValue(visualSelected, 'xColumn', 'yColumn','zColumn', data);
     //generateBarFilters();
@@ -550,25 +549,20 @@ function generateNumericColumnFilter(colID){
         filterTo = GetURLParameter('zTo');
         break;
     }
-    console.log("fuck: " + Math.floor(parseFloat(data[0].min)));
     var defautFrom;
     defaultFrom = Math.floor(parseFloat(data[0].min));
     var defaultTo;
     defaultTo = Math.ceil(parseFloat(data[0].max));
-    console.log(defaultFrom);
-    console.log(defaultTo);
     if (filterFrom != null){
       var fromNum = parseFloat(filterFrom);
       if ((fromNum >= defaultFrom) && (fromNum <= defaultTo)){
         defaultFrom = fromNum;
-        console.log("new from: " + defaultFrom);
       }
     }
     if (filterTo != null){
       var toNum = parseFloat(filterTo);
       if ((toNum >= defaultFrom) && (toNum <= defaultTo)){
         defaultTo = toNum;
-        console.log("new To: " + defaultTo);
       }
 
     }
@@ -725,30 +719,39 @@ function createColsNBA(){
     var htmlStr = '<li><label>Year</label></li><li><select id="Season">';
     htmlStr = htmlStr.concat("<option value='' selected='selected' disabled='disabled'> Choose Season </option>");
     for (var i = 0; i < yearsSinceBeginning; i++){
-      tempStr = (curYear - (i+1)).toString() + " - " + (curYear - (i)).toString();
-      htmlStr = htmlStr.concat('<option value="' + tempStr + '">' + tempStr + '</option>');
+      var tempStr = (curYear - (i+1)).toString() + " - " + (curYear - (i)).toString();
+      var tempStr2 = (curYear - (i+1)).toString() + "-" + (curYear - (i)).toString();
+      htmlStr = htmlStr.concat('<option value="' + tempStr2 + '">' + tempStr + '</option>');
 
     }
     htmlStr = htmlStr.concat('</select></li>');
     htmlStr = htmlStr.concat('<li><label>Team</label></li><li><select id="TeamName"><option value="" selected="selected" disabled="disabled"> Choose Team </option></select></li>');
     htmlStr = htmlStr.concat('<li><label>Player</label></li><li><select id="PlayerName"><option value="" selected="selected" disabled="disabled"> Choose Player </option></select></li>');
     $("#columnSelection.off-canvas-submenu").append(htmlStr);
+
+    detectBasketballColsURL();
 }
 
+function seasonChange(seasonChosen){
+  resetTeamList();
+  genListOfTeam(seasonChosen);
+  resetPlayerList();
+}
+
+function teamChange(teamChosen){
+  genListOfPlayers(teamChosen);
+}
 
 // as the year change, we should generate a different list of teams
 $(document).on('change', '#Season', function(){
-  resetTeamList();
-  genListOfTeam(this.value);
-  resetPlayerList();
+  seasonChange(this.value);
 });
 
 $(document).on('change', '#TeamName', function(){
-  genListOfPlayers(this.value);
+  teamChange(this.value);
 });
 
 function genListOfTeam(yearSpan){
-  console.log("what the fuck");
   var yearSpanStr = yearSpan.toString();
 
   //2015 - 2016 -> 2015-16
@@ -767,7 +770,7 @@ function genListOfTeam(yearSpan){
           //htmlStr = htmlStr.concat('<option value="' + teamSet[i][0] + '">' + teamSet[i][1] + '</option>');
           $("#TeamName").append('<option value="' + teamSet[i][0]+ '">' + teamSet[i][1]+ '</option>');
         }
-
+        detectNBATeam();
       }
     });
 };
@@ -809,6 +812,7 @@ function genListOfPlayers(teamID){
         //htmlStr = htmlStr.concat('<option value="' + playerSet[i][1] + '">' + playerSet[i][2] + '</option>');
         $("#PlayerName").append('<option value="' + playerSet[i][1]+ '">' + playerSet[i][2]+ '</option>');
       }
+      detectNBAPlayer();
     }
   });
 
