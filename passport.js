@@ -35,8 +35,17 @@ module.exports = function(passport, Strategy, bcrypt, sequelize){
         if (!c) {
           return done(null, false, {message: "Username is already in use."})
         } else {
+            var db = require('./database.js');
+            var schemaName = 'u' + u.id;
+            var createTableQuery = 'CREATE TABLE ' + schemaName + '.' + schemaName + 'tablevistype (tablename TEXT, vistype TEXT)';
+            var createSchemaQuery = 'CREATE SCHEMA ' + schemaName
+            console.log(createTableQuery);
+            db.queryDB(createSchemaQuery, function(myRows){
+              db.queryDB(createTableQuery, function(myRows){
 
-            sequelize.createSchema("u"+u.id);
+              });
+            });
+
             return done(null, u);
           }
         })

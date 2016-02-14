@@ -273,6 +273,40 @@ function generateQuery(schemaName, tableName, colList, filterQuery){
 
 }
 
+app.post('/createTableVisType', function(req, res){
+  var schemaName = 'public';
+  if (req.user)
+    schemaName = 'u' + req.user.id;
+
+  var createTableQuery = 'CREATE TABLE ' + schemaName + '.' + schemaName + 'tablevistype {tablename TEXT, vistype TEXT}';
+  db.queryDB(createTableQuery, function(myRows){
+    
+  });
+
+});
+
+
+app.post('/updateTableVisType', function(req, res){
+  var tableName = req.query.tableName;
+  var visType = req.query.vistype;
+  var schemaName = 'public';
+  if (req.user)
+    schemaName = 'u' + req.user.id;
+
+  var delQuery = 'delete from ' + schemaName + '.' + schemaName + 'tablevistype where tablename="' + tableName + '"';
+
+  // remove the entry, if it even exist
+  db.queryDB(myQuery, function(myRows){
+      var DelQuery = 'INSERT INTO ' + schemaName + '.' + schemaName +  'tablevistype VALUES ("' + tableName + '", "' + visType + '")';
+      // insert updated Row
+      db.queryDB(updateRowQuery, function(myRows){
+
+      });
+
+  });
+
+});
+
 app.get('/retrieveDistinctColValues', function(req, res){
   var colName = req.query.columnName;
   var tableName = req.query.tableName;

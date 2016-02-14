@@ -30,6 +30,11 @@ exports.queryDB = function(queryStr, callback) {
       callback(null);
       return;
     } else {
+      if ((rows.rows).length <= 0){
+        callback([0]);
+        return;
+      }
+      //console.log("fuck you bitch bitch" + rows.rows);
       callback(rows.rows);
       return;
 
