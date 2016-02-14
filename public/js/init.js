@@ -32,6 +32,355 @@ var orbit_ortho_camera
 var orbit_persp_camera
 var device_persp_camera
 
+
+
+function parseURLArg(){
+  var visSelect = GetURLParameter('visualization');
+  console.log(visSelect);
+  switch(visSelect){
+    case "globe" :
+      $("#VisualList").val("globe");
+      break;
+    case "scatter" :
+      $("#VisualList").val("scatter");
+      break;
+    case "bar":
+      $("#VisualList").val("bar");
+      break;
+    case "basketball" :
+      $("#VisualList").val("basketball");
+      break;
+    default:
+      console.log("no URL parameters used");
+      return;
+
+  }
+  visChange();
+  var tableSelect = GetURLParameter('table');
+  if (tableSelect == null)
+    return;
+
+  var isTure = 0;
+  // make sure it exist in dropdown list
+  $("#TableList option").each(function(){
+    console.log($(this).val());
+    if (tableSelect == $(this).val()){
+      $("#TableList").val(tableSelect);
+      tableChange();
+
+    }
+  });
+
+}
+
+
+// auto fills NBA Team Dropdown with URL Argument
+function detectNBATeam(){
+  var teamSelected = GetURLParameter('teamID');
+  if (teamSelected == null)
+    return;
+  var count = 0;
+  $("#TeamName option").each(function(){
+    if (teamSelected == $(this).val()){
+      var teamCol = document.getElementById('TeamName');
+      teamCol.selectedIndex = count;
+      teamChange(teamSelected);
+      return;
+    }
+    count++;
+  });
+}
+
+// auto fills NBA Player Dropdown with URL Argument
+function detectNBAPlayer(){
+  var playerSelected = GetURLParameter('playerID');
+  if (playerSelected == null)
+    return;
+  var count = 0;
+  $("#PlayerName option").each(function(){
+    if (playerSelected == $(this).val()){
+      var playerCol = document.getElementById('PlayerName');
+      playerCol.selectedIndex = count;
+      return;
+    }
+    count++;
+  });
+}
+
+// generate Columns based on URL for Basketball
+function detectBasketballColsURL(){
+  var tableSelected = $("#TableList option:selected").text();
+  if(tableSelected == 'NBA'){
+    var seasonSelected = GetURLParameter('seasonID');
+    var teamSelected = GetURLParameter('teamID');
+    var playerSelected = GetURLParameter('playerID');
+    var count = 0;
+    $("#Season option").each(function(){
+      if (seasonSelected == $(this).val()){
+        var seasonCol = document.getElementById('Season');
+        seasonCol.selectedIndex = count;
+        seasonChange(seasonSelected);
+        return;
+      }
+      count++;
+    });
+  }
+  else {
+    var xSelect = GetURLParameter('coutX');
+    var ySelect = GetURLParameter('courtY');
+    var shotSelect = GetURLParameter('shot');
+
+    var count = 0;
+
+    if (xSelect != null) {
+      $("#courtXColumn option").each(function(){
+        if (xSelect == $(this).text()){
+          var colElem1 = document.getElementById('courtXColumn');
+          colElem1.selectedIndex = count;
+        }
+        count++;
+      });
+    }
+
+    if (ySelect != null){
+      count = 0;
+      $("#courtYColumn option").each(function(){
+        if (ySelect == $(this).text()){
+          var colElem2 = document.getElementById('courtYColumn');
+          colElem2.selectedIndex = count;
+        }
+        count ++;
+      });
+    }
+
+    if (shotSelect){
+      count = 0;
+      $("#shotColumn option").each(function(){
+        if (shotSelect == $(this).text()){
+          var colElem3 = document.getElementById('shotColumn');
+          colElem3.selectedIndex = count;
+        }
+        count ++;
+      });
+    }
+  }
+}
+
+function generateURLForSharing(){
+
+  var genURL = window.location.href;
+  if (genURL[genURL.length -1] == '#')
+    genURL = genURL.substring(0, genURL.length - 1);
+  genURL = genURL.concat("?");
+  var visualSelected =  $("#VisualList option:selected").val();
+  if (visualSelected != null)
+    genURL = genURL.concat('visualization=' + visualSelected + '&');
+  var tableSelected = $("#TableList option:selected").text();
+  if (tableSelected != null)
+    genURL = genURL.concat('table=' + tableSelected+ '&');
+
+  switch(visualSelected){
+    case 'bar':
+    case 'scatter':
+      var col1 = $("#xColumn option:selected").text();
+      var col2 = $("#yColumn option:selected").text();
+      var col3 = $("#zColumn option:selected").text();
+      if (col1 != null)
+        genURL = genURL.concat('x=' + col1+ '&');
+      if (col2 != null)
+        genURL = genURL.concat('y=' + col2+ '&');
+      if (col3 != null)
+        genURL = genURL.concat('z=' + col3+ '&');
+      var xFilter = $("#sliderX").slider("option", "values");
+      var yFilter = $("#sliderY").slider("option", "values");
+      var zFilter = $("#sliderZ").slider("option", "values");
+      if (xFilter[0] != undefined)
+        genURL = genURL.concat('xFrom=' + xFilter[0] + '&');
+      if (xFilter[1] != undefined)
+        genURL = genURL.concat('xTo=' + xFilter[1]+ '&');
+      if (yFilter[0] != undefined)
+        genURL = genURL.concat('yFrom=' + yFilter[0]+ '&');
+      if (yFilter[1] != undefined)
+        genURL = genURL.concat('yTo=' + yFilter[1]+ '&');
+      if (zFilter[0] != undefined)
+        genURL = genURL.concat('zFrom=' + zFilter[0]+ '&');
+      if (zFilter[1] != undefined)
+        genURL = genURL.concat('zTo=' + zFilter[1]+ '&');
+    break;
+
+    case 'globe':
+      console.log("Globe");
+      var col1 = $("#xColumn option:selected").text();
+      var col2 = $("#yColumn option:selected").text();
+      var col3 = $("#zColumn option:selected").text();
+      if (col1 != null)
+        genURL = genURL.concat('x=' + col1+ '&');
+      if (col2 != null)
+        genURL = genURL.concat('y=' + col2+ '&');
+      if (col3 != null)
+        genURL = genURL.concat('z=' + col3+ '&');
+      break;
+    case 'basketball':
+      if (tableSelected == 'NBA'){
+        var playerID = $("#PlayerName option:selected").val();
+        var teamID = $("#TeamName option:selected").val();
+        var seasonID = $("#Season option:selected").val();
+        console.log(playerID);
+        console.log(teamID);
+        console.log(seasonID);
+        if (playerID != null)
+          genURL = genURL.concat('playerID=' + playerID + '&');
+        if (teamID != null)
+          genURL = genURL.concat('teamID=' + teamID+ '&');
+        if (seasonID != null)
+          genURL = genURL.concat('seasonID=' + seasonID+ '&');
+
+      }
+      else {
+       var col1 = $("#courtXColumn option:selected").text();
+       var col2 = $("#courtYColumn option:selected").text();
+       var col3 = $("#shotColumn option:selected").text();
+       if (col1 != null)
+         genURL = genURL.concat('x=' + col1+ '&');
+       if (col2 != null)
+         genURL = genURL.concat('y=' + col2+ '&');
+       if (col3 != null)
+         genURL = genURL.concat('z=' + col3+ '&');
+       console.log("basketball");
+
+     }
+     break;
+      default:
+        console.log("matched nothign: " + tableSelected);
+        break;
+
+  }
+
+  // create text box for link and paste link inside
+  $("#shareLink").html("");
+  $("#shareLink").html('<form>Link:<br><input id="shareLinkID" type="text" name="sharelink" value = "' + genURL + '"><br></form>');
+  document.getElementById('shareLinkID').focus();
+  document.getElementById('shareLinkID').select();
+
+}
+
+// generate Columns based on URL for Globe
+function detectGlobeColsURL(){
+  var latSelect = GetURLParameter('lat');
+  var longSelect = GetURLParameter('long');
+  var magSelect = GetURLParameter('mag');
+
+  var count = 0;
+
+  if (latSelect != null){
+    $("#xColumn option").each(function(){
+      if (latSelect == $(this).text()){
+        var colElem1 = document.getElementById('xColumn');
+        colElem1.selectedIndex = count;
+      }
+      count++;
+    });
+  }
+
+  if (longSelect != null){
+    count = 0;
+    $("#yColumn option").each(function(){
+      if (longSelect == $(this).text()){
+        var colElem2 = document.getElementById('yColumn');
+        colElem2.selectedIndex = count;
+      }
+      count ++;
+    });
+  }
+  if (magSelect != null){
+    count = 0;
+    $("#zColumn option").each(function(){
+      if (magSelect == $(this).text()){
+        var colElem3 = document.getElementById('zColumn');
+        colElem3.selectedIndex = count;
+      }
+      count ++;
+    });
+  }
+
+}
+
+// generate columns based on URL for Gen Graphs
+function detectXYZGenVis(){
+  //Get Column
+  var xSelect = GetURLParameter('x');
+  var ySelect = GetURLParameter('y');
+  var zSelect = GetURLParameter('z');
+  var count = 0;
+  $("#xColumn option").each(function(){
+    if (xSelect == $(this).text()){
+      var colElem1 = document.getElementById('xColumn');
+      colElem1.selectedIndex = count;
+      switch (colElem1[count].value){
+        case 'double precision':
+          generateNumericColumnFilter('#xColumn');
+          break;
+        case 'text':
+          generateTextColumnFilter('#xColumn');
+          break;
+        default:
+          break;
+      }
+    }
+    count++;
+  });
+  count = 0;
+  $("#yColumn option").each(function(){
+    if (ySelect == $(this).text()){
+      var colElem2 = document.getElementById('yColumn');
+      colElem2.selectedIndex = count;
+      switch (colElem2[count].value){
+        case 'double precision':
+          generateNumericColumnFilter('#yColumn');
+          break;
+        case 'text':
+          generateTextColumnFilter('#yColumn');
+          break;
+        default:
+          break;
+      }
+    }
+    count ++;
+  });
+  count = 0;
+  $("#zColumn option").each(function(){
+    if (zSelect == $(this).text()){
+      var colElem3 = document.getElementById('zColumn');
+      colElem3.selectedIndex = count;
+      switch (colElem3[count].value){
+        case 'double precision':
+          generateNumericColumnFilter('#zColumn');
+          break;
+        case 'text':
+          generateTextColumnFilter('#zColumn');
+          break;
+        default:
+          break;
+      }
+    }
+    count ++;
+  });
+
+}
+$(document).ready( function () {
+  parseURLArg();
+});
+
+function GetURLParameter(sParam){
+    var sPageURL = window.location.search.substring(1);
+    var sURLVariables = sPageURL.split('&');
+    for (var i = 0; i < sURLVariables.length; i++) {
+        var sParameterName = sURLVariables[i].split('=');
+        if (sParameterName[0] == sParam){
+            return sParameterName[1];
+        }
+    }
+  }
 function init() {
   scene = new THREE.Scene();
   window.addEventListener('resize', onWindowResize, false);
@@ -68,6 +417,7 @@ function resetVisuals(){
 }
 
 function generateVisuals() {
+  console.log("GenerateingVisuals");
   var tableSelected = $("#VisualList option:selected").val();
   switch (tableSelected) {
     case 'bar':
@@ -232,6 +582,7 @@ function generateScatter() {
 
 
 function generateBar() {
+  console.log("generateBar()");
   clearmeshes();
   if (RENDERID != null)
     cancelAnimationFrame(RENDERID);
@@ -251,7 +602,7 @@ function generateBar() {
   initbars();
   //animate();
   renderBars();
-
+  console.log("After renderBars()");
   targetlist = [];
   mousetargetlist = [];
   scater_check = 0;
@@ -260,7 +611,7 @@ function generateBar() {
   var y = $("#yColumn option:selected").text();
   var z = $("#zColumn option:selected").text();
 
-
+  console.log("wtf");
   // generate bar/Scatter Query Based on Filters
   console.log(x);
   console.log(y);

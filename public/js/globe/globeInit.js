@@ -1,7 +1,7 @@
 function generateGlobe(json){
   clearmeshes();
   console.log("generate_globe()");
-  $('.visual').empty();  
+  $('.visual').empty();
 
   globeText = document.createElement('div');
   globeText.style.position = 'absolute';
@@ -11,11 +11,7 @@ function generateGlobe(json){
   globeText.innerHTML = "";
   globeText.style.top = 20 + 'px';
   globeText.style.left = 70 + 'px';
-<<<<<<< HEAD
-  globeText.style.backgroundColor = 'rgba(255,255, 255,0.0)'
-=======
-  globeText.style.backgroundColor = rgba(255, 255, 255, 0.0);
->>>>>>> 7069dc7e45224619c4e1b931dcf6de803f1131b6
+  globeText.style.backgroundColor = 'rgba(255,255, 255,0.0)';
   globeText.style.color = 'black';
   globeText.style.fontSize = '20px';
   // globeText.style.margin = "50px -400px 0px 0px";
@@ -29,7 +25,7 @@ function generateGlobe(json){
   //renderer, camera, scene,  RENDERID
   globe = new DAT.Globe(container, renderer, camera, scene, RENDERID, effect);
   scene = globe.scene;
-  
+
 
   // var tableSelected = $("#TableList option:selected").val();
 
@@ -63,4 +59,3 @@ function generateGlobe(json){
 // Begin request
   // xhr.send( null );
 }
-
