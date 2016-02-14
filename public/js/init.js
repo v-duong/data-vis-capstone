@@ -53,9 +53,9 @@ function parseURLArg(){
     default:
       console.log("no URL parameters used");
       return;
-    visChange();
-  }
 
+  }
+  visChange();
   var tableSelect = GetURLParameter('table');
   if (tableSelect == null)
     return;
@@ -73,53 +73,105 @@ function parseURLArg(){
 
 }
 
-// generate Columns based on URL for Globe
-function detectBasketballColsURL(){
-  var xSelect = GetURLParameter('coutX');
-  var ySelect = GetURLParameter('courtY');
-  var shotSelect = GetURLParameter('shot');
 
-
+// auto fills NBA Team Dropdown with URL Argument
+function detectNBATeam(){
+  var teamSelected = GetURLParameter('teamID');
+  if (teamSelected == null)
+    return;
   var count = 0;
+  $("#TeamName option").each(function(){
+    if (teamSelected == $(this).val()){
+      var teamCol = document.getElementById('TeamName');
+      teamCol.selectedIndex = count;
+      teamChange(teamSelected);
+      return;
+    }
+    count++;
+  });
+}
 
-  if (xSelect != null) {
-    console.log("fuck still entered here");
-    $("#courtXColumn option").each(function(){
-      console.log($(this).text());
-      if (xSelect == $(this).text()){
-        var colElem1 = document.getElementById('courtXColumn');
-        colElem1.selectedIndex = count;
+// auto fills NBA Player Dropdown with URL Argument
+function detectNBAPlayer(){
+  var playerSelected = GetURLParameter('playerID');
+  if (playerSelected == null)
+    return;
+  var count = 0;
+  $("#PlayerName option").each(function(){
+    if (playerSelected == $(this).val()){
+      var playerCol = document.getElementById('PlayerName');
+      playerCol.selectedIndex = count;
+      return;
+    }
+    count++;
+  });
+}
+
+// generate Columns based on URL for Basketball
+function detectBasketballColsURL(){
+  var tableSelected = $("#TableList option:selected").text();
+  if(tableSelected == 'NBA'){
+    var seasonSelected = GetURLParameter('seasonID');
+    var teamSelected = GetURLParameter('teamID');
+    var playerSelected = GetURLParameter('playerID');
+    var count = 0;
+    $("#Season option").each(function(){
+      if (seasonSelected == $(this).val()){
+        var seasonCol = document.getElementById('Season');
+        seasonCol.selectedIndex = count;
+        seasonChange(seasonSelected);
+        return;
       }
       count++;
     });
   }
+  else {
+    var xSelect = GetURLParameter('coutX');
+    var ySelect = GetURLParameter('courtY');
+    var shotSelect = GetURLParameter('shot');
 
-  if (ySelect != null){
-    count = 0;
-    $("#courtYColumn option").each(function(){
-      if (ySelect == $(this).text()){
-        var colElem2 = document.getElementById('courtYColumn');
-        colElem2.selectedIndex = count;
-      }
-      count ++;
-    });
-  }
+    var count = 0;
 
-  if (shotSelect){
-    count = 0;
-    $("#shotColumn option").each(function(){
-      if (shotSelect == $(this).text()){
-        var colElem3 = document.getElementById('shotColumn');
-        colElem3.selectedIndex = count;
-      }
-      count ++;
-    });
+    if (xSelect != null) {
+      $("#courtXColumn option").each(function(){
+        if (xSelect == $(this).text()){
+          var colElem1 = document.getElementById('courtXColumn');
+          colElem1.selectedIndex = count;
+        }
+        count++;
+      });
+    }
+
+    if (ySelect != null){
+      count = 0;
+      $("#courtYColumn option").each(function(){
+        if (ySelect == $(this).text()){
+          var colElem2 = document.getElementById('courtYColumn');
+          colElem2.selectedIndex = count;
+        }
+        count ++;
+      });
+    }
+
+    if (shotSelect){
+      count = 0;
+      $("#shotColumn option").each(function(){
+        if (shotSelect == $(this).text()){
+          var colElem3 = document.getElementById('shotColumn');
+          colElem3.selectedIndex = count;
+        }
+        count ++;
+      });
+    }
   }
 }
 
 function generateURLForSharing(){
 
-  var genURL = window.location.href + "?";
+  var genURL = window.location.href;
+  if (genURL[genURL.length -1] == '#')
+    genURL = genURL.substring(0, genURL.length - 1);
+  genURL = genURL.concat("?");
   var visualSelected =  $("#VisualList option:selected").val();
   if (visualSelected != null)
     genURL = genURL.concat('visualization=' + visualSelected + '&');
@@ -129,37 +181,86 @@ function generateURLForSharing(){
 
   switch(visualSelected){
     case 'bar':
-      console.log("hmM");
     case 'scatter':
       var col1 = $("#xColumn option:selected").text();
       var col2 = $("#yColumn option:selected").text();
       var col3 = $("#zColumn option:selected").text();
-      console.log("Wtf" + col1);
       if (col1 != null)
         genURL = genURL.concat('x=' + col1+ '&');
       if (col2 != null)
         genURL = genURL.concat('y=' + col2+ '&');
       if (col3 != null)
         genURL = genURL.concat('z=' + col3+ '&');
+      var xFilter = $("#sliderX").slider("option", "values");
+      var yFilter = $("#sliderY").slider("option", "values");
+      var zFilter = $("#sliderZ").slider("option", "values");
+      if (xFilter[0] != undefined)
+        genURL = genURL.concat('xFrom=' + xFilter[0] + '&');
+      if (xFilter[1] != undefined)
+        genURL = genURL.concat('xTo=' + xFilter[1]+ '&');
+      if (yFilter[0] != undefined)
+        genURL = genURL.concat('yFrom=' + yFilter[0]+ '&');
+      if (yFilter[1] != undefined)
+        genURL = genURL.concat('yTo=' + yFilter[1]+ '&');
+      if (zFilter[0] != undefined)
+        genURL = genURL.concat('zFrom=' + zFilter[0]+ '&');
+      if (zFilter[1] != undefined)
+        genURL = genURL.concat('zTo=' + zFilter[1]+ '&');
     break;
 
     case 'globe':
       console.log("Globe");
+      var col1 = $("#xColumn option:selected").text();
+      var col2 = $("#yColumn option:selected").text();
+      var col3 = $("#zColumn option:selected").text();
+      if (col1 != null)
+        genURL = genURL.concat('x=' + col1+ '&');
+      if (col2 != null)
+        genURL = genURL.concat('y=' + col2+ '&');
+      if (col3 != null)
+        genURL = genURL.concat('z=' + col3+ '&');
       break;
     case 'basketball':
-     var col1 = $("#courtXColumn option:selected").text();
-     var col2 = $("#courtYColumn option:selected").text();
-     var col3 = $("#shotColumn option:selected").text();
-     console.log("basketball");
+      if (tableSelected == 'NBA'){
+        var playerID = $("#PlayerName option:selected").val();
+        var teamID = $("#TeamName option:selected").val();
+        var seasonID = $("#Season option:selected").val();
+        console.log(playerID);
+        console.log(teamID);
+        console.log(seasonID);
+        if (playerID != null)
+          genURL = genURL.concat('playerID=' + playerID + '&');
+        if (teamID != null)
+          genURL = genURL.concat('teamID=' + teamID+ '&');
+        if (seasonID != null)
+          genURL = genURL.concat('seasonID=' + seasonID+ '&');
+
+      }
+      else {
+       var col1 = $("#courtXColumn option:selected").text();
+       var col2 = $("#courtYColumn option:selected").text();
+       var col3 = $("#shotColumn option:selected").text();
+       if (col1 != null)
+         genURL = genURL.concat('x=' + col1+ '&');
+       if (col2 != null)
+         genURL = genURL.concat('y=' + col2+ '&');
+       if (col3 != null)
+         genURL = genURL.concat('z=' + col3+ '&');
+       console.log("basketball");
+
+     }
      break;
-    default:
-      console.log("matched nothign: " + tableSelected);
-      break;
+      default:
+        console.log("matched nothign: " + tableSelected);
+        break;
+
   }
 
   // create text box for link and paste link inside
-  $("#columnSelection.off-canvas-submenu").html("");
-  $("#shareLink").html('<form>Link:<br><input type="text" name="sharelink" value = "' + genURL + '"><br></form>');
+  $("#shareLink").html("");
+  $("#shareLink").html('<form>Link:<br><input id="shareLinkID" type="text" name="sharelink" value = "' + genURL + '"><br></form>');
+  document.getElementById('shareLinkID').focus();
+  document.getElementById('shareLinkID').select();
 
 }
 
@@ -173,7 +274,6 @@ function detectGlobeColsURL(){
 
   if (latSelect != null){
     $("#xColumn option").each(function(){
-      console.log($(this).text());
       if (latSelect == $(this).text()){
         var colElem1 = document.getElementById('xColumn');
         colElem1.selectedIndex = count;
@@ -211,10 +311,8 @@ function detectXYZGenVis(){
   var xSelect = GetURLParameter('x');
   var ySelect = GetURLParameter('y');
   var zSelect = GetURLParameter('z');
-console.log("print everything: " + xSelect + ySelect + zSelect);
   var count = 0;
   $("#xColumn option").each(function(){
-    console.log($(this).text());
     if (xSelect == $(this).text()){
       var colElem1 = document.getElementById('xColumn');
       colElem1.selectedIndex = count;
@@ -268,17 +366,6 @@ console.log("print everything: " + xSelect + ySelect + zSelect);
     count ++;
   });
 
-  visSelect =   $("#VisualList").val();
-  switch(visSelect){
-    case "scatter":
-    case "bar":
-      //detectXYZGenVis();
-      //generateVisuals();
-      break;
-    default:
-      break;
-  }
-
 }
 $(document).ready( function () {
   parseURLArg();
@@ -287,7 +374,6 @@ $(document).ready( function () {
 function GetURLParameter(sParam){
     var sPageURL = window.location.search.substring(1);
     var sURLVariables = sPageURL.split('&');
-    console.log(sURLVariables);
     for (var i = 0; i < sURLVariables.length; i++) {
         var sParameterName = sURLVariables[i].split('=');
         if (sParameterName[0] == sParam){
