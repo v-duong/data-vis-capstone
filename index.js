@@ -75,11 +75,13 @@ app.get('/files', function(req, res) {
   res.render('files');
 });
 
+
 app.get('/tables', function(req,res) {
   var schemaName = 'public';
   if (req.user)
     schemaName = 'u'+req.user.id;
-  var getTableQuery = "SELECT table_name FROM information_schema.tables WHERE table_schema = '"+schemaName+"'";
+  //var getTableQuery = "SELECT table_name FROM information_schema.tables WHERE table_schema = '"+schemaName+"' and table_name!='"+ schemaName+ "tablevistype'";
+  var getTableQuery = "SELECT * FROM " + schemaName + "." + schemaName + "tablevistype";
   console.log(getTableQuery);
 
   db.queryDB(getTableQuery, function(myTables) {
@@ -120,61 +122,7 @@ app.post('/files', file_uploaded.single('datafile'), function(req, res) {
   var textBuff = "";
   var src = fs.createReadStream(tmp_path);
   src.pipe(process.stdout);
-  //If globe radiobutton selected
-  // if (visualType == 1){
-  //   var jsonFile = "";
-  //   src.on('data', function(fileData) {
-  //     jsonFile = jsonFile.concat(fileData.toString());
-  //   });
 
-  //   src.on('end', function() {
-
-  //   jsonFile = jsonFile.slice(0,-1);
-  //   jsonFile = jsonFile.split('\r\n');
-  //   if(jsonFile.length==1){
-  //     jsonFile = jsonFile.join().split('\r');
-  //   }
-  //   columns = jsonFile.splice(0,1)[0];
-
-  //   //Check if there are not 3 columns (lat,long,magnitude)
-  //   if (columns.split(',').length != 3){
-  //     console.log("Invalid Globe Data");
-  //     return;
-  //   }
-
-  //   var max = 0;
-  //   var temp;
-  //   var mag;
-  //   for(var i in jsonFile){
-  //     temp = jsonFile[i].split(",");
-  //     mag = parseFloat(temp[2]);
-  //     if(mag>max){max = mag;}
-  //   }
-
-  //   // console.log(max);
-  //   name = req.file.originalname;
-  //   name = name.substring(0, name.indexOf('.csv'));
-  //   jsonFile = "[\"" + name + "\"," +max+",[" + jsonFile + "]]";
-
-    // var writer = fs.writeFile(__dirname + "/public/globeData/" + name + ".json", jsonFile, function(err){
-    //     if (err){
-    //       return console.log(err);
-    //     }
-    //     res.render('files');
-
-    //   });
-
-  //   });
-
-  //   src.on('error', function(err) {
-  //     res.render('files');
-  //   });
-
-  //   //If general data type radio button selected
-  // } // end of globe json data, to be deleted..
-
-
-  // else {
   src.on('data', function(fileData) {
 
     textBuff = textBuff.concat(fileData.toString());
@@ -215,19 +163,37 @@ app.post('/files', file_uploaded.single('datafile'), function(req, res) {
 });
 
 
-
+app.get('/tableforvis', function(req, res){
+  schemaName = 'public';
+  if (req.user) {
+    schemaName = 'u' + req.user.id;
+  }
+  var vistype = req.query.visual;
+  if ((vistype == 'bar') || (vistype == 'scatter'))
+    vistype = 'barscatter';
+  var getTableQuery = "SELECT tablename FROM " + schemaName + "." + schemaName + "tablevistype where vistype='" + vistype + "' OR vistype='All'";
+  db.queryDB(getTableQuery, function(myRows) {
+    if (myRows == null) {
+      console.log("Couldnt access database");
+    } else {
+      res.send(JSON.stringify(myRows));
+    }
+  });
+});
 
 
 
 app.get('/visualize', function(req, res) {
   var tlist;
   var schemaName = 'public';
-  var a = ""
+  //var a = ""
   if (req.user) {
     schemaName = 'u' + req.user.id;
-    a = ""
+    //a = ""
   }
-  db.queryDB("SELECT table_name FROM information_schema.tables WHERE table_schema = '"+ schemaName + "' " + a + ";", function(tlist) {
+  var getTableQuery = "SELECT * FROM " + schemaName + "." + schemaName + "tablevistype where vistype='All'";
+  //db.queryDB("SELECT table_name FROM information_schema.tables WHERE table_schema = '"+ schemaName + "' " + a + ";",
+  db.queryDB(getTableQuery, function(tlist) {
     res.render('visualize', {
       tables: tlist
     });
@@ -280,24 +246,25 @@ app.post('/createTableVisType', function(req, res){
 
   var createTableQuery = 'CREATE TABLE ' + schemaName + '.' + schemaName + 'tablevistype {tablename TEXT, vistype TEXT}';
   db.queryDB(createTableQuery, function(myRows){
-    
+
   });
 
 });
 
 
 app.post('/updateTableVisType', function(req, res){
-  var tableName = req.query.tableName;
-  var visType = req.query.vistype;
+  var tableName = req.body.tableName;
+  var visType = req.body.vistype;
   var schemaName = 'public';
   if (req.user)
     schemaName = 'u' + req.user.id;
 
-  var delQuery = 'delete from ' + schemaName + '.' + schemaName + 'tablevistype where tablename="' + tableName + '"';
-
+  var delQuery = 'delete from ' + schemaName + '.' + schemaName + "tablevistype where tablename='" + tableName.toLowerCase() + "'";
+  console.log("delQuery: " + delQuery );
   // remove the entry, if it even exist
-  db.queryDB(myQuery, function(myRows){
-      var DelQuery = 'INSERT INTO ' + schemaName + '.' + schemaName +  'tablevistype VALUES ("' + tableName + '", "' + visType + '")';
+  db.queryDB(delQuery, function(myRows){
+      var updateRowQuery = 'INSERT INTO ' + schemaName + '.' + schemaName +  "tablevistype VALUES ('" + tableName.toLowerCase()  + "', '" + visType + "')";
+      console.log("updateRowQuery: " + updateRowQuery );
       // insert updated Row
       db.queryDB(updateRowQuery, function(myRows){
 
@@ -313,7 +280,7 @@ app.get('/retrieveDistinctColValues', function(req, res){
   var schemaName = 'public';
   if (req.user)
     schemaName = 'u'+req.user.id;
-  var myQuery = 'select distinct ' + colName + ' from ' + schemaName + '.' + tableName + ' where ' + colName + ' is not null order by ' + colName;
+  var myQuery = 'select distinct ' + colName + ' from ' + schemaName + '.' + tableName.toLowerCase()  + ' where ' + colName + ' is not null order by ' + colName;
 
   console.log(myQuery);
   db.queryDB(myQuery, function(myRows) {
@@ -333,7 +300,7 @@ app.get('/retrieveColumns', function(req, res) {
   var schemaName = 'public';
   if (req.user)
     schemaName = 'u'+req.user.id;
-  myQuery = myQuery.concat("table_schema = '" + schemaName + "'" + " AND table_name = '" + tableName+ "'" );
+  myQuery = myQuery.concat("table_schema = '" + schemaName + "'" + " AND table_name = '" + tableName.toLowerCase() + "'" );
 
   if ((dataTypes != null) || (dataTypes != undefined)){
     myQuery = myQuery.concat(" AND (");
@@ -358,7 +325,7 @@ app.get('/retrieveColumns', function(req, res) {
 
 app.get('/retrieveData', function(req, res) {
   //var myQuery = req.query.myQuery;
-  var tableName = req.query.tableName;
+  var tableName = (req.query.tableName).toLowerCase() ;
   var colList = req.query.columnList;
   var filterQuery = req.query.filterQuery;
   var orderBy = req.query.orderBy;
@@ -367,7 +334,7 @@ app.get('/retrieveData', function(req, res) {
   if (req.user)
     schemaName = 'u'+req.user.id;
 
-  var myQuery = generateQuery(schemaName, tableName, colList, filterQuery);
+  var myQuery = generateQuery(schemaName, tableName , colList, filterQuery);
   if (myQuery == '')
     return;
 
@@ -389,7 +356,7 @@ app.post('/delData', function(req, res) {
   var schemaName = 'public';
   if (req.user)
     schemaName = 'u'+req.user.id;
-  var tableName = req.body.tName;
+  var tableName = (req.body.tName).toLowerCase();
 
   var dropSuccess = false;
   db.deleteTable(tableName,schemaName, function(dropErr) {

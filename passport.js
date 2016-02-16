@@ -39,7 +39,6 @@ module.exports = function(passport, Strategy, bcrypt, sequelize){
             var schemaName = 'u' + u.id;
             var createTableQuery = 'CREATE TABLE ' + schemaName + '.' + schemaName + 'tablevistype (tablename TEXT, vistype TEXT)';
             var createSchemaQuery = 'CREATE SCHEMA ' + schemaName
-            console.log(createTableQuery);
             db.queryDB(createSchemaQuery, function(myRows){
               db.queryDB(createTableQuery, function(myRows){
 
