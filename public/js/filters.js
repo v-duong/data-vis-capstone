@@ -178,7 +178,7 @@ function visChange(){
       if (visualSelected == 'basketball')
         $("#TableList").append('<option value="NBA">NBA</option>');
 
-
+      detectTable();
     });
 
     // remove all old filters and colums
