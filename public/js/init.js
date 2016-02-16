@@ -56,21 +56,25 @@ function parseURLArg(){
 
   }
   visChange();
+
+
+}
+
+// AutoDetectTable
+function detectTable(){
   var tableSelect = GetURLParameter('table');
   if (tableSelect == null)
     return;
 
-  var isTure = 0;
   // make sure it exist in dropdown list
   $("#TableList option").each(function(){
-    console.log($(this).val());
+    //console.log($(this).val());
     if (tableSelect == $(this).val()){
       $("#TableList").val(tableSelect);
       tableChange();
 
     }
   });
-
 }
 
 
@@ -169,6 +173,10 @@ function detectBasketballColsURL(){
 function generateURLForSharing(){
 
   var genURL = window.location.href;
+  var n = genURL.indexOf("?");
+  if (n > 0)
+    genURL = genURL.substring(0, n);
+
   if (genURL[genURL.length -1] == '#')
     genURL = genURL.substring(0, genURL.length - 1);
   genURL = genURL.concat("?");

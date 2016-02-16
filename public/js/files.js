@@ -1,10 +1,18 @@
 window.onload = function(){
   $.get('/tables', function(data){
     var d = JSON.parse(data);
-    for (i = 0; i < d.length; i++)
-      $('.filetable').append('<tr><td>'+ d[i].table_name +'</td><td>\
-      <input class="button" type="button" class="delbutton" id='+ d[i].table_name +' value="Delete" onclick="deleteFunc(this.id)">\
-      </td></tr>')
+    for (i = 0; i < d.length; i++){
+      //$('.filetable').append('<tr><td><select id='+ d[i].table_name + '_vis class="vislist"><option value="all">All</option><option value="barscatter">Bar/Scatter</option><option value="globe">Globe</option><option value="basketball">Basketball</option></select></td></tr>');
+
+      $('.filetable').append('<tr><td>'+ d[i].tablename +'</td><td><select id='+  d[i].tablename + '_vis class="vislist"><option value="All">All</option><option value="barscatter">Bar/Scatter</option><option value="globe">Globe</option><option value="basketball">Basketball</option></select></td><td>\
+      <input class="button" type="button" class="delbutton" id='+ d[i].tablename +' value="Delete" onclick="deleteFunc(this.id)"></td></tr>');
+
+      // set the value for the dropdown within database -- to do later
+      var dropDownID = "#" + d[i].tablename + "_vis";
+      $(dropDownID).val(d[i].vistype);
+
+
+    }
   });
 
   $( '.file-input' ).each( function(){
@@ -49,6 +57,32 @@ var CustDropzone = new Dropzone(document.body, { // Make the whole body a dropzo
         window.location.replace('/files');
     });
   }
+});
+
+/*
+$(document).on('change', '#vislist', function(){
+  teamChange(this.value);
+});*/
+
+$(document).on('change','select',function(){
+  //console.log(this.value);
+  //var table_name = ((this.id).split("_"))[0];
+  var table_name = (this.id).slice(0, -4);
+  var visualtype = this.value;
+  console.log(table_name);
+  console.log(visualtype);
+
+  // change database type
+  $.post('/updateTableVisType', {
+      vistype: visualtype,
+      tableName: table_name
+    }, function(data){
+      console.log(data);
+      if (data != true)
+        console.log("It died");
+
+    }, 'json');
+
 });
 
 

@@ -15,8 +15,6 @@ block sidelist
 		li
 			select(id='TableList')
 				option(value='' selected='selected' disabled="disabled") Choose Table
-				each item in tables
-					option(value=item.table_name) #{item.table_name}
 		li#columnOption
 			a.off-canvas-submenu-call(href='#')
 				| Column Selection

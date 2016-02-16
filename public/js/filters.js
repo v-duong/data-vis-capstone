@@ -1,4 +1,5 @@
 var FilterArray = [];
+var previousVisSelected = "default";
 
 function isNumber(evt) {
     evt = (evt) ? evt : window.event;
@@ -146,48 +147,55 @@ function setDefaultDropDownValue(visSelected, col1, col2, col3, colList){
 }
 
 function visChange(){
+
   var visualSelected =  $("#VisualList option:selected").val();
   var tableSelected = $("#TableList option:selected").text();
 
   $('#filters').hide();
   $('#filtersOption').show();
   hideFindNthlarge();
-  console.log(tableSelected);
-  switch(visualSelected){
-  // if we're switching to basketball, theres no filters, so make sure to remove all
-    case 'basketball':
-      // add NBA into Table
-      $("#TableList").append('<option value="NBA">NBA</option>');
-      $('#filters1').html("");
-      $('#filters2').html("");
-      $('#filters3').html("");
-      if (tableSelected != 'Choose Table')
-        createColsBasketball(visualSelected, tableSelected);
-      break;
-    case 'bar':
-      // remove NBA from table List
-      $("#TableList option[value='NBA']").remove();
-      if (tableSelected != 'Choose Table')
-        createColsBar(visualSelected, tableSelected);
-      break;
-    case 'scatter':
-      // remove NBA from table List
-      $("#TableList option[value='NBA']").remove();
-      if (tableSelected != 'Choose Table')
-        createColsScatter(visualSelected, tableSelected);
-      break;
-    case 'globe':
-      // remove NBA from table List
-      $("#TableList option[value='NBA']").remove();
-      if (tableSelected != 'Choose Table'){
-        createColsGlobe(visualSelected,tableSelected);
-      }
-      hideColumnOptions();
-      createFindNthLarge();
-      console.log("globe is called");
-      break;
 
+  // shouldn't have to do anything when visual is switched from scatter to bar
+  if ((visualSelected == 'bar') || (visualSelected == 'scatter')){
+    if ((previousVisSelected == 'bar') || (previousVisSelected == 'scatter')){
+      previousVisSelected = visualSelected;
+      return;
+    }
   }
+
+
+  // generating new table list
+  $('#TableList').children('option:not(:first)').remove();  // remove old children
+    $.getJSON('/tableforvis', {
+       visual: visualSelected
+    }, function(data){
+
+      for (var i = 0; i < data.length; i++){
+        $("#TableList").append('<option value="' + data[i].tablename + '">' + data[i].tablename + '</option>');
+      }
+      var tableElem = document.getElementById('TableList');
+      tableElem.selectedIndex = 0;
+      if (visualSelected == 'basketball')
+        $("#TableList").append('<option value="NBA">NBA</option>');
+
+      detectTable();
+    });
+
+    // remove all old filters and colums
+    $('#filters1').html("");
+    $('#filters2').html("");
+    $('#filters3').html("");
+    $("#columnSelection.off-canvas-submenu").html("");
+
+
+  if (visualSelected == 'globe'){
+    hideColumnOptions();
+    createFindNthLarge();
+  }
+
+
+
+  previousVisSelected = visualSelected;
 }
 
 $("#VisualList").change(function(){
@@ -303,7 +311,7 @@ function createColsScatter(visualSelected, tableSelected){
 
 
 function createColsBasketball(visualSelected, tableSelected){
-
+  console.log("Table selected: " + tableSelected);
   $("#columnSelection.off-canvas-submenu").html("");
   $.getJSON('/retrieveColumns', {
      tableName: tableSelected,
@@ -315,7 +323,7 @@ function createColsBasketball(visualSelected, tableSelected){
     // populate dropdown list with columnNames and Values
     for (var i = 0; i < data.length; i++){
       htmlStr = htmlStr.concat('<option value="' + data[i].data_type + '">' + data[i].column_name + '</option>');
-
+      console.log(data[i].data_type +"FUCK FUKC FUK"+ data[i].column_name);
     }
 
     htmlStr = htmlStr.concat('</select></li>');
