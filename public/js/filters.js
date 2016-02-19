@@ -1,4 +1,5 @@
 var FilterArray = [];
+var previousVisSelected = "default";
 
 function isNumber(evt) {
     evt = (evt) ? evt : window.event;
@@ -145,50 +146,60 @@ function setDefaultDropDownValue(visSelected, col1, col2, col3, colList){
   }
 }
 
-$("#VisualList").change(function(){
+function visChange(){
+
   var visualSelected =  $("#VisualList option:selected").val();
   var tableSelected = $("#TableList option:selected").text();
 
   $('#filters').hide();
   $('#filtersOption').show();
   hideFindNthlarge();
-  console.log(tableSelected);
-  switch(visualSelected){
-  // if we're switching to basketball, theres no filters, so make sure to remove all
-    case 'basketball':
-      // add NBA into Table
-      $("#TableList").append('<option value="NBA">NBA</option>');
-      $('#filters1').html("");
-      $('#filters2').html("");
-      $('#filters3').html("");
-      if (tableSelected != 'Choose Table')
-        createColsBasketball(visualSelected, tableSelected);
-      break;
-    case 'bar':
-      // remove NBA from table List
-      $("#TableList option[value='NBA']").remove();
-      if (tableSelected != 'Choose Table')
-        createColsBar(visualSelected, tableSelected);
-      break;
-    case 'scatter':
-      // remove NBA from table List
-      $("#TableList option[value='NBA']").remove();
-      if (tableSelected != 'Choose Table')
-        createColsScatter(visualSelected, tableSelected);
-      break;
-    case 'globe':
-      // remove NBA from table List
-      $("#TableList option[value='NBA']").remove();
-      if (tableSelected != 'Choose Table'){
-        createColsGlobe(visualSelected,tableSelected);
-      }
-      hideColumnOptions();
-      createFindNthLarge();
-      console.log("globe is called");
-      break;
 
+  // shouldn't have to do anything when visual is switched from scatter to bar
+  if ((visualSelected == 'bar') || (visualSelected == 'scatter')){
+    if ((previousVisSelected == 'bar') || (previousVisSelected == 'scatter')){
+      previousVisSelected = visualSelected;
+      return;
+    }
   }
 
+
+  // generating new table list
+  $('#TableList').children('option:not(:first)').remove();  // remove old children
+    $.getJSON('/tableforvis', {
+       visual: visualSelected
+    }, function(data){
+
+      for (var i = 0; i < data.length; i++){
+        $("#TableList").append('<option value="' + data[i].tablename + '">' + data[i].tablename + '</option>');
+      }
+      var tableElem = document.getElementById('TableList');
+      tableElem.selectedIndex = 0;
+      if (visualSelected == 'basketball')
+        $("#TableList").append('<option value="NBA">NBA</option>');
+
+      detectTable();
+    });
+
+    // remove all old filters and colums
+    $('#filters1').html("");
+    $('#filters2').html("");
+    $('#filters3').html("");
+    $("#columnSelection.off-canvas-submenu").html("");
+
+
+  if (visualSelected == 'globe'){
+    hideColumnOptions();
+    createFindNthLarge();
+  }
+
+
+
+  previousVisSelected = visualSelected;
+}
+
+$("#VisualList").change(function(){
+  visChange();
 });
 
 function hideColumnOptions(){
@@ -227,6 +238,7 @@ function createColsGlobe(visualSelected ,tableSelected){
     $("#columnSelection.off-canvas-submenu").append('<li><p>Magnitude</p> <select id="zColumn">' + htmlStr_3);
 
     setDefaultDropDownValue(visualSelected, 'xColumn', 'yColumn','zColumn', data);
+    detectGlobeColsURL();
   });
 }
 
@@ -265,7 +277,8 @@ function createColsBar(visualSelected, tableSelected){
     $("#columnSelection.off-canvas-submenu").append('<li><p>Y</p> <select id="yColumn">' + htmlStrForY);
     $("#columnSelection.off-canvas-submenu").append('<li><p>Z</p> <select id="zColumn">' + htmlStr);
 
-    setDefaultDropDownValue(visualSelected, 'xColumn', 'yColumn','zColumn', data);
+    detectXYZGenVis();
+    //setDefaultDropDownValue(visualSelected, 'xColumn', 'yColumn','zColumn', data);
     //generateBarFilters();
 
   });
@@ -298,7 +311,7 @@ function createColsScatter(visualSelected, tableSelected){
 
 
 function createColsBasketball(visualSelected, tableSelected){
-
+  console.log("Table selected: " + tableSelected);
   $("#columnSelection.off-canvas-submenu").html("");
   $.getJSON('/retrieveColumns', {
      tableName: tableSelected,
@@ -310,7 +323,7 @@ function createColsBasketball(visualSelected, tableSelected){
     // populate dropdown list with columnNames and Values
     for (var i = 0; i < data.length; i++){
       htmlStr = htmlStr.concat('<option value="' + data[i].data_type + '">' + data[i].column_name + '</option>');
-
+      console.log(data[i].data_type +"FUCK FUKC FUK"+ data[i].column_name);
     }
 
     htmlStr = htmlStr.concat('</select></li>');
@@ -319,13 +332,15 @@ function createColsBasketball(visualSelected, tableSelected){
     $("#columnSelection.off-canvas-submenu").append('<li><p>Shot Result</p> <select id="shotColumn">' + htmlStr);
 
     setDefaultDropDownValue(visualSelected, 'courtXColumn', 'courtYColumn','shotColumn', data);
-    //generateBarFilters();
+    // if theres parameters in URL, set to those
+    detectBasketballColsURL();
 
   });
 }
-// table selected, time to show columns.. See what kind of Visualization was chosen first
-$("#TableList").change(function(){
-	var visualSelected =  $("#VisualList option:selected").val();
+
+function tableChange(){
+  console.log("table CHange");
+  var visualSelected =  $("#VisualList option:selected").val();
 	switch(visualSelected){
 		case 'bar':
       var tableSelected = $("#TableList option:selected").val();
@@ -363,6 +378,10 @@ $("#TableList").change(function(){
 			$("#TableList").val('');	// set it back to default
 			break;
 	}
+}
+// table selected, time to show columns.. See what kind of Visualization was chosen first
+$("#TableList").change(function(){
+  tableChange();
 });
 
 // Changes for Dynamic Column
@@ -521,11 +540,50 @@ function generateNumericColumnFilter(colID){
     }
 
 
+    var filterFrom = null;
+    var filterTo = null;
+
+    switch(colID){
+      case '#xColumn':
+        filterFrom = GetURLParameter('xFrom');
+        filterTo = GetURLParameter('xTo');
+        break;
+      case '#yColumn':
+        filterFrom = GetURLParameter('yFrom');
+        filterTo = GetURLParameter('yTo');
+        break;
+      case '#zColumn':
+        filterFrom = GetURLParameter('zFrom');
+        filterTo = GetURLParameter('zTo');
+        break;
+    }
+    var defautFrom;
+    defaultFrom = Math.floor(parseFloat(data[0].min));
+    var defaultTo;
+    defaultTo = Math.ceil(parseFloat(data[0].max));
+    if (filterFrom != null){
+      var fromNum = parseFloat(filterFrom);
+      if ((fromNum >= defaultFrom) && (fromNum <= defaultTo)){
+        defaultFrom = fromNum;
+      }
+    }
+    if (filterTo != null){
+      var toNum = parseFloat(filterTo);
+      if ((toNum >= defaultFrom) && (toNum <= defaultTo)){
+        defaultTo = toNum;
+      }
+
+    }
+
+
+
+
+
     $( slideName ).slider({
     	range: true,
     	min: Math.floor(parseFloat(data[0].min)),
     	max: Math.ceil(parseFloat(data[0].max)),
-    	values: [ Math.floor(parseFloat(data[0].min)), Math.ceil(parseFloat(data[0].max)) ],
+    	values: [defaultFrom, defaultTo ],
       step: stepValue,
     	slide: function( event, ui ) {
     		$( amountName ).val(  ui.values[ 0 ] + " - " + ui.values[ 1 ] );
@@ -533,6 +591,9 @@ function generateNumericColumnFilter(colID){
 
     	});
     	$( amountName ).val(  $( slideName ).slider( "values", 0 ) + " - " + $( slideName ).slider( "values", 1 ) );
+
+      // set value for filters if applicable
+    //  detectGenNumFiltersURL( colID, Math.floor(parseFloat(data[0].min), Math.ceil(parseFloat(data[0].max))));
 
   });
 };
@@ -666,30 +727,39 @@ function createColsNBA(){
     var htmlStr = '<li><label>Year</label></li><li><select id="Season">';
     htmlStr = htmlStr.concat("<option value='' selected='selected' disabled='disabled'> Choose Season </option>");
     for (var i = 0; i < yearsSinceBeginning; i++){
-      tempStr = (curYear - (i+1)).toString() + " - " + (curYear - (i)).toString();
-      htmlStr = htmlStr.concat('<option value="' + tempStr + '">' + tempStr + '</option>');
+      var tempStr = (curYear - (i+1)).toString() + " - " + (curYear - (i)).toString();
+      var tempStr2 = (curYear - (i+1)).toString() + "-" + (curYear - (i)).toString();
+      htmlStr = htmlStr.concat('<option value="' + tempStr2 + '">' + tempStr + '</option>');
 
     }
     htmlStr = htmlStr.concat('</select></li>');
     htmlStr = htmlStr.concat('<li><label>Team</label></li><li><select id="TeamName"><option value="" selected="selected" disabled="disabled"> Choose Team </option></select></li>');
     htmlStr = htmlStr.concat('<li><label>Player</label></li><li><select id="PlayerName"><option value="" selected="selected" disabled="disabled"> Choose Player </option></select></li>');
     $("#columnSelection.off-canvas-submenu").append(htmlStr);
+
+    detectBasketballColsURL();
 }
 
+function seasonChange(seasonChosen){
+  resetTeamList();
+  genListOfTeam(seasonChosen);
+  resetPlayerList();
+}
+
+function teamChange(teamChosen){
+  genListOfPlayers(teamChosen);
+}
 
 // as the year change, we should generate a different list of teams
 $(document).on('change', '#Season', function(){
-  resetTeamList();
-  genListOfTeam(this.value);
-  resetPlayerList();
+  seasonChange(this.value);
 });
 
 $(document).on('change', '#TeamName', function(){
-  genListOfPlayers(this.value);
+  teamChange(this.value);
 });
 
 function genListOfTeam(yearSpan){
-  console.log("what the fuck");
   var yearSpanStr = yearSpan.toString();
 
   //2015 - 2016 -> 2015-16
@@ -708,7 +778,7 @@ function genListOfTeam(yearSpan){
           //htmlStr = htmlStr.concat('<option value="' + teamSet[i][0] + '">' + teamSet[i][1] + '</option>');
           $("#TeamName").append('<option value="' + teamSet[i][0]+ '">' + teamSet[i][1]+ '</option>');
         }
-
+        detectNBATeam();
       }
     });
 };
@@ -750,6 +820,7 @@ function genListOfPlayers(teamID){
         //htmlStr = htmlStr.concat('<option value="' + playerSet[i][1] + '">' + playerSet[i][2] + '</option>');
         $("#PlayerName").append('<option value="' + playerSet[i][1]+ '">' + playerSet[i][2]+ '</option>');
       }
+      detectNBAPlayer();
     }
   });
 

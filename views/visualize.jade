@@ -15,8 +15,6 @@ block sidelist
 		li
 			select(id='TableList')
 				option(value='' selected='selected' disabled="disabled") Choose Table
-				each item in tables
-					option(value=item.table_name) #{item.table_name}
 		li#columnOption
 			a.off-canvas-submenu-call(href='#')
 				| Column Selection
@@ -32,8 +30,10 @@ block sidelist
 			li#filters2
 			li#filters3
 		li.b
-			input.button(type='button', value='Apply', onclick='generateVisuals()')
+			input.button(id='apply', type='button', value='Apply', onclick='generateVisuals()')
 			input.button(type='button', value='Enter VR', onclick='VRBottonPressed()')
+			input.button(type='button', value='Share', onclick='generateURLForSharing()')
+			li#shareLink
 		li.c
 			input(id="sphere" type='checkbox', checked=false)
 			p Sphere Toggle

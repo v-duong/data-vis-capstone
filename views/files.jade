@@ -13,6 +13,9 @@ block maintext
           br
 
           input.button2(type="submit" value="Upload" disabled="disabled" id="upload")
+          br
+          br
+          h3 OR DRAG TO SCREEN
   br
   .row
     form#my-awesome-dropzone.CustDropzone(action='/files', method='post')
@@ -23,6 +26,7 @@ block maintext
       table.filetable
         thead
           th Table Name
+          th Visual Type
           th Options
         tbody
       - } else {
@@ -31,6 +35,7 @@ block maintext
       - }
 
   script(src='https://rawgit.com/enyo/dropzone/master/dist/dropzone.js')
-  script(src='static/js/files.js')
   script(src='https://code.jquery.com/jquery-2.1.4.min.js')
+  script(src='static/js/files.js')
+  
     

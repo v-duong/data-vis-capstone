@@ -1,7 +1,7 @@
 function generateGlobe(json){
   clearmeshes();
   console.log("generate_globe()");
-  $('.visual').empty();  
+  $('.visual').empty();
 
   globeText = document.createElement('div');
   globeText.style.position = 'absolute';
@@ -23,7 +23,6 @@ function generateGlobe(json){
   scene = globe.scene;
   device_persp_controls = globe.controls;
   controls = device_persp_controls;
-  
 
   // var tableSelected = $("#TableList option:selected").val();
 
@@ -58,4 +57,3 @@ function generateGlobe(json){
 // Begin request
   // xhr.send( null );
 }
-
