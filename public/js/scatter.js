@@ -1,3 +1,9 @@
+ var counter = 0
+ var sum = 0.1466
+ var accZold = 0
+ var velocity = 0
+
+
  //renderer render the whole scene and camera
  var initscatter = function() {
 
@@ -26,6 +32,21 @@
   orbit_persp_controls.enabled = false;
   device_persp_controls.enabled = false;
   controls.enabled = true;
+
+  if (window.DeviceMotionEvent) {
+  	console.log("DeviceMotionEvent supported");
+  	velocity = 0;
+ 	window.addEventListener('devicemotion', deviceMotionHandler, false);
+  } else {
+  	console.log("DeviceMotionEvent not supported");
+  }
+
+  var recognition = new webkitSpeechRecognition();
+  recognition.onresult = function(event) { 
+  	console.log(event);
+  }
+  recognition.start();
+
 
  }
 
@@ -262,4 +283,61 @@ var setupScene = function()
 	scene.add(Xaxis); scene.add(Yaxis); scene.add(Zaxis);
 	meshes.push(Xaxis); meshes.push(Yaxis); meshes.push(Zaxis);
 
+}
+
+function deviceMotionHandler(eventData){
+	//if (vrModeIsOn === false || isMobile === false) return;
+	//if (counter >= 100) return;
+	var acceleration = eventData.acceleration;
+	// console.log("X:" + acceleration.x);
+	// console.log("Y:" + acceleration.y);
+	//console.log("Z:" + acceleration.z);
+	//acceleration = eventData.accelerationIncludingGravity;
+	// console.log("X:" + acceleration.x);
+	// console.log("Y:" + acceleration.y);
+	// console.log("Z:" + acceleration.z);
+
+	var interval = eventData.interval;
+	//console.log(eventData.interval);
+	//counter = counter + 1;
+	var accZ = (accZold + (acceleration.z + 0.1466))/2;
+	if (accZ < 0.01 && accZ > -0.04)
+		accZ = 0;
+
+	velocity += accZ * interval;
+	// if (velocity > 4)
+	// 	velocity = 4;
+	// if (velocity < -4)
+	// 	velocity = -4;
+	//console.log(velocity);
+	if ( velocity > 0.5){
+		//camera.translateZ( -velocity );
+		velocity -= 0.05;
+	}
+
+	else if (velocity < -0.5){
+		//camera.translateZ( -velocity );
+		velocity += 0.05;
+	}
+
+	accZold = accZ;
+	//sum += acceleration.z + 0.1466;
+	//counter += 1;
+	//console.log(sum/counter)
+
+	//camera.rotation.x +=  10;
+	//camera.position.y +=  0 * acceleration.y * interval * interval;
+	//camera.position.z +=  0 * acceleration.z * interval * interval;
+
+	// var rotation = eventData.rotationRate;
+	// console.log("X:" + acceleration.x);
+	// console.log("Y:" + acceleration.y);
+	// console.log("Z:" + acceleration.z);
+
+}
+
+
+function dblClickEvent(event){
+
+		
 }

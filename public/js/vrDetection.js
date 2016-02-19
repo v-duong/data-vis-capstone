@@ -49,14 +49,20 @@ function VRBottonPressed(){
 function fullScreenExitHandler(){
     if ( !(document.webkitIsFullScreen || document.mozFullScreen || document.msFullScreen || document.fullScreen) ){
     	vrModeIsOn = false;
+    	if (graphType == 'globe') return;
     	controls.enabled = false;
+
     	if (graphType === 'bar'){
 			camera = orbit_ortho_camera;
   			controls = orbit_ortho_controls;
 			camera.position.set(600, 600, 800);
   			camera.lookAt(new THREE.Vector3(0,0,0));
 		}
-		else {
+		else if (graphType === 'globe'){
+  				container.addEventListener('mousedown', onMouseDown, false);
+   				container.addEventListener('mousewheel', onMouseWheel, false);
+   				return;
+  		} else {
 			camera = orbit_persp_camera;
 			controls = orbit_persp_controls;
   			camera.lookAt(new THREE.Vector3(0,0,0));
@@ -92,6 +98,9 @@ function enterVRMode(){
 	} else if (element.msRequestFullscreen) {
 		element.msRequestFullscreen();
 	}
+
+	if (controls === undefined) console.log("undefined detected");
+	if (graphType == 'globe') return;
 	controls.enabled = false;
 
 	if (graphType == 'bar'){
@@ -104,6 +113,7 @@ function enterVRMode(){
   		else {
   			camera = orbit_persp_camera;
   			controls = orbit_persp_controls;
+
   		}
 
   		camera.position.set(600, 600, 800);
@@ -119,6 +129,7 @@ function enterVRMode(){
   			camera = orbit_persp_camera;
   			controls = orbit_persp_controls;
   		}
+  		camera.lookAt(new THREE.Vector3(0,0,0));
 	}
 	else if (graphType == 'basketball'){
 		if (isMobile){
@@ -132,6 +143,13 @@ function enterVRMode(){
   		camera.position.set(600, 640, 800);
   		camera.lookAt(new THREE.Vector3(0,0,0));
 	}
+	else if (graphType === 'globe'){
+  		controls = device_persp_controls;
+  		container.removeEventListener('mousedown', onMouseDown, false);
+   		container.removeEventListener('mousewheel', onMouseWheel, false);
+  		camera.lookAt(new THREE.Vector3(0,0,0));
+		
+  	}
 
 	controls.enabled = true;
 

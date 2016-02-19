@@ -17,14 +17,12 @@ function generateGlobe(json){
   // globeText.style.margin = "50px -400px 0px 0px";
   document.getElementById('vis').appendChild(globeText);
 
-  document.body.style.backgroundImage="url('public/js/globe/loading.gif')";
-  document.body.style.Position = "center center";
-  document.body.style.backgroundRepeat = "no repeat";
-
   var container = document.getElementById('vis');
   //renderer, camera, scene,  RENDERID
-  globe = new DAT.Globe(container, renderer, camera, scene, RENDERID, effect);
+  globe = new DAT.Globe(container, renderer, camera, scene, RENDERID, effect, controls);
   scene = globe.scene;
+  device_persp_controls = globe.controls;
+  controls = device_persp_controls;
   
 
   // var tableSelected = $("#TableList option:selected").val();
@@ -53,9 +51,6 @@ function generateGlobe(json){
         globe.animate();
         document.getElementById('vis').style.backgroundImage = "none";
 
-        if (window.DeviceMotionEvent) {
-          console.log("DeviceMotionEvent supported");
-        } 
   //   }
 
   // };

@@ -14,8 +14,52 @@
 var DAT = DAT || {};
 
 
-DAT.Globe = function(container, renderer, camera, scene, animate, effect, controls) {
-  opts = opts || {};
+function generateGlobe(json){
+  clearmeshes();
+  console.log("generate_globe()");
+  $('.visual').empty();  
+
+  globeText = document.createElement('div');
+  globeText.style.position = 'absolute';
+  //text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
+  globeText.style.width = 900;
+  globeText.style.height = 40;
+  globeText.innerHTML = "";
+  globeText.style.top = 20 + 'px';
+  globeText.style.left = 70 + 'px';
+  globeText.style.backgroundColor = 'rgba(255,255, 255, 0.0)'
+  globeText.style.color = 'black';
+  globeText.style.fontSize = '20px';
+  // globeText.style.margin = "50px -400px 0px 0px";
+  document.getElementById('vis').appendChild(globeText);
+
+  var container = document.getElementById('vis');
+  //renderer, camera, scene,  RENDERID
+  globe = new DAT.Globe(container);
+  scene = globe.scene;
+  
+    // If we've received the data
+
+        console.log(json);
+        // // Tell the globe about your JSON data
+        globe.addData( json[0], {format: 'magnitude', name: json[2], max: json[1]} );
+        // Create the geometry
+        globe.createPoints();
+
+        // Begin animation
+
+        globe.animate();
+        document.getElementById('vis').style.backgroundImage = "none";
+
+}
+
+DAT.Globe = function(container) {
+  var renderer;
+  var camera;
+  var scene;
+  var animate;
+  var effect;
+  var opts = opts || {};
   var colorFn = opts.colorFn || function(x) {
     var c = new THREE.Color();
     c.setHSL( ( 0.6 - ( x * 0.5 ) ), 1.0, 0.5 );
@@ -87,6 +131,10 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, contro
   var distance = 100000, distanceTarget = 100000;
   var padding = 40;
   var PI_HALF = Math.PI / 2;
+  var device_persp_controls;
+  var orbit_persp_controls;
+  var controls;
+  var INITIATED = false;
 
   function init() {
 
@@ -101,6 +149,7 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, contro
     camera.position.z = distance;
 
     scene = new THREE.Scene();
+    scene.add(camera);
 
     var geometry = new THREE.SphereGeometry(200, 40, 30);
 
@@ -173,8 +222,14 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, contro
       overRenderer = false;
     }, false);
 
-    // controls = new THREE.DeviceOrientationControls(camera);
-    // console.log("initiate device controls");
+    device_persp_controls = new THREE.DeviceOrientationControls(camera);
+    device_persp_controls.enable = false;
+    orbit_persp_controls = new THREE.OrbitControls(camera, renderer.domElement);
+    window.addEventListener('deviceorientation', setOrientationControls, true);
+    //orbit_persp_controls.addEventListener('change', animate);
+
+    INITIATED = true;
+
   }
 
   function addData(data, opts) {
@@ -292,6 +347,13 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, contro
   function onMouseDown(event) {
     event.preventDefault();
 
+    console.log("mouse down event detected");
+
+    if (vrModeIsOn === true && isMobile === true) {
+      console.log("return");
+      return;
+    }
+
     container.addEventListener('mousemove', onMouseMove, false);
     container.addEventListener('mouseup', onMouseUp, false);
     container.addEventListener('mouseout', onMouseOut, false);
@@ -303,6 +365,8 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, contro
     targetOnDown.y = target.y;
 
     container.style.cursor = 'move';
+
+    console.log("runs here?");
   }
 
   function onMouseMove(event) {
@@ -319,6 +383,7 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, contro
   }
 
   function onMouseUp(event) {
+    console.log("mouse up event detected");
     container.removeEventListener('mousemove', onMouseMove, false);
     container.removeEventListener('mouseup', onMouseUp, false);
     container.removeEventListener('mouseout', onMouseOut, false);
@@ -326,13 +391,16 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, contro
   }
 
   function onMouseOut(event) {
+    console.log("mouse out event detected");
     container.removeEventListener('mousemove', onMouseMove, false);
     container.removeEventListener('mouseup', onMouseUp, false);
     container.removeEventListener('mouseout', onMouseOut, false);
   }
 
   function onMouseWheel(event) {
+    console.log("mouse wheel event detected");
     event.preventDefault();
+    if (vrModeIsOn === true && isMobile === true) return;
     if (overRenderer) {
       zoom(event.wheelDeltaY * 0.3);
     }
@@ -350,6 +418,17 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, contro
         event.preventDefault();
         break;
     }
+  }
+
+  function setOrientationControls(e) {
+    if (!e.alpha) return;
+    if (device_persp_controls === undefined || vrModeIsOn === false ||  isMobile === false) {
+      return;
+    }
+    console.log("setOrientationControls working");
+    device_persp_controls.connect();
+    device_persp_controls.update();
+    window.removeEventListener('deviceorientation', setOrientationControls);
   }
 
   // function onWindowResize( event ) {
@@ -454,6 +533,14 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, contro
 
   function animate() {
     requestAnimationFrame(animate);
+    //device_persp_controls.update();
+    if (isMobile === true && vrModeIsOn === true){
+      device_persp_controls.enable = true;
+      orbit_persp_controls.enable = false;
+    } else {
+      device_persp_controls.enable = false;
+      orbit_persp_controls.enable = true;
+    }
     renderGlobe();
   }
 
@@ -471,13 +558,14 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, contro
 
     camera.lookAt(mesh.position);
 
+    console.log("renderering");
+
     if (vrModeIsOn) {
       effect.render(scene, camera);
     } else {
       renderer.render(scene, camera);
     }
   }
-
 
   init();
   this.animate = animate;
@@ -520,4 +608,6 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, contro
   return this;
 
 };
+
+
 
