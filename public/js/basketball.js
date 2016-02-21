@@ -207,30 +207,23 @@ function genZone9(){
 
 }
 function genZone0(){
-  var shape = new THREE.Shape();
-  shape.moveTo( 87.5, 0 );
-  shape.absarc( 0, 0, 87.5, 0, (240/180)* Math.PI, false );
+  var geometry = new THREE.CircleGeometry(86.5, 30, 60/180*Math.PI,240/180*Math.PI);
+  geometry.faces.push(new THREE.Face3(0,1,31));
 
-  var extrudeSettings = {
-    amount : 1,
-    steps : 1
-  };
   var material = new THREE.MeshBasicMaterial({
-    //color: 0x00ff00,
     side: THREE.DoubleSide,
     transparent: true,
     opacity: 0.5
   });
-  var geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-  var myMesh = new THREE.Mesh(geometry, material);
+  var mymesh = new THREE.Mesh(geometry, material);
+  
+  mymesh.rotation.set(Math.PI/2, 0, 0);
+  mymesh.position.set(425,2,0);
+  mymesh.__dirtyPosition = true;
 
-  myMesh.rotation.set(Math.PI/2, 0,Math.PI/2.75);
-  myMesh.position.set(425,0,0);
-  myMesh.__dirtyPosition = true;
-  //return myMesh;
-  zones[0] = myMesh;
-  scene.add(myMesh);
-  //scene.add(zones[0]);
+  //return mymesh;
+  zones[0] = mymesh;
+  scene.add(mymesh);
 }
 
 function genZone1(){
@@ -252,7 +245,7 @@ function genZone1(){
     scene.add(mymesh);
 }
 function genZone2(){
-  var geometry = new THREE.RingGeometry( 87.5, 167.5, 16, 2, 0, 50/180 * Math.PI);
+  var geometry = new THREE.RingGeometry( 87.5, 167.5, 16, 2, 0, 49/180 * Math.PI);
 
   var material = new THREE.MeshBasicMaterial({
     //color: 0xfff000,
@@ -263,7 +256,7 @@ function genZone2(){
 //  var geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
   var mymesh = new THREE.Mesh(geometry, material);
 
-  mymesh.rotation.set(Math.PI/2, 0,(2*Math.PI/2.33));
+  mymesh.rotation.set(Math.PI/2, 0,(2*Math.PI/2.32));
   mymesh.position.set(425,2,0);
   mymesh.__dirtyPosition = true;
 
