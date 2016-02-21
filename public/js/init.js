@@ -217,7 +217,6 @@ function generateURLForSharing(){
     break;
 
     case 'globe':
-      console.log("Globe");
       var col1 = $("#xColumn option:selected").text();
       var col2 = $("#yColumn option:selected").text();
       var col3 = $("#zColumn option:selected").text();
@@ -233,9 +232,6 @@ function generateURLForSharing(){
         var playerID = $("#PlayerName option:selected").val();
         var teamID = $("#TeamName option:selected").val();
         var seasonID = $("#Season option:selected").val();
-        console.log(playerID);
-        console.log(teamID);
-        console.log(seasonID);
         if (playerID != null)
           genURL = genURL.concat('playerID=' + playerID + '&');
         if (teamID != null)
@@ -264,12 +260,30 @@ function generateURLForSharing(){
 
   }
 
-  // create text box for link and paste link inside
-  $("#shareLink").html("");
-  $("#shareLink").html('<form>Link:<br><input id="shareLinkID" type="text" name="sharelink" value = "' + genURL + '"><br></form>');
-  document.getElementById('shareLinkID').focus();
-  document.getElementById('shareLinkID').select();
+  // if user is currently logged in
+  if (tableSelected != 'NBA'){
+    $.getJSON('/genShareIDifLoggedIn', {
+       tableName: tableSelected,
+       visualType: visualSelected
+    }, function(data){
+      if (data != null){
+        genURL = genURL.concat("shareid=" + data);
+      }
 
+      // create text box for link and paste link inside
+      $("#shareLink").html("");
+      $("#shareLink").html('<form>Link:<br><input id="shareLinkID" type="text" name="sharelink" value = "' + genURL + '"><br></form>');
+      document.getElementById('shareLinkID').focus();
+      document.getElementById('shareLinkID').select();
+    });
+  }
+  else {
+    // create text box for link and paste link inside
+    $("#shareLink").html("");
+    $("#shareLink").html('<form>Link:<br><input id="shareLinkID" type="text" name="sharelink" value = "' + genURL + '"><br></form>');
+    document.getElementById('shareLinkID').focus();
+    document.getElementById('shareLinkID').select();
+  }
 }
 
 // generate Columns based on URL for Globe
@@ -425,7 +439,6 @@ function resetVisuals(){
 }
 
 function generateVisuals() {
-  console.log("GenerateingVisuals");
   var tableSelected = $("#VisualList option:selected").val();
   switch (tableSelected) {
     case 'bar':
@@ -488,7 +501,8 @@ function generateBasketball(){
 
     $.getJSON('/retrieveData', {
       tableName: tableSelected,
-      columnList: [x,y,z]
+      columnList: [x,y,z],
+      sharekey: GetURLParameter('shareid')
     }, function(data) {
       calculateZones(data);
     });
@@ -515,8 +529,6 @@ function calculateZones(data){
   }
 
   var keys = _.keys(data[0]);
-  console.log(data[0]);
-  console.log(data[1]);
   for (var i = 0; i < data.length; i++) {
     var indexX= Math.round(( data[i][keys[0]]+250 )/10);
     var indexY=Math.round(( data[i][keys[1]] + 40)/10);  // add 40 to include the distance from base line to rim
@@ -571,7 +583,8 @@ function generateScatter() {
   $.getJSON('/retrieveData', {
     tableName: tableName,
     columnList: [x,y,z],
-    filterQuery: FilterQuery
+    filterQuery: FilterQuery,
+    sharekey: GetURLParameter('shareid')
   }, function(data) {
     findScales(scales, data, x, y, z);
     displayNodes(data, x, y, z, scales);
@@ -590,7 +603,6 @@ function generateScatter() {
 
 
 function generateBar() {
-  console.log("generateBar()");
   clearmeshes();
   if (RENDERID != null)
     cancelAnimationFrame(RENDERID);
@@ -610,7 +622,6 @@ function generateBar() {
   initbars();
   //animate();
   renderBars();
-  console.log("After renderBars()");
   targetlist = [];
   mousetargetlist = [];
   scater_check = 0;
@@ -619,17 +630,14 @@ function generateBar() {
   var y = $("#yColumn option:selected").text();
   var z = $("#zColumn option:selected").text();
 
-  console.log("wtf");
   // generate bar/Scatter Query Based on Filters
-  console.log(x);
-  console.log(y);
-  console.log(z);
   var FilterQuery = BarScatterFilterQuery();
   var test;
   $.getJSON('/retrieveData', {
     tableName: tableSelected,
     columnList: [x,y,z],
-    filterQuery: FilterQuery
+    filterQuery: FilterQuery,
+    sharekey: GetURLParameter('shareid')
   }, function(data) {
     renderData(data);
   });
@@ -649,7 +657,8 @@ function createGlobe(){
   $.getJSON('/retrieveData', {
     tableName: tableSelected,
     columnList: [lat,longi,mag],
-    orderBy: order
+    orderBy: order,
+    sharekey: GetURLParameter('shareid')
     // filterQuery: FilterQuery
   }, function(data) {
       var temp, points, max, json;
