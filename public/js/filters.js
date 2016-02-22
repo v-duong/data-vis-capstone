@@ -187,7 +187,11 @@ function visChange(){
         }, function(data2){
           $("#TableList").append('<option value="' + data2[0].tablename + '">' + data2[0].tablename + '</option>');
           var tempTableList = document.getElementById('TableList');
-          tempTableList.selectedIndex = data.length+1;
+          if (visualSelected == 'basketball')
+            tempTableList.selectedIndex = data.length+2;
+          else
+            tempTableList.selectedIndex = data.length+1;
+
           tableChange();
         });
     }
