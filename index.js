@@ -164,21 +164,45 @@ app.post('/files', file_uploaded.single('datafile'), function(req, res) {
 
 
 app.get('/tableforvis', function(req, res){
-  schemaName = 'public';
-  if (req.user) {
-    schemaName = 'u' + req.user.id;
+
+  var shareID = req.query.sharekey;
+  if (shareID != null){
+    var verifQuery = "SELECT tablename, visual from sharedtables where sharedid='" + shareID + "'";
+    console.log(verifQuery);
+    db.queryDB(verifQuery, function(myRows) {
+      if (myRows == null) {
+        console.log("DB Failed");
+      } else {
+        //var tableRet = JSON.stringify(myRows)[0].tablename;
+        if (myRows[0] == null) {
+          console.log("No such table");
+        }
+        else {
+          var visRet = myRows[0].visual;
+          var vistype = req.query.visual;
+          if (visRet == vistype)
+            res.send(JSON.stringify(myRows));
+        }
+      }
+    });
   }
-  var vistype = req.query.visual;
-  if ((vistype == 'bar') || (vistype == 'scatter'))
-    vistype = 'barscatter';
-  var getTableQuery = "SELECT tablename FROM " + schemaName + "." + schemaName + "tablevistype where vistype='" + vistype + "' OR vistype='All'";
-  db.queryDB(getTableQuery, function(myRows) {
-    if (myRows == null) {
-      console.log("Couldnt access database");
-    } else {
-      res.send(JSON.stringify(myRows));
+  else {
+    var schemaName = 'public';
+    if (req.user) {
+      schemaName = 'u' + req.user.id;
     }
-  });
+    var vistype = req.query.visual;
+    if ((vistype == 'bar') || (vistype == 'scatter'))
+      vistype = 'barscatter';
+    var getTableQuery = "SELECT tablename FROM " + schemaName + "." + schemaName + "tablevistype where vistype='" + vistype + "' OR vistype='All'";
+    db.queryDB(getTableQuery, function(myRows) {
+      if (myRows == null) {
+        console.log("Couldnt access database");
+      } else {
+        res.send(JSON.stringify(myRows));
+      }
+    });
+  }
 });
 
 
@@ -259,11 +283,11 @@ app.post('/updateTableVisType', function(req, res){
   if (req.user)
     schemaName = 'u' + req.user.id;
 
-  var delQuery = 'delete from ' + schemaName + '.' + schemaName + "tablevistype where tablename='" + tableName.toLowerCase() + "'";
+  var delQuery = 'delete from ' + schemaName + '.' + schemaName + "tablevistype where tablename='" + tableName + "'";
   console.log("delQuery: " + delQuery );
   // remove the entry, if it even exist
   db.queryDB(delQuery, function(myRows){
-      var updateRowQuery = 'INSERT INTO ' + schemaName + '.' + schemaName +  "tablevistype VALUES ('" + tableName.toLowerCase()  + "', '" + visType + "')";
+      var updateRowQuery = 'INSERT INTO ' + schemaName + '.' + schemaName +  "tablevistype VALUES ('" + tableName  + "', '" + visType + "')";
       console.log("updateRowQuery: " + updateRowQuery );
       // insert updated Row
       db.queryDB(updateRowQuery, function(myRows){
@@ -272,6 +296,33 @@ app.post('/updateTableVisType', function(req, res){
 
   });
 
+});
+
+app.get('/genShareIDifLoggedIn', function(req, res){
+  console.log("whattt");
+  if (req.user){
+    var tableName = req.query.tableName;
+    var visType = req.query.visualType;
+    var shareID = 'u' + req.user.id + '_';
+    var d = new Date();
+    var n = d.getTime();
+    shareID = shareID.concat(n);
+
+    // add into database
+    var addRow = "INSERT INTO public.sharedtables VALUES ('" + shareID  + "', '" + tableName + "', '" + visType + "')";
+
+    db.queryDB(addRow, function(myRows) {
+      console.log(shareID);
+      res.send(JSON.stringify(shareID));
+    });
+
+
+
+  }
+  else {
+    console.log("in the else statement");
+    res.send(JSON.stringify(null));
+  }
 });
 
 app.get('/retrieveDistinctColValues', function(req, res){
@@ -297,9 +348,14 @@ app.get('/retrieveColumns', function(req, res) {
   var myQuery = 'select column_name, data_type from information_schema.columns where ';
   var tableName = req.query.tableName;
   var dataTypes = req.query.dataType;
+
   var schemaName = 'public';
   if (req.user)
     schemaName = 'u'+req.user.id;
+
+  if (req.query.sharekey)
+    schemaName = ((req.query.sharekey).split('_'))[0];
+
   myQuery = myQuery.concat("table_schema = '" + schemaName + "'" + " AND table_name = '" + tableName.toLowerCase() + "'" );
 
   if ((dataTypes != null) || (dataTypes != undefined)){
@@ -334,6 +390,9 @@ app.get('/retrieveData', function(req, res) {
   if (req.user)
     schemaName = 'u'+req.user.id;
 
+  if (req.query.sharekey)
+    schemaName = ((req.query.sharekey).split('_'))[0];
+
   var myQuery = generateQuery(schemaName, tableName , colList, filterQuery);
   if (myQuery == '')
     return;
@@ -356,7 +415,7 @@ app.post('/delData', function(req, res) {
   var schemaName = 'public';
   if (req.user)
     schemaName = 'u'+req.user.id;
-  var tableName = (req.body.tName).toLowerCase();
+  var tableName = req.body.tName;
 
   var dropSuccess = false;
   db.deleteTable(tableName,schemaName, function(dropErr) {

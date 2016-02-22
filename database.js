@@ -40,7 +40,7 @@ exports.queryDB = function(queryStr, callback) {
 exports.deleteTable = function(tableName, schemaName, callback) {
   //drop table firsttest
 
-  var dropQuery = "drop table ".concat(schemaName + '.' + tableName);
+  var dropQuery = "drop table ".concat(schemaName + '.' + tableName.toLowerCase());
 
   //delete from useraccount."Users" where id=7;
   var dropRowQuery = "delete from " + schemaName + "." + schemaName + "tablevistype where tablename='" + tableName + "'";
