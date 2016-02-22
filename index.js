@@ -283,11 +283,11 @@ app.post('/updateTableVisType', function(req, res){
   if (req.user)
     schemaName = 'u' + req.user.id;
 
-  var delQuery = 'delete from ' + schemaName + '.' + schemaName + "tablevistype where tablename='" + tableName.toLowerCase() + "'";
+  var delQuery = 'delete from ' + schemaName + '.' + schemaName + "tablevistype where tablename='" + tableName + "'";
   console.log("delQuery: " + delQuery );
   // remove the entry, if it even exist
   db.queryDB(delQuery, function(myRows){
-      var updateRowQuery = 'INSERT INTO ' + schemaName + '.' + schemaName +  "tablevistype VALUES ('" + tableName.toLowerCase()  + "', '" + visType + "')";
+      var updateRowQuery = 'INSERT INTO ' + schemaName + '.' + schemaName +  "tablevistype VALUES ('" + tableName  + "', '" + visType + "')";
       console.log("updateRowQuery: " + updateRowQuery );
       // insert updated Row
       db.queryDB(updateRowQuery, function(myRows){
@@ -415,7 +415,7 @@ app.post('/delData', function(req, res) {
   var schemaName = 'public';
   if (req.user)
     schemaName = 'u'+req.user.id;
-  var tableName = (req.body.tName).toLowerCase();
+  var tableName = req.body.tName;
 
   var dropSuccess = false;
   db.deleteTable(tableName,schemaName, function(dropErr) {
