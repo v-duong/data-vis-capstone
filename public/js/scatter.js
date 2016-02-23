@@ -1,10 +1,9 @@
- var counter = 0;
- var sum = 0.1466;
- var accZold = 0;
- var velocity = 0;
- var accList = [];
- var timer = 0;
- var averageAcc = 0;
+// var sum = 0.1466;
+ // var accZold = 0;
+ // var velocity = 0;
+ var accList = []
+ // var timer = 0
+ // var averageAcc = 0;
 
 
  //renderer render the whole scene and camera
@@ -54,15 +53,24 @@
 	// document.addEventListener("volumeupbutton", onVolumeUpKeyDown, false);
  //  }
 
-  // var recognition = new webkitSpeechRecognition();
-  // recognition.onresult = function(event) { 
-  // 	console.log(event);
-  // }
-  // recognition.start();
-
-
+ 
+  var recognition;
+  if (!('webkitSpeechRecognition' in window)) {
+  	console.log("webkitSpeechRecognition NOT supported");
+  	//upgrade();
+  } else {
+  	console.log("webkitSpeechRecognition supported");
+  	recognition = new webkitSpeechRecognition();
+  	recognition.continuous = true;
+  	recognition.interimResults = true;
+  	recognition.onresult = function(event) { 
+  		console.log("Speak plz");
+  		console.log(event);
+  	}
+  	recognition.start();
+  	console.log("webkitSpeechRecognition started");
  }
-
+}
  function onDeviceReady(e) {
  	// body...
  }
@@ -323,13 +331,13 @@ function deviceMotionHandler(eventData){
 	//acceleration = eventData.accelerationIncludingGravity;
 
 
-	timer = (timer + 1) % 10;
-	if (timer == 0){
+	//timer = (timer + 1) % 10;
+	//if (timer == 0){
 		// console.log("X: " + acceleration.x);
 		// console.log("Y: " + acceleration.y);
 		// console.log("Z: " + acceleration.z);
 		//console.log(averageAcc);
-	}
+	//}
 	// console.log("Y:" + acceleration.y);
 	//console.log("Z:" + acceleration.z);
 	//acceleration = eventData.accelerationIncludingGravity;
