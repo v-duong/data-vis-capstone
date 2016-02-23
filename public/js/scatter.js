@@ -1,7 +1,10 @@
- var counter = 0
- var sum = 0.1466
- var accZold = 0
- var velocity = 0
+ var counter = 0;
+ var sum = 0.1466;
+ var accZold = 0;
+ var velocity = 0;
+ var accList = [];
+ var timer = 0;
+ var averageAcc = 0;
 
 
  //renderer render the whole scene and camera
@@ -41,13 +44,41 @@
   	console.log("DeviceMotionEvent not supported");
   }
 
-  var recognition = new webkitSpeechRecognition();
-  recognition.onresult = function(event) { 
-  	console.log(event);
-  }
-  recognition.start();
+  var i;
+  for (i = 0; i < 10; i++)
+  	accList.push(0);
+
+ //  if (isMobile){
+ //  	document.addEventListener("deviceready", onDeviceReady, false);
+ //  	document.addEventListener("volumedownbutton", onVolumeDownKeyDown, false);
+	// document.addEventListener("volumeupbutton", onVolumeUpKeyDown, false);
+ //  }
+
+  // var recognition = new webkitSpeechRecognition();
+  // recognition.onresult = function(event) { 
+  // 	console.log(event);
+  // }
+  // recognition.start();
 
 
+ }
+
+ function onDeviceReady(e) {
+ 	// body...
+ }
+
+ function onVolumeDownKeyDown(e) {
+ 	e.preventdefault();
+ 	console.log("Volume down");
+ 	if (vrModeIsOn)
+ 		camera.translateZ(1);
+ }
+
+ function onVolumeUpKeyDown(e) {
+ 	e.preventdefault();
+ 	console.log("Volume up");
+	if (vrModeIsOn)
+ 		camera.translateZ(-1);
  }
 
  var renderScatter = function () {
@@ -289,7 +320,16 @@ function deviceMotionHandler(eventData){
 	//if (vrModeIsOn === false || isMobile === false) return;
 	//if (counter >= 100) return;
 	var acceleration = eventData.acceleration;
-	// console.log("X:" + acceleration.x);
+	//acceleration = eventData.accelerationIncludingGravity;
+
+
+	timer = (timer + 1) % 10;
+	if (timer == 0){
+		// console.log("X: " + acceleration.x);
+		// console.log("Y: " + acceleration.y);
+		// console.log("Z: " + acceleration.z);
+		//console.log(averageAcc);
+	}
 	// console.log("Y:" + acceleration.y);
 	//console.log("Z:" + acceleration.z);
 	//acceleration = eventData.accelerationIncludingGravity;
@@ -297,33 +337,30 @@ function deviceMotionHandler(eventData){
 	// console.log("Y:" + acceleration.y);
 	// console.log("Z:" + acceleration.z);
 
-	var interval = eventData.interval;
+	//var interval = eventData.interval;
 	//console.log(eventData.interval);
 	//counter = counter + 1;
-	var accZ = (accZold + (acceleration.z + 0.1466))/2;
-	if (accZ < 0.01 && accZ > -0.04)
-		accZ = 0;
+	// var accZ = (accZold + (acceleration.z + 0.1466))/2;
+	// if (accZ < 0.01 && accZ > -0.04)
+	// 	accZ = 0;
 
-	velocity += accZ * interval;
+	// velocity += accZ * interval;
 	// if (velocity > 4)
 	// 	velocity = 4;
 	// if (velocity < -4)
 	// 	velocity = -4;
 	//console.log(velocity);
-	if ( velocity > 0.5){
+	//if ( velocity > 0.5){
 		//camera.translateZ( -velocity );
-		velocity -= 0.05;
-	}
+	//	velocity -= 0.05;
+	//}
 
-	else if (velocity < -0.5){
+	//else if (velocity < -0.5){
 		//camera.translateZ( -velocity );
-		velocity += 0.05;
-	}
+	//	velocity += 0.05;
+	//}	
 
-	accZold = accZ;
-	//sum += acceleration.z + 0.1466;
-	//counter += 1;
-	//console.log(sum/counter)
+	//accZold = accZ;
 
 	//camera.rotation.x +=  10;
 	//camera.position.y +=  0 * acceleration.y * interval * interval;
@@ -333,6 +370,21 @@ function deviceMotionHandler(eventData){
 	// console.log("X:" + acceleration.x);
 	// console.log("Y:" + acceleration.y);
 	// console.log("Z:" + acceleration.z);
+
+	// averageAcc -= accList[counter % 10];
+	// var accZ = Math.round((acceleration.z + 0.1466) * 100) * 1.000000 / 100;
+	// console.log(accZ);
+	// accList[counter % 10] = accZ;
+	// averageAcc += accList[counter % 10];
+	// counter = counter + 1;
+
+	// velocity += averageAcc;
+
+	// camera.translateZ( -velocity * 0.0005 );
+
+	// sum += acceleration.z;
+	// counter += 1;
+	// console.log(sum/counter);
 
 }
 
