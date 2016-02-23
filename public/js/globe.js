@@ -13,6 +13,8 @@
 
 var DAT = DAT || {};
 
+var timer = 0;
+
 
 function generateGlobe(json){
   clearmeshes();
@@ -139,6 +141,8 @@ DAT.Globe = function(container) {
   var pointList = [];
   var highlightbar;
   var max;
+  var last_alpha = 0;
+  var last_gamma = 0;
 
   function init() {
 
@@ -321,7 +325,6 @@ DAT.Globe = function(container) {
       scene.add(this.points);
       meshes.push(this.points);
 
-        console.log(this.points);
     }
   }
 
@@ -386,11 +389,6 @@ DAT.Globe = function(container) {
     scene.add(hpoint);
     meshes.push(hpoint)
     highlightbar = hpoint;
-  }
-
-  function equal(a, b){
-    var c=a-b;
-    return c<0.001||c>-0.001;
   }
 
   function onMouseDown(event) {
@@ -474,11 +472,42 @@ DAT.Globe = function(container) {
     if (device_persp_controls === undefined || vrModeIsOn === false ||  isMobile === false) {
       return;
     }
-    console.log("setOrientationControls working");
+
+    timer += 1;
+    timer = timer % 100;
+    if (timer == 0){
+      console.log("alpha: " + e.alpha);
+      console.log("beta: " + e.beta);
+      console.log("gamma: " + e.gamma);
+      console.log(" ");
+    }
+
+
+    // var device_rotation =  (e.gamma < 0)? 180 - e.alpha : e.alpha ;
+    // if(e.alpha>355 || e.alpha < 5) return;
+    var gamma_value  = (e.gamma>0) ? 90 - e.gamma : -90 - e.gamma;
+    var device_rotation_x = e.alpha - last_alpha;
+    var device_rotation_y = gamma_value - last_gamma;
+    last_alpha = e.alpha;
+    last_gamma = gamma_value;
+    if(device_rotation_x > 50 || device_rotation_x < -50) return;
+
+    //console.log(device_rotation);
+    //device_rotation = (device_rotation > 180) ? device_rotation - 360 : device_rotation;
+    target.x += device_rotation_x/180 * Math.PI;
+    target.y += device_rotation_y/180 * Math.PI;
+    //console.log("setOrientationControls working");
     device_persp_controls.connect();
     device_persp_controls.update();
     window.removeEventListener('deviceorientation', setOrientationControls);
   }
+
+  function floatEqual(a, b){
+    var c=b-a;
+    c=(c<0)?-c:c;
+    return c<0.001;
+  }
+
 
   // function onWindowResize( event ) {
   //   camera.aspect = container.offsetWidth / container.offsetHeight;
@@ -591,8 +620,11 @@ DAT.Globe = function(container) {
   function renderGlobe() {
     zoom(curZoomSpeed);
 
-    rotation.x += (target.x - rotation.x) * 0.1;
-    rotation.y += (target.y - rotation.y) * 0.1;
+    var rotation_speed_factor = (vrModeIsOn && isMobile) ? 1 : 0.1;
+     
+    rotation.x += (target.x - rotation.x) * rotation_speed_factor;
+    rotation.y += (target.y - rotation.y) * rotation_speed_factor;
+
     distance += (distanceTarget - distance) * 0.3;
     // cameraWalk();
 
