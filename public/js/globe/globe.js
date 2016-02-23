@@ -375,6 +375,7 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, opts) 
       console.log(dy);
       target.x = rotation.x + dxz;
       target.y = rotation.y + dy;
+      target.y -= 0.2
 
       findNthAnimation = false;
     }
