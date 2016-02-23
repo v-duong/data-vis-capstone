@@ -32,7 +32,6 @@ exports.queryDB = function(queryStr, callback) {
     } else {
       callback(rows.rows);
       return;
-
     }
   });
 
@@ -41,15 +40,29 @@ exports.queryDB = function(queryStr, callback) {
 exports.deleteTable = function(tableName, schemaName, callback) {
   //drop table firsttest
 
-  var dropQuery = "drop table ".concat(schemaName + '.' + tableName);
+  var dropQuery = "drop table ".concat(schemaName + '.' + tableName.toLowerCase());
+
+  //delete from useraccount."Users" where id=7;
+  var dropRowQuery = "delete from " + schemaName + "." + schemaName + "tablevistype where tablename='" + tableName + "'";
+
   client.query(dropQuery, function(err, rows) {
     if (err) {
       console.log("Could not drop table");
       callback(false);
       return;
     } else {
-      callback(true);
-      return;
+      client.query(dropRowQuery, function(err2, rows2){
+        if (err){
+          console.log("Could not drop row in tablevistype table. ");
+          callback(false);
+          return;
+        }
+        else{
+          callback(true);
+          return;
+        }
+      });
+
     }
   });
 
@@ -272,6 +285,13 @@ exports.insertTable = function(tableName, schemaName, dataSet, callback){
         }
         else {
           console.log("insert Complete!");
+          var insertRowQuery = "insert into " + schemaName + "." + schemaName + "tablevistype values ('" + tableName + "', 'All')";
+          console.log(insertRowQuery);
+          client.query(insertRowQuery, function(err2, rows2){
+            if (err2){
+              console.log("cannot create new row in tablevistype");
+            }
+          });
         }
       });
 

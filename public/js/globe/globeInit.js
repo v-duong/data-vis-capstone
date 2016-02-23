@@ -11,21 +11,18 @@ function generateGlobe(json){
   globeText.innerHTML = "";
   globeText.style.top = 20 + 'px';
   globeText.style.left = 70 + 'px';
-  globeText.style.backgroundColor = 'rgba(255,255, 255,0.0)';
+  globeText.style.backgroundColor = 'rgba(255,255, 255, 0.0)'
   globeText.style.color = 'black';
   globeText.style.fontSize = '20px';
   // globeText.style.margin = "50px -400px 0px 0px";
   document.getElementById('vis').appendChild(globeText);
 
-  document.body.style.backgroundImage="url('public/js/globe/loading.gif')";
-  document.body.style.Position = "center center";
-  document.body.style.backgroundRepeat = "no repeat";
-
   var container = document.getElementById('vis');
   //renderer, camera, scene,  RENDERID
-  globe = new DAT.Globe(container, renderer, camera, scene, RENDERID, effect);
+  globe = new DAT.Globe(container, renderer, camera, scene, RENDERID, effect, controls);
   scene = globe.scene;
-
+  device_persp_controls = globe.controls;
+  controls = device_persp_controls;
 
   // var tableSelected = $("#TableList option:selected").val();
 
@@ -52,6 +49,7 @@ function generateGlobe(json){
 
         globe.animate();
         document.getElementById('vis').style.backgroundImage = "none";
+
   //   }
 
   // };

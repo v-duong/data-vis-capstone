@@ -16,7 +16,7 @@ var sphereToggle = false
 var sprite1;
 var canvas1, context1, texture1
 var isMobile = false
-var vrModeIsOn
+var vrModeIsOn = false
 var cities_, data_;
 var globeText;
 var globe;
@@ -56,21 +56,25 @@ function parseURLArg(){
 
   }
   visChange();
+
+
+}
+
+// AutoDetectTable
+function detectTable(){
   var tableSelect = GetURLParameter('table');
   if (tableSelect == null)
     return;
 
-  var isTure = 0;
   // make sure it exist in dropdown list
   $("#TableList option").each(function(){
-    console.log($(this).val());
+    //console.log($(this).val());
     if (tableSelect == $(this).val()){
       $("#TableList").val(tableSelect);
       tableChange();
 
     }
   });
-
 }
 
 
@@ -169,6 +173,10 @@ function detectBasketballColsURL(){
 function generateURLForSharing(){
 
   var genURL = window.location.href;
+  var n = genURL.indexOf("?");
+  if (n > 0)
+    genURL = genURL.substring(0, n);
+
   if (genURL[genURL.length -1] == '#')
     genURL = genURL.substring(0, genURL.length - 1);
   genURL = genURL.concat("?");
@@ -209,7 +217,6 @@ function generateURLForSharing(){
     break;
 
     case 'globe':
-      console.log("Globe");
       var col1 = $("#xColumn option:selected").text();
       var col2 = $("#yColumn option:selected").text();
       var col3 = $("#zColumn option:selected").text();
@@ -225,9 +232,6 @@ function generateURLForSharing(){
         var playerID = $("#PlayerName option:selected").val();
         var teamID = $("#TeamName option:selected").val();
         var seasonID = $("#Season option:selected").val();
-        console.log(playerID);
-        console.log(teamID);
-        console.log(seasonID);
         if (playerID != null)
           genURL = genURL.concat('playerID=' + playerID + '&');
         if (teamID != null)
@@ -256,12 +260,30 @@ function generateURLForSharing(){
 
   }
 
-  // create text box for link and paste link inside
-  $("#shareLink").html("");
-  $("#shareLink").html('<form>Link:<br><input id="shareLinkID" type="text" name="sharelink" value = "' + genURL + '"><br></form>');
-  document.getElementById('shareLinkID').focus();
-  document.getElementById('shareLinkID').select();
+  // if user is currently logged in
+  if (tableSelected != 'NBA'){
+    $.getJSON('/genShareIDifLoggedIn', {
+       tableName: tableSelected,
+       visualType: visualSelected
+    }, function(data){
+      if (data != null){
+        genURL = genURL.concat("shareid=" + data);
+      }
 
+      // create text box for link and paste link inside
+      $("#shareLink").html("");
+      $("#shareLink").html('<form>Link:<br><input id="shareLinkID" type="text" name="sharelink" value = "' + genURL + '"><br></form>');
+      document.getElementById('shareLinkID').focus();
+      document.getElementById('shareLinkID').select();
+    });
+  }
+  else {
+    // create text box for link and paste link inside
+    $("#shareLink").html("");
+    $("#shareLink").html('<form>Link:<br><input id="shareLinkID" type="text" name="sharelink" value = "' + genURL + '"><br></form>');
+    document.getElementById('shareLinkID').focus();
+    document.getElementById('shareLinkID').select();
+  }
 }
 
 // generate Columns based on URL for Globe
@@ -400,6 +422,14 @@ function init() {
   if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|ipad|iris|kindle|Android|Silk|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i.test(navigator.userAgent)
     || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(navigator.userAgent.substr(0,4))) isMobile = true;
 
+  window.addEventListener('deviceorientation', setOrientationControls, true);
+  //20160209
+  // if ((window.DeviceMotionEvent) {
+  //   window.addEventListener('devicemotion', deviceMotionHandler, false);
+  // } else {
+  //   document.getElementById("dmEvent").innerHTML = "Not supported."
+  // } 
+
   vrModeIsOn = false;
 }
 
@@ -417,7 +447,6 @@ function resetVisuals(){
 }
 
 function generateVisuals() {
-  console.log("GenerateingVisuals");
   var tableSelected = $("#VisualList option:selected").val();
   switch (tableSelected) {
     case 'bar':
@@ -480,7 +509,8 @@ function generateBasketball(){
 
     $.getJSON('/retrieveData', {
       tableName: tableSelected,
-      columnList: [x,y,z]
+      columnList: [x,y,z],
+      sharekey: GetURLParameter('shareid')
     }, function(data) {
       calculateZones(data);
     });
@@ -507,8 +537,6 @@ function calculateZones(data){
   }
 
   var keys = _.keys(data[0]);
-  console.log(data[0]);
-  console.log(data[1]);
   for (var i = 0; i < data.length; i++) {
     var indexX= Math.round(( data[i][keys[0]]+250 )/10);
     var indexY=Math.round(( data[i][keys[1]] + 40)/10);  // add 40 to include the distance from base line to rim
@@ -563,7 +591,8 @@ function generateScatter() {
   $.getJSON('/retrieveData', {
     tableName: tableName,
     columnList: [x,y,z],
-    filterQuery: FilterQuery
+    filterQuery: FilterQuery,
+    sharekey: GetURLParameter('shareid')
   }, function(data) {
     findScales(scales, data, x, y, z);
     displayNodes(data, x, y, z, scales);
@@ -582,7 +611,6 @@ function generateScatter() {
 
 
 function generateBar() {
-  console.log("generateBar()");
   clearmeshes();
   if (RENDERID != null)
     cancelAnimationFrame(RENDERID);
@@ -602,7 +630,6 @@ function generateBar() {
   initbars();
   //animate();
   renderBars();
-  console.log("After renderBars()");
   targetlist = [];
   mousetargetlist = [];
   scater_check = 0;
@@ -611,17 +638,14 @@ function generateBar() {
   var y = $("#yColumn option:selected").text();
   var z = $("#zColumn option:selected").text();
 
-  console.log("wtf");
   // generate bar/Scatter Query Based on Filters
-  console.log(x);
-  console.log(y);
-  console.log(z);
   var FilterQuery = BarScatterFilterQuery();
   var test;
   $.getJSON('/retrieveData', {
     tableName: tableSelected,
     columnList: [x,y,z],
-    filterQuery: FilterQuery
+    filterQuery: FilterQuery,
+    sharekey: GetURLParameter('shareid')
   }, function(data) {
     renderData(data);
   });
@@ -638,10 +662,15 @@ function createGlobe(){
   document.getElementById('vis').style.background = "#ffffff url('static/js/globe/ajax-loader.gif') no-repeat center center";
   createFindNthLarge();
 
+  if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|ipad|iris|kindle|Android|Silk|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i.test(navigator.userAgent)
+    || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(navigator.userAgent.substr(0,4))) isMobile = true;
+
+
   $.getJSON('/retrieveData', {
     tableName: tableSelected,
     columnList: [lat,longi,mag],
-    orderBy: order
+    orderBy: order,
+    sharekey: GetURLParameter('shareid')
     // filterQuery: FilterQuery
   }, function(data) {
       var temp, points, max, json;
@@ -660,6 +689,7 @@ function createGlobe(){
       generateGlobe(json);
       data_ = data;
   });
+
 }
 
 function findNthLargest(){
@@ -671,6 +701,8 @@ function findNthLargest(){
 function findMatchCity(cities, data, index){
   var lat = $("#xColumn option:selected").text();
   var longi = $("#yColumn option:selected").text();
+  var mag = $("#zColumn option:selected").text();
+  console.log(mag);
   while(data[index-1][lat]==null || data[index-1][longi]==null){index++;}
   var destLocation = [data[index-1][lat], data[index-1][longi]]
   globe.getTotalRotateAngle(destLocation[0],destLocation[1]);
@@ -682,6 +714,8 @@ function findMatchCity(cities, data, index){
   var latlng = {lat:destLocation[0], lng:destLocation[1]}
   var adress, i, findData, cityAddress;
   // console.log(geocoder);
+
+  globe.highlightPoint(data[index-1][lat], data[index-1][longi], data[index-1][mag]);
   findData = false;
   geocoder.geocode({'location': latlng}, function(results, status) {
     if (status === google.maps.GeocoderStatus.OK) {
@@ -744,34 +778,7 @@ function onWindowResize() {
   camera.bottom = -1 * windowHalfY;
   camera.updateProjectionMatrix();
 
-  // hideCamera.aspect = window.innerWidth / window.innerHeight;
-  // hideCamera.left = -1 * windowHalfX;
-  // hideCamera.right = windowHalfX;
-  // hideCamera.top = windowHalfY;
-  // hideCamera.bottom = -1 * windowHalfY;
-  // hideCamera.updateProjectionMatrix();
-
-  // orbit_persp_camera.aspect = window.innerWidth / window.innerHeight;
-  // orbit_persp_camera.left = -1 * windowHalfX;
-  // orbit_persp_camera.right = windowHalfX;
-  // orbit_persp_camera.top = windowHalfY;
-  // orbit_persp_camera.bottom = -1 * windowHalfY;
-  // orbit_persp_camera.updateProjectionMatrix();
-
-  // device_persp_camera.aspect = window.innerWidth / window.innerHeight;
-  // device_persp_camera.left = -1 * windowHalfX;
-  // device_persp_camera.right = windowHalfX;
-  // device_persp_camera.top = windowHalfY;
-  // device_persp_camera.bottom = -1 * windowHalfY;
-  // device_persp_camera.updateProjectionMatrix();
-
-  // orbit_ortho_camera.aspect = window.innerWidth / window.innerHeight;
-  // orbit_ortho_camera.left = -1 * windowHalfX;
-  // orbit_ortho_camera.right = windowHalfX;
-  // orbit_ortho_camera.top = windowHalfY;
-  // orbit_ortho_camera.bottom = -1 * windowHalfY;
-  // orbit_ortho_camera.updateProjectionMatrix();
-
+  
   renderer.setSize(window.innerWidth, window.innerHeight);
   effect.setSize(window.innerWidth, window.innerHeight);
 
@@ -779,14 +786,14 @@ function onWindowResize() {
 
 
 function setOrientationControls(e) {
-  if (!e.alpha) {
+  if (!e.alpha || device_persp_controls === undefined) {
     return;
   }
   device_persp_controls.connect();
   device_persp_controls.update();
   window.removeEventListener('deviceorientation', setOrientationControls);
 }
-window.addEventListener('deviceorientation', setOrientationControls, true);
+
 
 
 //2016-01-26-05:35

@@ -15,8 +15,6 @@ block sidelist
 		li
 			select(id='TableList')
 				option(value='' selected='selected' disabled="disabled") Choose Table
-				each item in tables
-					option(value=item.table_name) #{item.table_name}
 		li#columnOption
 			a.off-canvas-submenu-call(href='#')
 				| Column Selection
@@ -55,8 +53,9 @@ block scripts
 	script(src='static/js/scatter.js')
 	script(src='static/js/vrDetection.js')
 	script(src='static/js/bars.js')
-	script(src='static/js/globe/globe.js')
-	script(src='static/js/globe/globeInit.js')
+	//- script(src='static/js/globe/globe.js')
+	//- script(src='static/js/globe/globeInit.js')
+	script(src='static/js/globe.js')
 	script(async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA4sQwoKMP1Dh7pn32-rIGMZ5m6fOQTh3U&callback=initMap")
 
 	link(rel='stylesheet', href='//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css')
