@@ -500,16 +500,6 @@ DAT.Globe = function(container) {
     distanceTarget = distanceTarget < 350 ? 350 : distanceTarget;
   }
 
-  function cameraWalk(){
-    if(findNthAnimation){
-      console.log(dxz);
-      console.log(dy);
-      target.x = rotation.x + dxz;
-      target.y = rotation.y + dy;
-
-      findNthAnimation = false;
-    }
-  }
 
   function getTotalRotateAngle(lat,lon){
     var destCoor = getDestXYZ(lat,lon);
@@ -525,7 +515,9 @@ DAT.Globe = function(container) {
     dxz = deltaXZ;
     dy = deltaY;
 
-    findNthAnimation = true;
+    target.x = rotation.x + dxz;
+    target.y = rotation.y + dy;
+    target.y -= 0.2;
   }
 
   function getDeltaXZ(destCoor){
@@ -602,7 +594,7 @@ DAT.Globe = function(container) {
     rotation.x += (target.x - rotation.x) * 0.1;
     rotation.y += (target.y - rotation.y) * 0.1;
     distance += (distanceTarget - distance) * 0.3;
-    cameraWalk();
+    // cameraWalk();
 
     camera.position.x = distance * Math.sin(rotation.x) * Math.cos(rotation.y);
     camera.position.y = distance * Math.sin(rotation.y);
