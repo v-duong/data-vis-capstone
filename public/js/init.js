@@ -701,6 +701,8 @@ function findNthLargest(){
 function findMatchCity(cities, data, index){
   var lat = $("#xColumn option:selected").text();
   var longi = $("#yColumn option:selected").text();
+  var mag = $("#zColumn option:selected").text();
+  console.log(mag);
   while(data[index-1][lat]==null || data[index-1][longi]==null){index++;}
   var destLocation = [data[index-1][lat], data[index-1][longi]]
   globe.getTotalRotateAngle(destLocation[0],destLocation[1]);
@@ -712,6 +714,8 @@ function findMatchCity(cities, data, index){
   var latlng = {lat:destLocation[0], lng:destLocation[1]}
   var adress, i, findData, cityAddress;
   // console.log(geocoder);
+
+  globe.highlightPoint(data[index-1][lat], data[index-1][longi], data[index-1][mag]);
   findData = false;
   geocoder.geocode({'location': latlng}, function(results, status) {
     if (status === google.maps.GeocoderStatus.OK) {

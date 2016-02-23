@@ -28,7 +28,7 @@ function generateGlobe(json){
   globeText.style.top = 20 + 'px';
   globeText.style.left = 70 + 'px';
   globeText.style.backgroundColor = 'rgba(255,255, 255, 0.0)'
-  globeText.style.color = 'black';
+  globeText.style.color = '#800080';
   globeText.style.fontSize = '20px';
   // globeText.style.margin = "50px -400px 0px 0px";
   document.getElementById('vis').appendChild(globeText);
@@ -37,7 +37,7 @@ function generateGlobe(json){
   //renderer, camera, scene,  RENDERID
   globe = new DAT.Globe(container);
   scene = globe.scene;
-  
+
     // If we've received the data
 
         console.log(json);
@@ -131,10 +131,14 @@ DAT.Globe = function(container) {
   var distance = 100000, distanceTarget = 100000;
   var padding = 40;
   var PI_HALF = Math.PI / 2;
-  var device_persp_controls;
-  var orbit_persp_controls;
+  //var device_persp_controls;
+  //var orbit_persp_controls;
   var controls;
   var INITIATED = false;
+
+  var pointList = [];
+  var highlightbar;
+  var max;
 
   function init() {
 
@@ -233,7 +237,7 @@ DAT.Globe = function(container) {
   }
 
   function addData(data, opts) {
-    var lat, lng, size, color, i, step, colorFnWrapper, max;
+    var lat, lng, size, color, i, step, colorFnWrapper;
 
     max = opts.max;
     console.log(max)
@@ -316,6 +320,8 @@ DAT.Globe = function(container) {
       }
       scene.add(this.points);
       meshes.push(this.points);
+
+        console.log(this.points);
     }
   }
 
@@ -342,6 +348,49 @@ DAT.Globe = function(container) {
       point.updateMatrix();
     }
     subgeo.merge(point.geometry, point.matrix);
+  }
+
+  function highlightPoint(lat, lng, mag) {
+    if(highlightbar != undefined) scene.remove(highlightbar)
+    var size = mag * 200/max;
+    var dest = getDestXYZ(lat, lng);
+
+    var geo = new THREE.BoxGeometry(7, 7, 1);
+    var material = new THREE.MeshBasicMaterial( {color: 0x800080} );
+    geo.applyMatrix(new THREE.Matrix4().makeTranslation(0,0,-0.5));
+
+    var hpoint = new THREE.Mesh(geo, material);
+
+    // var geometry = new THREE.SphereGeometry();
+    // var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+    // var sphere = new THREE.Mesh( geometry, material );
+
+    hpoint.position.x = dest[0];
+    hpoint.position.y = dest[1];
+    hpoint.position.z = dest[2];
+
+    hpoint.lookAt(mesh.position);
+
+    hpoint.scale.z = Math.max( size, 0.1 ); // avoid non-invertible matrix
+    hpoint.updateMatrix();
+
+    // for (var i = 0; i < point.geometry.faces.length; i++) {
+
+    //   hpoint.geometry.faces[i].color = 0xFFA500;
+
+    // }
+    if(hpoint.matrixAutoUpdate){
+      hpoint.updateMatrix();
+    }
+
+    scene.add(hpoint);
+    meshes.push(hpoint)
+    highlightbar = hpoint;
+  }
+
+  function equal(a, b){
+    var c=a-b;
+    return c<0.001||c>-0.001;
   }
 
   function onMouseDown(event) {
@@ -528,6 +577,8 @@ DAT.Globe = function(container) {
     var x = 200 * Math.sin(phi) * Math.cos(theta);
     var y = 200 * Math.cos(phi);
     var z = 200 * Math.sin(phi) * Math.sin(theta);
+    console.log("***********");
+    //highlightPoint(x, y, z);
     return [x, y, z];
   }
 
@@ -544,6 +595,7 @@ DAT.Globe = function(container) {
     renderGlobe();
   }
 
+
   function renderGlobe() {
     zoom(curZoomSpeed);
 
@@ -558,7 +610,7 @@ DAT.Globe = function(container) {
 
     camera.lookAt(mesh.position);
 
-    console.log("renderering");
+    //console.log("renderering");
 
     if (vrModeIsOn) {
       effect.render(scene, camera);
@@ -604,6 +656,7 @@ DAT.Globe = function(container) {
   this.renderer = renderer;
   this.scene = scene;
   this.getTotalRotateAngle=getTotalRotateAngle;
+  this.highlightPoint = highlightPoint;
 
   return this;
 

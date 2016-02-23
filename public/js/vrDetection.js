@@ -99,6 +99,8 @@ function enterVRMode(){
 		element.msRequestFullscreen();
 	}
 
+  console.log( orbit_persp_controls );
+
 	if (controls === undefined) console.log("undefined detected");
 	if (graphType == 'globe') return;
 	controls.enabled = false;
