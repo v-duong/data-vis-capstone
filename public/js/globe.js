@@ -156,10 +156,13 @@ DAT.Globe = function(container) {
     container.style.font = '13px/20px Arial, sans-serif';
 
     var shader, uniforms, material;
-    w = container.offsetWidth || window.innerWidth;
-    h = container.offsetHeight || window.innerHeight;
+    // w = container.offsetWidth || window.innerWidth;
+    // h = container.offsetHeight || window.innerHeight;
 
-    camera = new THREE.PerspectiveCamera(45, w / h, 1, 10000);
+    w = window.innerWidth;
+    h = window.innerHeight;
+
+    camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 10000);
     camera.position.z = distance;
 
     scene = new THREE.Scene();
@@ -212,6 +215,8 @@ DAT.Globe = function(container) {
     renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
     renderer.setClearColor(0x000000, .9)
     renderer.setSize(window.innerWidth, window.innerHeight);
+    //renderer.domElement.style.position = 'absolute';
+
 
     effect = new THREE.StereoEffect(renderer);
     effect.setSize(window.innerWidth, window.innerHeight);
@@ -361,6 +366,7 @@ DAT.Globe = function(container) {
       point.updateMatrix();
     }
     subgeo.merge(point.geometry, point.matrix);
+
   }
 
   function highlightPoint(lat, lng, mag) {
@@ -530,18 +536,19 @@ DAT.Globe = function(container) {
   // }
 
   function onWindowResize( event ) {
-    windowHalfX = window.innerWidth / 2;
-    windowHalfY = window.innerHeight / 2;
+    // windowHalfX = window.innerWidth / 2;
+    // windowHalfY = window.innerHeight / 2;
 
     camera.aspect = window.innerWidth / window.innerHeight;
-    camera.left = -1 * windowHalfX;
-    camera.right = windowHalfX;
-    camera.top = windowHalfY;
-    camera.bottom = -1 * windowHalfY;
+    // camera.left = -1 * windowHalfX;
+    // camera.right = windowHalfX;
+    // camera.top = windowHalfY;
+    // camera.bottom = -1 * windowHalfY;
 
     camera.updateProjectionMatrix();
     renderer.setSize( window.innerWidth, window.innerHeight );
     effect.setSize( window.innerWidth, window.innerHeight );
+
   }
 
 
