@@ -77,12 +77,13 @@ function initbasketball() {
   if (!INITIAL) {
     orbit_persp_controls.addEventListener('change', render);
     device_persp_controls.addEventListener('change', render);
-    add_Click_EventListener(3);
   }
 
   orbit_persp_controls.enabled = false;
   device_persp_controls.enabled = false;
   controls.enabled = true;
+
+  add_Click_EventListener(1.2);
 
 
 }

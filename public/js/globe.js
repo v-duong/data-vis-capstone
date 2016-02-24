@@ -62,6 +62,12 @@ DAT.Globe = function(container) {
   var animate;
   var effect;
   var opts = opts || {};
+  var clickCounter = 0;
+  var clickTimer = 0;
+  var clickBegin = false;
+  var clickTimeOut = 40;
+  var velocityCounter = 0;
+  var speedFactor = 0;
   var colorFn = opts.colorFn || function(x) {
     var c = new THREE.Color();
     c.setHSL( ( 0.6 - ( x * 0.5 ) ), 1.0, 0.5 );
@@ -475,14 +481,14 @@ DAT.Globe = function(container) {
       return;
     }
 
-    timer += 1;
-    timer = timer % 100;
-    if (timer == 0){
-      console.log("alpha: " + e.alpha);
-      console.log("beta: " + e.beta);
-      console.log("gamma: " + e.gamma);
-      console.log(" ");
-    }
+    // timer += 1;
+    // timer = timer % 100;
+    // if (timer == 0){
+    //   console.log("alpha: " + e.alpha);
+    //   console.log("beta: " + e.beta);
+    //   console.log("gamma: " + e.gamma);
+    //   console.log(" ");
+    // }
 
 
     // var device_rotation =  (e.gamma < 0)? 180 - e.alpha : e.alpha ;
@@ -661,6 +667,105 @@ DAT.Globe = function(container) {
 
 
   }
+
+function add_Click_EventListener(speed){
+  clickCounter = 0
+  clickTimer = 0
+  clickBegin = false
+  clickTimeOut = 40
+  velocityCounter = 0
+  speedFactor = speed;
+  document.getElementById('vis').addEventListener("click", onclick);
+
+}
+
+function onclick( event ){
+  //event.preventdefault();
+  if (!(vrModeIsOn && isMobile)) return;
+  if (velocityCounter >0){
+    velocityCounter = 0;
+    return;
+  }
+  clickBegin = true;
+  clickCounter ++;
+  // if (clickCounter == 2)
+  //   window.removeEventListener("click", onclick);
+}
+
+function do_click_mission(){
+  if (clickCounter == 1){
+    console.log("1 click");
+    do_single_click();
+  }
+  else if (clickCounter == 2){
+    console.log("2 clicks");
+    do_double_click();
+  }
+  else {
+    console.log(clickCounter + " clicks");
+    do_multi_click();
+  }
+}
+
+function click_Timer(){
+  
+  if (clickBegin)
+    clickTimer = (clickTimer >= clickTimeOut)?clickTimeOut : clickTimer+1;
+
+  if (clickTimer>=clickTimeOut && clickBegin == true){
+    
+    do_click_mission();
+    clickBegin = false;
+    clickCounter = 0;
+    clickTimer = 0;
+    //window.addEventListener("click", onclick);
+  }
+
+  //camera.translateZ( -velocityCounter * speedFactor );
+  distance -= velocityCounter * speedFactor;
+
+}
+
+//while moving, single click to stop
+//while stopped, 
+
+function do_single_click(){
+  if (velocityCounter != 0)
+    velocityCounter  = 0;
+  else
+    velocityCounter = 1;
+
+  //camera.translateZ( -velocityCounter * speedFactor );
+
+}
+
+function do_double_click(){
+  if (velocityCounter != 0)
+    velocityCounter  = 0;
+  else {
+    velocityCounter = -1;
+  }
+
+  //camera.translateZ( velocityCounter * speedFactor );
+
+}
+
+function do_multi_click(){
+  if (velocityCounter != 0)
+    velocityCounter  = 0;
+  else{
+    if (graphType == 'scatter')
+      camera.position.set(10, 10, 10);
+    else if (graphType == 'bar')
+      camera.position.set(600, 600, 800);
+    else if (graphType == 'globe')
+      camera.position.set(0, 0, 400);
+    else {
+      ;
+    }
+    camera.lookAt(new THREE.Vector3(0,0,0));
+  }
+}
 
   init();
   this.animate = animate;
