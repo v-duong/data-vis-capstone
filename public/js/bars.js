@@ -43,6 +43,7 @@ function initbars() {
   device_persp_controls.enabled = false;
   controls.enabled = true;
   add_Click_EventListener(3);
+  vrModeIsOn = false;
 
 }
 

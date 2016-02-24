@@ -54,6 +54,7 @@
 
  voice_recognition();
  add_Click_EventListener(0.05);
+ vrModeIsOn = false;
 
 }
 

@@ -84,6 +84,7 @@ function initbasketball() {
   controls.enabled = true;
 
   add_Click_EventListener(1.2);
+  vrModeIsOn = false;
 
 
 }

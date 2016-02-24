@@ -242,7 +242,9 @@ DAT.Globe = function(container) {
     window.addEventListener('deviceorientation', setOrientationControls, true);
     //orbit_persp_controls.addEventListener('change', animate);
 
-    add_Click_EventListener(2);
+    add_Click_EventListener(100);
+
+    vrModeIsOn = false;
 
     INITIATED = true;
 
@@ -400,14 +402,13 @@ DAT.Globe = function(container) {
   }
 
   function onMouseDown(event) {
-    event.preventDefault();
-
-    console.log("mouse down event detected");
-
     if (vrModeIsOn === true && isMobile === true) {
-      console.log("return");
+      //console.log("return");
       return;
     }
+    //event.preventDefault();
+
+    console.log("mouse down event detected");
 
     container.addEventListener('mousemove', onMouseMove, false);
     container.addEventListener('mouseup', onMouseUp, false);
@@ -438,7 +439,7 @@ DAT.Globe = function(container) {
   }
 
   function onMouseUp(event) {
-    console.log("mouse up event detected");
+    //console.log("mouse up event detected");
     container.removeEventListener('mousemove', onMouseMove, false);
     container.removeEventListener('mouseup', onMouseUp, false);
     container.removeEventListener('mouseout', onMouseOut, false);
@@ -446,15 +447,15 @@ DAT.Globe = function(container) {
   }
 
   function onMouseOut(event) {
-    console.log("mouse out event detected");
+    //console.log("mouse out event detected");
     container.removeEventListener('mousemove', onMouseMove, false);
     container.removeEventListener('mouseup', onMouseUp, false);
     container.removeEventListener('mouseout', onMouseOut, false);
   }
 
   function onMouseWheel(event) {
-    console.log("mouse wheel event detected");
-    event.preventDefault();
+    //console.log("mouse wheel event detected");
+    //event.preventDefault();
     if (vrModeIsOn === true && isMobile === true) return;
     if (overRenderer) {
       zoom(event.wheelDeltaY * 0.3);
@@ -722,7 +723,7 @@ function click_Timer(){
   }
 
   //camera.translateZ( -velocityCounter * speedFactor );
-  distance -= velocityCounter * speedFactor;
+  distanceTarget  -= velocityCounter * speedFactor * 0.01;
 
 }
 
