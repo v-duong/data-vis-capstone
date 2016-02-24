@@ -32,6 +32,14 @@ var orbit_ortho_camera
 var orbit_persp_camera
 var device_persp_camera
 
+//click control
+ var clickCounter = 0
+ var clickTimer = 0
+ var clickBegin = false
+ var clickTimeOut = 40
+ var velocityCounter = 0
+ var speedFactor
+
 
 
 function parseURLArg(){
@@ -945,3 +953,101 @@ function updateTextSprite(intersects){
     sprite1.position.set(intersects[0].object.position.x, intersects[0].object.position.y, intersects[0].object.position.z); //update sprite position
   }
 }
+
+function add_Click_EventListener(speed){
+  clickCounter = 0
+  clickTimer = 0
+  clickBegin = false
+  clickTimeOut = 40
+  velocityCounter = 0
+  speedFactor = speed;
+  document.getElementById('vis').addEventListener("click", onclick);
+
+}
+
+function onclick( event ){
+  //event.preventdefault();
+  if (!(vrModeIsOn && isMobile)) return;
+  if (velocityCounter >0){
+    velocityCounter = 0;
+    return;
+  }
+  clickBegin = true;
+  clickCounter ++;
+  // if (clickCounter == 2)
+  //   window.removeEventListener("click", onclick);
+}
+
+function do_click_mission(){
+  if (clickCounter == 1){
+    console.log("1 click");
+    do_single_click();
+  }
+  else if (clickCounter == 2){
+    console.log("2 clicks");
+    do_double_click();
+  }
+  else {
+    console.log(clickCounter + " clicks");
+    do_multi_click();
+  }
+}
+
+function click_Timer(){
+  
+  if (clickBegin)
+    clickTimer = (clickTimer >= clickTimeOut)?clickTimeOut : clickTimer+1;
+
+  if (clickTimer>=clickTimeOut && clickBegin == true){
+    
+    do_click_mission();
+    clickBegin = false;
+    clickCounter = 0;
+    clickTimer = 0;
+    //window.addEventListener("click", onclick);
+  }
+
+  camera.translateZ( -velocityCounter * speedFactor );
+
+}
+
+//while moving, single click to stop
+//while stopped, 
+
+function do_single_click(){
+  if (velocityCounter != 0)
+    velocityCounter  = 0;
+  else
+    velocityCounter = 1;
+
+  //camera.translateZ( -velocityCounter * speedFactor );
+
+}
+
+function do_double_click(){
+  if (velocityCounter != 0)
+    velocityCounter  = 0;
+  else
+    velocityCounter = -1;
+
+  //camera.translateZ( velocityCounter * speedFactor );
+
+}
+
+function do_multi_click(){
+  if (velocityCounter != 0)
+    velocityCounter  = 0;
+  else{
+    if (graphType == 'scatter')
+      camera.position.set(10, 10, 10);
+    else if (graphType == 'bar')
+      camera.position.set(600, 600, 800);
+    else if (graphType == 'globe')
+      camera.position.set(0, 0, 400);
+    else {
+      ;
+    }
+    camera.lookAt(new THREE.Vector3(0,0,0));
+  }
+}
+

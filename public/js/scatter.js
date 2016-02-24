@@ -5,9 +5,6 @@
  //var timer = 0
  // var averageAcc = 0;
 
- var clickCounter = 0
- var clickTimer = 7
-
  //renderer render the whole scene and camera
  var initscatter = function() {
 
@@ -55,27 +52,30 @@
 	// document.addEventListener("volumeupbutton", onVolumeUpKeyDown, false);
  //  }
 
- 
-  var recognition;
-  if (!('webkitSpeechRecognition' in window)) {
-  	console.log("webkitSpeechRecognition NOT supported");
-  	//upgrade();
-  } else {
-  	console.log("webkitSpeechRecognition supported");
-  	recognition = new webkitSpeechRecognition();
-  	recognition.continuous = true;
-  	recognition.interimResults = true;
-  	recognition.onresult = function(event) { 
-  		console.log("Speak plz");
-  		console.log(event);
-  	}
-  	recognition.start();
-  	console.log("webkitSpeechRecognition started");
- }
-
- window.addEventListener("click", onclick);
+ voice_recognition();
+ add_Click_EventListener(0.05);
 
 }
+
+ function voice_recognition(){
+   var recognition, next = 0;
+    if (!('webkitSpeechRecognition' in window)) {
+  	  console.log("webkitSpeechRecognition NOT supported");
+  	  //upgrade();
+    } else {
+      console.log("webkitSpeechRecognition supported");
+  	  recognition = new webkitSpeechRecognition();
+  	  recognition.continuous = true;
+  	  recognition.interimResults = true;
+  	  recognition.onresult = function(event) {
+  		console.log("Speak plz");
+  		console.log(event);
+  		console.log(event.results[0][0].transcript);
+  	  }
+  	  recognition.start();
+  	  console.log("webkitSpeechRecognition started");
+    }
+ }
 
  function onDeviceReady(e) {
  	// body...
@@ -109,11 +109,8 @@
     	renderer.render(scene, orbit_persp_camera);
   	}
 	controls.update();
-	clickTimer = (clickTimer == 7)?7 : clickTimer+1;
-	if (clickTimer ==7){
-		container.addEventListener("click", onclick);
-		do_click();
-	}
+
+	click_Timer();
 }
 
 //draw line according to two points and color
@@ -413,17 +410,61 @@ function dblClickEvent(event){
 		
 }
 
-function onclick( event ){
-	if (clickCounter == 0){
-		clickCounter = 1;
-		clickTimer = 0;
-	}
-	else if (clickCounter = 1 && clickTimer < 7){
-		clickCounter = 2;
-		container.removeEventListener("click", onclick);
-	}
-}
+// function onclick( event ){
+// 	//event.preventdefault();
+// 	if (!(vrModeIsOn && isMobile)) return;
+// 	clickBegin = true;
+// 	clickCounter ++;
+// 	// if (clickCounter == 2)
+// 	// 	 window.removeEventListener("click", onclick);
+// }
 
-function do_click(){
-	if (clickCounter = 1);
-}
+// function do_click_mission(){
+// 	if (clickCounter == 1){
+// 		console.log("1 click");
+// 		do_single_click();
+// 	}
+// 	else if (clickCounter == 2){
+// 		console.log("2 clicks");
+// 		do_double_click();
+// 	}
+// 	else 
+// 		console.log(clickCounter + " clicks");
+// }
+
+// function click_Timer(){
+	
+// 	if (clickBegin)
+// 		clickTimer = (clickTimer >= clickTimeOut)?clickTimeOut : clickTimer+1;
+
+// 	if (clickTimer>=clickTimeOut && clickBegin == true){
+		
+// 		do_click_mission();
+// 		clickBegin = false;
+// 		clickCounter = 0;
+// 		clickTimer = 0;
+// 		//window.addEventListener("click", onclick);
+// 	}
+
+// 	camera.translateZ( -velocityCounter * speedFactor );
+// }
+
+// function do_single_click(){
+// 	if (velocityCounter != 0)
+// 		velocityCounter  = 0;
+// 	else
+// 		velocityCounter = 1;
+
+// 	//camera.translateZ( -velocityCounter * speedFactor );
+
+// }
+
+// function do_double_click(){
+// 	if (velocityCounter != 0)
+// 		velocityCounter  = 0;
+// 	else
+// 		velocityCounter = -1;
+
+// 	//camera.translateZ( velocityCounter * speedFactor );
+
+// }

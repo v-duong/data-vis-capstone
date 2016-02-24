@@ -153,7 +153,7 @@ DAT.Globe = function(container) {
     w = container.offsetWidth || window.innerWidth;
     h = container.offsetHeight || window.innerHeight;
 
-    camera = new THREE.PerspectiveCamera(30, w / h, 1, 10000);
+    camera = new THREE.PerspectiveCamera(45, w / h, 1, 10000);
     camera.position.z = distance;
 
     scene = new THREE.Scene();
@@ -235,6 +235,8 @@ DAT.Globe = function(container) {
     orbit_persp_controls = new THREE.OrbitControls(camera, renderer.domElement);
     window.addEventListener('deviceorientation', setOrientationControls, true);
     //orbit_persp_controls.addEventListener('change', animate);
+
+    add_Click_EventListener(2);
 
     INITIATED = true;
 
@@ -521,7 +523,15 @@ DAT.Globe = function(container) {
   // }
 
   function onWindowResize( event ) {
-    camera.aspect = window.innerWidth/ window.innerHeight;
+    windowHalfX = window.innerWidth / 2;
+    windowHalfY = window.innerHeight / 2;
+
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.left = -1 * windowHalfX;
+    camera.right = windowHalfX;
+    camera.top = windowHalfY;
+    camera.bottom = -1 * windowHalfY;
+
     camera.updateProjectionMatrix();
     renderer.setSize( window.innerWidth, window.innerHeight );
     effect.setSize( window.innerWidth, window.innerHeight );
@@ -641,11 +651,15 @@ DAT.Globe = function(container) {
 
     //console.log("renderering");
 
+    click_Timer();
+
     if (vrModeIsOn) {
       effect.render(scene, camera);
     } else {
       renderer.render(scene, camera);
     }
+
+
   }
 
   init();

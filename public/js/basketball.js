@@ -77,11 +77,14 @@ function initbasketball() {
   if (!INITIAL) {
     orbit_persp_controls.addEventListener('change', render);
     device_persp_controls.addEventListener('change', render);
+    add_Click_EventListener(3);
   }
 
   orbit_persp_controls.enabled = false;
   device_persp_controls.enabled = false;
   controls.enabled = true;
+
+
 }
 
  var renderBasketball = function () {
@@ -96,6 +99,7 @@ function initbasketball() {
     else {
       renderer.render(scene, orbit_persp_camera);
     }
+  click_Timer();
   controls.update();
 }
 
