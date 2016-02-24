@@ -401,9 +401,6 @@ function genZone4and8(){
   geometry.vertices.push(new THREE.Vector3(47,220,0));
   geometry.vertices.push(new THREE.Vector3(-93,220,0));
   geometry.vertices.push(new THREE.Vector3(-120,210,0));
-  //geometry.vertices.push( new THREE.Vector3( 135, 125, 0 ) );
-  //geometry.vertices.push(new THREE.Vector3(135, -15, 0));
-  //geometry.vertices.push(new THREE.Vector3(75, -15, 0));
   geometry.faces.push(new THREE.Face3(0,21,22));
   for (var i = 0; i < 20; i++){
     geometry.faces.push(new THREE.Face3(i,i+1,21));
@@ -422,24 +419,20 @@ function genZone4and8(){
     transparent: true,
     opacity: 0.5
   });
-  //zones[4] = new THREE.Line(geometry, new THREE.LineBasicMaterial({color: 0x0f00ff}));
   var mymesh = new THREE.Mesh(geometry, material);
   mymesh.rotation.set(-Math.PI/2, 0,0);
   mymesh.position.set(422.5,4,0);
   mymesh.__dirtyPosition = true;
-  //scene.add(zones[4]);
 
   //zone 5
   var mymesh2 = new THREE.Mesh(geometry, material2);
   mymesh2.rotation.set(Math.PI/2, 0, 0);
   mymesh2.position.set(422.5,4,0);
   mymesh2.__dirtyPosition = true;
-  //scene.add(zones[8]);
-  //return [mymesh2, mymesh];
-  zones[4] = mymesh;
-  scene.add(mymesh);
-  zones[8] = mymesh2;
+  zones[4] = mymesh2;
   scene.add(mymesh2);
+  zones[8] = mymesh;
+  scene.add(mymesh);
 }
 
 function genZone5(){
