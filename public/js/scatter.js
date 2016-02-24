@@ -15,7 +15,7 @@
   renderer.setSize(window.innerWidth, window.innerHeight);
 
   //add effect
-  effect = new THREE.StereoEffect(renderer);
+  effect = new THREE.StereoEffect(renderer,15);
   effect.setSize(window.innerWidth, window.innerHeight);
 
   orbit_persp_controls = new THREE.OrbitControls(orbit_persp_camera, renderer.domElement);

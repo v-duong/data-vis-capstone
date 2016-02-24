@@ -218,7 +218,7 @@ DAT.Globe = function(container) {
     //renderer.domElement.style.position = 'absolute';
 
 
-    effect = new THREE.StereoEffect(renderer);
+    effect = new THREE.StereoEffect(renderer,30);
     effect.setSize(window.innerWidth, window.innerHeight);
 
     container.appendChild(renderer.domElement);

@@ -7,14 +7,14 @@
  * Off-axis stereoscopic effect based on http://paulbourke.net/stereographics/stereorender/
  */
 
-THREE.StereoEffect = function ( renderer ) {
+THREE.StereoEffect = function ( renderer,fl ) {
 
 	// API
 
 	var scope = this;
 
 	this.eyeSeparation = 3;
-	this.focalLength = 15; 	// Distance to the non-parallax or projection plane
+	this.focalLength = fl; 	// Distance to the non-parallax or projection plane
 
 	Object.defineProperties( this, {
 		separation: {
