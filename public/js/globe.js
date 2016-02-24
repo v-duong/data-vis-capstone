@@ -491,11 +491,16 @@ DAT.Globe = function(container) {
     last_alpha = e.alpha;
     last_gamma = gamma_value;
     if(device_rotation_x > 50 || device_rotation_x < -50) return;
+    if(device_rotation_y > 50 || device_rotation_y < -50) return;
 
     //console.log(device_rotation);
     //device_rotation = (device_rotation > 180) ? device_rotation - 360 : device_rotation;
     target.x += device_rotation_x/180 * Math.PI;
     target.y += device_rotation_y/180 * Math.PI;
+    if (target.y > Math.PI/2 - 0.01)
+      target.y =  Math.PI/2 - 0.01;
+    else if (target.y <  - Math.PI/2 + 0.01)
+      target.y = - Math.PI/2 + 0.01;
     //console.log("setOrientationControls working");
     device_persp_controls.connect();
     device_persp_controls.update();

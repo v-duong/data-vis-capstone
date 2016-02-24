@@ -2,9 +2,11 @@
  // var accZold = 0;
  // var velocity = 0;
  var accList = []
- // var timer = 0
+ //var timer = 0
  // var averageAcc = 0;
 
+ var clickCounter = 0
+ var clickTimer = 7
 
  //renderer render the whole scene and camera
  var initscatter = function() {
@@ -70,7 +72,11 @@
   	recognition.start();
   	console.log("webkitSpeechRecognition started");
  }
+
+ window.addEventListener("click", onclick);
+
 }
+
  function onDeviceReady(e) {
  	// body...
  }
@@ -103,6 +109,11 @@
     	renderer.render(scene, orbit_persp_camera);
   	}
 	controls.update();
+	clickTimer = (clickTimer == 7)?7 : clickTimer+1;
+	if (clickTimer ==7){
+		container.addEventListener("click", onclick);
+		do_click();
+	}
 }
 
 //draw line according to two points and color
@@ -400,4 +411,19 @@ function deviceMotionHandler(eventData){
 function dblClickEvent(event){
 
 		
+}
+
+function onclick( event ){
+	if (clickCounter == 0){
+		clickCounter = 1;
+		clickTimer = 0;
+	}
+	else if (clickCounter = 1 && clickTimer < 7){
+		clickCounter = 2;
+		container.removeEventListener("click", onclick);
+	}
+}
+
+function do_click(){
+	if (clickCounter = 1);
 }
