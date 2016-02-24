@@ -62,6 +62,12 @@ DAT.Globe = function(container) {
   var animate;
   var effect;
   var opts = opts || {};
+  var clickCounter = 0;
+  var clickTimer = 0;
+  var clickBegin = false;
+  var clickTimeOut = 40;
+  var velocityCounter = 0;
+  var speedFactor = 0;
   var colorFn = opts.colorFn || function(x) {
     var c = new THREE.Color();
     c.setHSL( ( 0.6 - ( x * 0.5 ) ), 1.0, 0.5 );
@@ -153,7 +159,7 @@ DAT.Globe = function(container) {
     w = container.offsetWidth || window.innerWidth;
     h = container.offsetHeight || window.innerHeight;
 
-    camera = new THREE.PerspectiveCamera(30, w / h, 1, 10000);
+    camera = new THREE.PerspectiveCamera(45, w / h, 1, 10000);
     camera.position.z = distance;
 
     scene = new THREE.Scene();
@@ -235,6 +241,10 @@ DAT.Globe = function(container) {
     orbit_persp_controls = new THREE.OrbitControls(camera, renderer.domElement);
     window.addEventListener('deviceorientation', setOrientationControls, true);
     //orbit_persp_controls.addEventListener('change', animate);
+
+    add_Click_EventListener(100);
+
+    vrModeIsOn = false;
 
     INITIATED = true;
 
@@ -392,14 +402,13 @@ DAT.Globe = function(container) {
   }
 
   function onMouseDown(event) {
-    event.preventDefault();
-
-    console.log("mouse down event detected");
-
     if (vrModeIsOn === true && isMobile === true) {
-      console.log("return");
+      //console.log("return");
       return;
     }
+    //event.preventDefault();
+
+    console.log("mouse down event detected");
 
     container.addEventListener('mousemove', onMouseMove, false);
     container.addEventListener('mouseup', onMouseUp, false);
@@ -430,7 +439,7 @@ DAT.Globe = function(container) {
   }
 
   function onMouseUp(event) {
-    console.log("mouse up event detected");
+    //console.log("mouse up event detected");
     container.removeEventListener('mousemove', onMouseMove, false);
     container.removeEventListener('mouseup', onMouseUp, false);
     container.removeEventListener('mouseout', onMouseOut, false);
@@ -438,15 +447,15 @@ DAT.Globe = function(container) {
   }
 
   function onMouseOut(event) {
-    console.log("mouse out event detected");
+    //console.log("mouse out event detected");
     container.removeEventListener('mousemove', onMouseMove, false);
     container.removeEventListener('mouseup', onMouseUp, false);
     container.removeEventListener('mouseout', onMouseOut, false);
   }
 
   function onMouseWheel(event) {
-    console.log("mouse wheel event detected");
-    event.preventDefault();
+    //console.log("mouse wheel event detected");
+    //event.preventDefault();
     if (vrModeIsOn === true && isMobile === true) return;
     if (overRenderer) {
       zoom(event.wheelDeltaY * 0.3);
@@ -473,14 +482,14 @@ DAT.Globe = function(container) {
       return;
     }
 
-    timer += 1;
-    timer = timer % 100;
-    if (timer == 0){
-      console.log("alpha: " + e.alpha);
-      console.log("beta: " + e.beta);
-      console.log("gamma: " + e.gamma);
-      console.log(" ");
-    }
+    // timer += 1;
+    // timer = timer % 100;
+    // if (timer == 0){
+    //   console.log("alpha: " + e.alpha);
+    //   console.log("beta: " + e.beta);
+    //   console.log("gamma: " + e.gamma);
+    //   console.log(" ");
+    // }
 
 
     // var device_rotation =  (e.gamma < 0)? 180 - e.alpha : e.alpha ;
@@ -491,11 +500,16 @@ DAT.Globe = function(container) {
     last_alpha = e.alpha;
     last_gamma = gamma_value;
     if(device_rotation_x > 50 || device_rotation_x < -50) return;
+    if(device_rotation_y > 50 || device_rotation_y < -50) return;
 
     //console.log(device_rotation);
     //device_rotation = (device_rotation > 180) ? device_rotation - 360 : device_rotation;
     target.x += device_rotation_x/180 * Math.PI;
     target.y += device_rotation_y/180 * Math.PI;
+    if (target.y > Math.PI/2 - 0.01)
+      target.y =  Math.PI/2 - 0.01;
+    else if (target.y <  - Math.PI/2 + 0.01)
+      target.y = - Math.PI/2 + 0.01;
     //console.log("setOrientationControls working");
     device_persp_controls.connect();
     device_persp_controls.update();
@@ -516,7 +530,15 @@ DAT.Globe = function(container) {
   // }
 
   function onWindowResize( event ) {
-    camera.aspect = window.innerWidth/ window.innerHeight;
+    windowHalfX = window.innerWidth / 2;
+    windowHalfY = window.innerHeight / 2;
+
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.left = -1 * windowHalfX;
+    camera.right = windowHalfX;
+    camera.top = windowHalfY;
+    camera.bottom = -1 * windowHalfY;
+
     camera.updateProjectionMatrix();
     renderer.setSize( window.innerWidth, window.innerHeight );
     effect.setSize( window.innerWidth, window.innerHeight );
@@ -636,12 +658,115 @@ DAT.Globe = function(container) {
 
     //console.log("renderering");
 
+    click_Timer();
+
     if (vrModeIsOn) {
       effect.render(scene, camera);
     } else {
       renderer.render(scene, camera);
     }
+
+
   }
+
+function add_Click_EventListener(speed){
+  clickCounter = 0
+  clickTimer = 0
+  clickBegin = false
+  clickTimeOut = 40
+  velocityCounter = 0
+  speedFactor = speed;
+  document.getElementById('vis').addEventListener("click", onclick);
+
+}
+
+function onclick( event ){
+  //event.preventdefault();
+  if (!(vrModeIsOn && isMobile)) return;
+  if (velocityCounter >0){
+    velocityCounter = 0;
+    return;
+  }
+  clickBegin = true;
+  clickCounter ++;
+  // if (clickCounter == 2)
+  //   window.removeEventListener("click", onclick);
+}
+
+function do_click_mission(){
+  if (clickCounter == 1){
+    console.log("1 click");
+    do_single_click();
+  }
+  else if (clickCounter == 2){
+    console.log("2 clicks");
+    do_double_click();
+  }
+  else {
+    console.log(clickCounter + " clicks");
+    do_multi_click();
+  }
+}
+
+function click_Timer(){
+  
+  if (clickBegin)
+    clickTimer = (clickTimer >= clickTimeOut)?clickTimeOut : clickTimer+1;
+
+  if (clickTimer>=clickTimeOut && clickBegin == true){
+    
+    do_click_mission();
+    clickBegin = false;
+    clickCounter = 0;
+    clickTimer = 0;
+    //window.addEventListener("click", onclick);
+  }
+
+  //camera.translateZ( -velocityCounter * speedFactor );
+  distanceTarget  -= velocityCounter * speedFactor * 0.01;
+
+}
+
+//while moving, single click to stop
+//while stopped, 
+
+function do_single_click(){
+  if (velocityCounter != 0)
+    velocityCounter  = 0;
+  else
+    velocityCounter = 1;
+
+  //camera.translateZ( -velocityCounter * speedFactor );
+
+}
+
+function do_double_click(){
+  if (velocityCounter != 0)
+    velocityCounter  = 0;
+  else {
+    velocityCounter = -1;
+  }
+
+  //camera.translateZ( velocityCounter * speedFactor );
+
+}
+
+function do_multi_click(){
+  if (velocityCounter != 0)
+    velocityCounter  = 0;
+  else{
+    if (graphType == 'scatter')
+      camera.position.set(10, 10, 10);
+    else if (graphType == 'bar')
+      camera.position.set(600, 600, 800);
+    else if (graphType == 'globe')
+      camera.position.set(0, 0, 400);
+    else {
+      ;
+    }
+    camera.lookAt(new THREE.Vector3(0,0,0));
+  }
+}
 
   init();
   this.animate = animate;

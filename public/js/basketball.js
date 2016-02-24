@@ -82,6 +82,11 @@ function initbasketball() {
   orbit_persp_controls.enabled = false;
   device_persp_controls.enabled = false;
   controls.enabled = true;
+
+  add_Click_EventListener(1.2);
+  vrModeIsOn = false;
+
+
 }
 
  var renderBasketball = function () {
@@ -96,6 +101,7 @@ function initbasketball() {
     else {
       renderer.render(scene, orbit_persp_camera);
     }
+  click_Timer();
   controls.update();
 }
 
