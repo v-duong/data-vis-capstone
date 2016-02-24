@@ -11,7 +11,7 @@ function initbars() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 
   //add effect
-  effect = new THREE.StereoEffect(renderer);
+  effect = new THREE.StereoEffect(renderer,15);
   effect.setSize(window.innerWidth, window.innerHeight);
 
   // controls = new THREE.OrbitControls(camera, renderer.domElement);
