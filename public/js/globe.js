@@ -724,6 +724,8 @@ function click_Timer(){
 
   //camera.translateZ( -velocityCounter * speedFactor );
   distanceTarget  -= velocityCounter * speedFactor * 0.01;
+  if ( camera.position.x * camera.position.x + camera.position.y * camera.position.y + camera.position.z * camera.position.z > speedFactor * speedFactor * 1000000 )
+     distanceTarget  += velocityCounter * speedFactor * 0.01;
 
 }
 
@@ -764,7 +766,7 @@ function do_multi_click(){
     else {
       ;
     }
-    camera.lookAt(new THREE.Vector3(0,0,0));
+    //camera.lookAt(new THREE.Vector3(0,0,0));
   }
 }
 
