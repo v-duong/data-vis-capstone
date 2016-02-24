@@ -13,9 +13,61 @@
 
 var DAT = DAT || {};
 
+var timer = 0;
 
-DAT.Globe = function(container, renderer, camera, scene, animate, effect, opts) {
-  opts = opts || {};
+
+function generateGlobe(json){
+  clearmeshes();
+  console.log("generate_globe()");
+  $('.visual').empty();  
+
+  globeText = document.createElement('div');
+  globeText.style.position = 'absolute';
+  //text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
+  globeText.style.width = 900;
+  globeText.style.height = 40;
+  globeText.innerHTML = "";
+  globeText.style.top = 20 + 'px';
+  globeText.style.left = 70 + 'px';
+  globeText.style.backgroundColor = 'rgba(255,255, 255, 0.0)'
+  globeText.style.color = '#800080';
+  globeText.style.fontSize = '20px';
+  // globeText.style.margin = "50px -400px 0px 0px";
+  document.getElementById('vis').appendChild(globeText);
+
+  var container = document.getElementById('vis');
+  //renderer, camera, scene,  RENDERID
+  globe = new DAT.Globe(container);
+  scene = globe.scene;
+
+    // If we've received the data
+
+        console.log(json);
+        // // Tell the globe about your JSON data
+        globe.addData( json[0], {format: 'magnitude', name: json[2], max: json[1]} );
+        // Create the geometry
+        globe.createPoints();
+
+        // Begin animation
+
+        globe.animate();
+        document.getElementById('vis').style.backgroundImage = "none";
+
+}
+
+DAT.Globe = function(container) {
+  var renderer;
+  var camera;
+  var scene;
+  var animate;
+  var effect;
+  var opts = opts || {};
+  var clickCounter = 0;
+  var clickTimer = 0;
+  var clickBegin = false;
+  var clickTimeOut = 40;
+  var velocityCounter = 0;
+  var speedFactor = 0;
   var colorFn = opts.colorFn || function(x) {
     var c = new THREE.Color();
     c.setHSL( ( 0.6 - ( x * 0.5 ) ), 1.0, 0.5 );
@@ -87,6 +139,16 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, opts) 
   var distance = 100000, distanceTarget = 100000;
   var padding = 40;
   var PI_HALF = Math.PI / 2;
+  //var device_persp_controls;
+  //var orbit_persp_controls;
+  var controls;
+  var INITIATED = false;
+
+  var pointList = [];
+  var highlightbar;
+  var max;
+  var last_alpha = 0;
+  var last_gamma = 0;
 
   function init() {
 
@@ -97,10 +159,11 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, opts) 
     w = container.offsetWidth || window.innerWidth;
     h = container.offsetHeight || window.innerHeight;
 
-    camera = new THREE.PerspectiveCamera(30, w / h, 1, 10000);
+    camera = new THREE.PerspectiveCamera(45, w / h, 1, 10000);
     camera.position.z = distance;
 
     scene = new THREE.Scene();
+    scene.add(camera);
 
     var geometry = new THREE.SphereGeometry(200, 40, 30);
 
@@ -172,10 +235,23 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, opts) 
     container.addEventListener('mouseout', function() {
       overRenderer = false;
     }, false);
+
+    device_persp_controls = new THREE.DeviceOrientationControls(camera);
+    device_persp_controls.enable = false;
+    orbit_persp_controls = new THREE.OrbitControls(camera, renderer.domElement);
+    window.addEventListener('deviceorientation', setOrientationControls, true);
+    //orbit_persp_controls.addEventListener('change', animate);
+
+    add_Click_EventListener(100);
+
+    vrModeIsOn = false;
+
+    INITIATED = true;
+
   }
 
   function addData(data, opts) {
-    var lat, lng, size, color, i, step, colorFnWrapper, max;
+    var lat, lng, size, color, i, step, colorFnWrapper;
 
     max = opts.max;
     console.log(max)
@@ -258,6 +334,7 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, opts) 
       }
       scene.add(this.points);
       meshes.push(this.points);
+
     }
   }
 
@@ -286,8 +363,52 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, opts) 
     subgeo.merge(point.geometry, point.matrix);
   }
 
+  function highlightPoint(lat, lng, mag) {
+    if(highlightbar != undefined) scene.remove(highlightbar)
+    var size = mag * 200/max;
+    var dest = getDestXYZ(lat, lng);
+
+    var geo = new THREE.BoxGeometry(7, 7, 1);
+    var material = new THREE.MeshBasicMaterial( {color: 0x800080} );
+    geo.applyMatrix(new THREE.Matrix4().makeTranslation(0,0,-0.5));
+
+    var hpoint = new THREE.Mesh(geo, material);
+
+    // var geometry = new THREE.SphereGeometry();
+    // var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+    // var sphere = new THREE.Mesh( geometry, material );
+
+    hpoint.position.x = dest[0];
+    hpoint.position.y = dest[1];
+    hpoint.position.z = dest[2];
+
+    hpoint.lookAt(mesh.position);
+
+    hpoint.scale.z = Math.max( size, 0.1 ); // avoid non-invertible matrix
+    hpoint.updateMatrix();
+
+    // for (var i = 0; i < point.geometry.faces.length; i++) {
+
+    //   hpoint.geometry.faces[i].color = 0xFFA500;
+
+    // }
+    if(hpoint.matrixAutoUpdate){
+      hpoint.updateMatrix();
+    }
+
+    scene.add(hpoint);
+    meshes.push(hpoint)
+    highlightbar = hpoint;
+  }
+
   function onMouseDown(event) {
-    event.preventDefault();
+    if (vrModeIsOn === true && isMobile === true) {
+      //console.log("return");
+      return;
+    }
+    //event.preventDefault();
+
+    console.log("mouse down event detected");
 
     container.addEventListener('mousemove', onMouseMove, false);
     container.addEventListener('mouseup', onMouseUp, false);
@@ -300,6 +421,8 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, opts) 
     targetOnDown.y = target.y;
 
     container.style.cursor = 'move';
+
+    console.log("runs here?");
   }
 
   function onMouseMove(event) {
@@ -316,6 +439,7 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, opts) 
   }
 
   function onMouseUp(event) {
+    //console.log("mouse up event detected");
     container.removeEventListener('mousemove', onMouseMove, false);
     container.removeEventListener('mouseup', onMouseUp, false);
     container.removeEventListener('mouseout', onMouseOut, false);
@@ -323,13 +447,16 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, opts) 
   }
 
   function onMouseOut(event) {
+    //console.log("mouse out event detected");
     container.removeEventListener('mousemove', onMouseMove, false);
     container.removeEventListener('mouseup', onMouseUp, false);
     container.removeEventListener('mouseout', onMouseOut, false);
   }
 
   function onMouseWheel(event) {
-    event.preventDefault();
+    //console.log("mouse wheel event detected");
+    //event.preventDefault();
+    if (vrModeIsOn === true && isMobile === true) return;
     if (overRenderer) {
       zoom(event.wheelDeltaY * 0.3);
     }
@@ -349,6 +476,53 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, opts) 
     }
   }
 
+  function setOrientationControls(e) {
+    if (!e.alpha) return;
+    if (device_persp_controls === undefined || vrModeIsOn === false ||  isMobile === false) {
+      return;
+    }
+
+    // timer += 1;
+    // timer = timer % 100;
+    // if (timer == 0){
+    //   console.log("alpha: " + e.alpha);
+    //   console.log("beta: " + e.beta);
+    //   console.log("gamma: " + e.gamma);
+    //   console.log(" ");
+    // }
+
+
+    // var device_rotation =  (e.gamma < 0)? 180 - e.alpha : e.alpha ;
+    // if(e.alpha>355 || e.alpha < 5) return;
+    var gamma_value  = (e.gamma>0) ? 90 - e.gamma : -90 - e.gamma;
+    var device_rotation_x = e.alpha - last_alpha;
+    var device_rotation_y = gamma_value - last_gamma;
+    last_alpha = e.alpha;
+    last_gamma = gamma_value;
+    if(device_rotation_x > 50 || device_rotation_x < -50) return;
+    if(device_rotation_y > 50 || device_rotation_y < -50) return;
+
+    //console.log(device_rotation);
+    //device_rotation = (device_rotation > 180) ? device_rotation - 360 : device_rotation;
+    target.x += device_rotation_x/180 * Math.PI;
+    target.y += device_rotation_y/180 * Math.PI;
+    if (target.y > Math.PI/2 - 0.01)
+      target.y =  Math.PI/2 - 0.01;
+    else if (target.y <  - Math.PI/2 + 0.01)
+      target.y = - Math.PI/2 + 0.01;
+    //console.log("setOrientationControls working");
+    device_persp_controls.connect();
+    device_persp_controls.update();
+    window.removeEventListener('deviceorientation', setOrientationControls);
+  }
+
+  function floatEqual(a, b){
+    var c=b-a;
+    c=(c<0)?-c:c;
+    return c<0.001;
+  }
+
+
   // function onWindowResize( event ) {
   //   camera.aspect = container.offsetWidth / container.offsetHeight;
   //   camera.updateProjectionMatrix();
@@ -356,7 +530,15 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, opts) 
   // }
 
   function onWindowResize( event ) {
-    camera.aspect = window.innerWidth/ window.innerHeight;
+    windowHalfX = window.innerWidth / 2;
+    windowHalfY = window.innerHeight / 2;
+
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.left = -1 * windowHalfX;
+    camera.right = windowHalfX;
+    camera.top = windowHalfY;
+    camera.bottom = -1 * windowHalfY;
+
     camera.updateProjectionMatrix();
     renderer.setSize( window.innerWidth, window.innerHeight );
     effect.setSize( window.innerWidth, window.innerHeight );
@@ -369,16 +551,6 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, opts) 
     distanceTarget = distanceTarget < 350 ? 350 : distanceTarget;
   }
 
-  function cameraWalk(){
-    if(findNthAnimation){
-      console.log(dxz);
-      console.log(dy);
-      target.x = rotation.x + dxz;
-      target.y = rotation.y + dy;
-
-      findNthAnimation = false;
-    }
-  }
 
   function getTotalRotateAngle(lat,lon){
     var destCoor = getDestXYZ(lat,lon);
@@ -394,7 +566,9 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, opts) 
     dxz = deltaXZ;
     dy = deltaY;
 
-    findNthAnimation = true;
+    target.x = rotation.x + dxz;
+    target.y = rotation.y + dy;
+    target.y -= 0.2;
   }
 
   function getDeltaXZ(destCoor){
@@ -446,21 +620,35 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, opts) 
     var x = 200 * Math.sin(phi) * Math.cos(theta);
     var y = 200 * Math.cos(phi);
     var z = 200 * Math.sin(phi) * Math.sin(theta);
+    console.log("***********");
+    //highlightPoint(x, y, z);
     return [x, y, z];
   }
 
   function animate() {
     requestAnimationFrame(animate);
-    render();
+    //device_persp_controls.update();
+    if (isMobile === true && vrModeIsOn === true){
+      device_persp_controls.enable = true;
+      orbit_persp_controls.enable = false;
+    } else {
+      device_persp_controls.enable = false;
+      orbit_persp_controls.enable = true;
+    }
+    renderGlobe();
   }
 
-  function render() {
+
+  function renderGlobe() {
     zoom(curZoomSpeed);
 
-    rotation.x += (target.x - rotation.x) * 0.1;
-    rotation.y += (target.y - rotation.y) * 0.1;
+    var rotation_speed_factor = (vrModeIsOn && isMobile) ? 1 : 0.1;
+     
+    rotation.x += (target.x - rotation.x) * rotation_speed_factor;
+    rotation.y += (target.y - rotation.y) * rotation_speed_factor;
+
     distance += (distanceTarget - distance) * 0.3;
-    cameraWalk();
+    // cameraWalk();
 
     camera.position.x = distance * Math.sin(rotation.x) * Math.cos(rotation.y);
     camera.position.y = distance * Math.sin(rotation.y);
@@ -468,13 +656,117 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, opts) 
 
     camera.lookAt(mesh.position);
 
+    //console.log("renderering");
+
+    click_Timer();
+
     if (vrModeIsOn) {
       effect.render(scene, camera);
     } else {
       renderer.render(scene, camera);
     }
+
+
   }
 
+function add_Click_EventListener(speed){
+  clickCounter = 0
+  clickTimer = 0
+  clickBegin = false
+  clickTimeOut = 40
+  velocityCounter = 0
+  speedFactor = speed;
+  document.getElementById('vis').addEventListener("click", onclick);
+
+}
+
+function onclick( event ){
+  //event.preventdefault();
+  if (!(vrModeIsOn && isMobile)) return;
+  if (velocityCounter >0){
+    velocityCounter = 0;
+    return;
+  }
+  clickBegin = true;
+  clickCounter ++;
+  // if (clickCounter == 2)
+  //   window.removeEventListener("click", onclick);
+}
+
+function do_click_mission(){
+  if (clickCounter == 1){
+    console.log("1 click");
+    do_single_click();
+  }
+  else if (clickCounter == 2){
+    console.log("2 clicks");
+    do_double_click();
+  }
+  else {
+    console.log(clickCounter + " clicks");
+    do_multi_click();
+  }
+}
+
+function click_Timer(){
+  
+  if (clickBegin)
+    clickTimer = (clickTimer >= clickTimeOut)?clickTimeOut : clickTimer+1;
+
+  if (clickTimer>=clickTimeOut && clickBegin == true){
+    
+    do_click_mission();
+    clickBegin = false;
+    clickCounter = 0;
+    clickTimer = 0;
+    //window.addEventListener("click", onclick);
+  }
+
+  //camera.translateZ( -velocityCounter * speedFactor );
+  distanceTarget  -= velocityCounter * speedFactor * 0.01;
+
+}
+
+//while moving, single click to stop
+//while stopped, 
+
+function do_single_click(){
+  if (velocityCounter != 0)
+    velocityCounter  = 0;
+  else
+    velocityCounter = 1;
+
+  //camera.translateZ( -velocityCounter * speedFactor );
+
+}
+
+function do_double_click(){
+  if (velocityCounter != 0)
+    velocityCounter  = 0;
+  else {
+    velocityCounter = -1;
+  }
+
+  //camera.translateZ( velocityCounter * speedFactor );
+
+}
+
+function do_multi_click(){
+  if (velocityCounter != 0)
+    velocityCounter  = 0;
+  else{
+    if (graphType == 'scatter')
+      camera.position.set(10, 10, 10);
+    else if (graphType == 'bar')
+      camera.position.set(600, 600, 800);
+    else if (graphType == 'globe')
+      camera.position.set(0, 0, 400);
+    else {
+      ;
+    }
+    camera.lookAt(new THREE.Vector3(0,0,0));
+  }
+}
 
   init();
   this.animate = animate;
@@ -513,8 +805,11 @@ DAT.Globe = function(container, renderer, camera, scene, animate, effect, opts) 
   this.renderer = renderer;
   this.scene = scene;
   this.getTotalRotateAngle=getTotalRotateAngle;
+  this.highlightPoint = highlightPoint;
 
   return this;
 
 };
+
+
 

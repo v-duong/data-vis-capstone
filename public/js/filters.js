@@ -16,6 +16,7 @@ function colDetectBarScatter(colElem1, colElem2, colElem3, colList){
     //console.log(colList[i].column_name.toLowerCase())
     switch (colList[i].column_name.toLowerCase()){
       case 'x':
+      case 'height':
         colElem1.selectedIndex = i+1;
         switch (colElem1[i+1].value){
           case 'double precision':
@@ -31,6 +32,7 @@ function colDetectBarScatter(colElem1, colElem2, colElem3, colList){
 
         // y column can potentially have less items than x, so need to check items
       case 'y':
+      case 'weight':
         var index = 0;
         if (colElem2.length-1 < colList.length){
             for (index = 1; index < colElem2.length; index++){
@@ -56,6 +58,7 @@ function colDetectBarScatter(colElem1, colElem2, colElem3, colList){
           }
           break;
       case 'z':
+      case 'fatness':
         colElem3.selectedIndex = i+1;
         switch (colElem3[i+1].value){
           case 'double precision':

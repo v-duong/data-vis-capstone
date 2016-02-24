@@ -100,7 +100,9 @@ function render() {
 
       renderer.render(scene, camera);
     }
+    click_Timer();
     controls.update();
+
 }
 
 function generateYears(){
