@@ -136,7 +136,7 @@ function enterVRMode(){
 	else if (graphType == 'basketball'){
 		if (isMobile){
   			camera = device_persp_camera;
-  			camera.position.y += 100;
+  			camera.position.y += 60;
   			camera.position.x = 0;
 
   			controls = device_persp_controls;
