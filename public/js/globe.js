@@ -156,13 +156,10 @@ DAT.Globe = function(container) {
     container.style.font = '13px/20px Arial, sans-serif';
 
     var shader, uniforms, material;
-    // w = container.offsetWidth || window.innerWidth;
-    // h = container.offsetHeight || window.innerHeight;
+    w = container.offsetWidth || window.innerWidth;
+    h = container.offsetHeight || window.innerHeight;
 
-    w = window.innerWidth;
-    h = window.innerHeight;
-
-    camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 10000);
+    camera = new THREE.PerspectiveCamera(45, w / h, 1, 10000);
     camera.position.z = distance;
 
     scene = new THREE.Scene();
@@ -216,7 +213,6 @@ DAT.Globe = function(container) {
     renderer.setClearColor(0x000000, .9)
     renderer.setSize(window.innerWidth, window.innerHeight);
 
-
     effect = new THREE.StereoEffect(renderer,30);
     effect.setSize(window.innerWidth, window.innerHeight);
 
@@ -242,11 +238,11 @@ DAT.Globe = function(container) {
 
     device_persp_controls = new THREE.DeviceOrientationControls(camera);
     device_persp_controls.enable = false;
-    //orbit_persp_controls = new THREE.OrbitControls(camera, renderer.domElement);
+    orbit_persp_controls = new THREE.OrbitControls(camera, renderer.domElement);
     window.addEventListener('deviceorientation', setOrientationControls, true);
     //orbit_persp_controls.addEventListener('change', animate);
 
-    add_Click_EventListener(1);
+    add_Click_EventListener(100);
 
     vrModeIsOn = false;
 
@@ -371,7 +367,6 @@ DAT.Globe = function(container) {
       point.updateMatrix();
     }
     subgeo.merge(point.geometry, point.matrix);
-
   }
 
   function highlightPoint(lat, lng, mag) {
@@ -417,7 +412,7 @@ DAT.Globe = function(container) {
       //console.log("return");
       return;
     }
-    event.preventDefault();
+    //event.preventDefault();
 
     console.log("mouse down event detected");
 
@@ -466,7 +461,7 @@ DAT.Globe = function(container) {
 
   function onMouseWheel(event) {
     //console.log("mouse wheel event detected");
-    event.preventDefault();
+    //event.preventDefault();
     if (vrModeIsOn === true && isMobile === true) return;
     if (overRenderer) {
       zoom(event.wheelDeltaY * 0.3);
@@ -541,19 +536,18 @@ DAT.Globe = function(container) {
   // }
 
   function onWindowResize( event ) {
-    // windowHalfX = window.innerWidth / 2;
-    // windowHalfY = window.innerHeight / 2;
+    windowHalfX = window.innerWidth / 2;
+    windowHalfY = window.innerHeight / 2;
 
     camera.aspect = window.innerWidth / window.innerHeight;
-    // camera.left = -1 * windowHalfX;
-    // camera.right = windowHalfX;
-    // camera.top = windowHalfY;
-    // camera.bottom = -1 * windowHalfY;
+    camera.left = -1 * windowHalfX;
+    camera.right = windowHalfX;
+    camera.top = windowHalfY;
+    camera.bottom = -1 * windowHalfY;
 
     camera.updateProjectionMatrix();
     renderer.setSize( window.innerWidth, window.innerHeight );
     effect.setSize( window.innerWidth, window.innerHeight );
-
   }
 
 
@@ -642,10 +636,10 @@ DAT.Globe = function(container) {
     //device_persp_controls.update();
     if (isMobile === true && vrModeIsOn === true){
       device_persp_controls.enable = true;
-      //orbit_persp_controls.enable = false;
+      orbit_persp_controls.enable = false;
     } else {
       device_persp_controls.enable = false;
-      //orbit_persp_controls.enable = true;
+      orbit_persp_controls.enable = true;
     }
     renderGlobe();
   }
@@ -735,16 +729,11 @@ function click_Timer(){
   }
 
   //camera.translateZ( -velocityCounter * speedFactor );
-  distanceTarget  -= velocityCounter * speedFactor ;
-  console.log(distanceTarget);
-  if ( distanceTarget >=  1000 || distanceTarget <= 350) {
-     distanceTarget  += velocityCounter * speedFactor;
-     velocityCounter = 0;
-  }
+  distanceTarget  -= velocityCounter * speedFactor * 0.01;
 
 }
 
-//while moving, press to stop
+//while moving, single click to stop
 //while stopped, 
 
 function do_single_click(){
@@ -781,7 +770,7 @@ function do_multi_click(){
     else {
       ;
     }
-    //camera.lookAt(new THREE.Vector3(0,0,0));
+    camera.lookAt(new THREE.Vector3(0,0,0));
   }
 }
 
