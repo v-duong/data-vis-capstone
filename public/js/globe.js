@@ -36,6 +36,7 @@ function generateGlobe(json){
   document.getElementById('vis').appendChild(globeText);
 
   var container = document.getElementById('vis');
+  document.getElementById('vis').style.backgroundColor = "rgba(51, 51, 51, .3)";
   //renderer, camera, scene,  RENDERID
   globe = new DAT.Globe(container);
   scene = globe.scene;
