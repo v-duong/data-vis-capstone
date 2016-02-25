@@ -259,6 +259,12 @@ DAT.Globe = function(container) {
     console.log();
     console.log();
 
+    if(max<1) {
+      max = 1;
+      console.log("data not normalized");
+
+    }
+
     opts.animated = opts.animated || false;
     this.is_animated = opts.animated;
     opts.format = opts.format || 'magnitude'; // other option is 'legend'
