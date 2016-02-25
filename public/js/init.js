@@ -1010,8 +1010,12 @@ function click_Timer(){
   }
 
   camera.translateZ( -velocityCounter * speedFactor );
-
+  if ( camera.position.x * camera.position.x + camera.position.y * camera.position.y + camera.position.z * camera.position.z > speedFactor * speedFactor * 300000){
+    camera.translateZ( velocityCounter * speedFactor );
+    velocityCounter  = 0;
+  }
 }
+
 
 //while moving, single click to stop
 //while stopped, 
