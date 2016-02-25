@@ -734,12 +734,14 @@ function findMatchCity(cities, data, index){
         cityAddress.push(address[i].long_name);
       }
       cityAddress = cityAddress.join(",");
+      if(cityAddress=="") cityAddress= "Fail to retrive information";
       globeText.innerHTML = cityAddress;
       console.log(cityAddress);
 
 
     } else {
       window.alert('Geocoder failed due to: ' + status);
+      globeText.innerHTML = "Fail to retrive information"
     }
   });
 
