@@ -1006,10 +1006,12 @@ function click_Timer(){
     clickTimer = 0;
     //window.addEventListener("click", onclick);
   }
-  camera.translateZ( -velocityCounter * speedFactor );
-  if ( camera.position.x * camera.position.x + camera.position.y * camera.position.y + camera.position.z * camera.position.z > speedFactor * speedFactor * 300000)
-    camera.translateZ( velocityCounter * speedFactor );
 
+  camera.translateZ( -velocityCounter * speedFactor );
+  if ( camera.position.x * camera.position.x + camera.position.y * camera.position.y + camera.position.z * camera.position.z > speedFactor * speedFactor * 300000){
+    camera.translateZ( velocityCounter * speedFactor );
+    velocityCounter  = 0;
+  }
 }
 
 

@@ -215,7 +215,6 @@ DAT.Globe = function(container) {
     renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
     renderer.setClearColor(0x000000, .9)
     renderer.setSize(window.innerWidth, window.innerHeight);
-    //renderer.domElement.style.position = 'absolute';
 
 
     effect = new THREE.StereoEffect(renderer,30);
@@ -243,11 +242,11 @@ DAT.Globe = function(container) {
 
     device_persp_controls = new THREE.DeviceOrientationControls(camera);
     device_persp_controls.enable = false;
-    orbit_persp_controls = new THREE.OrbitControls(camera, renderer.domElement);
+    //orbit_persp_controls = new THREE.OrbitControls(camera, renderer.domElement);
     window.addEventListener('deviceorientation', setOrientationControls, true);
     //orbit_persp_controls.addEventListener('change', animate);
 
-    add_Click_EventListener(100);
+    add_Click_EventListener(1);
 
     vrModeIsOn = false;
 
@@ -412,7 +411,7 @@ DAT.Globe = function(container) {
       //console.log("return");
       return;
     }
-    //event.preventDefault();
+    event.preventDefault();
 
     console.log("mouse down event detected");
 
@@ -461,7 +460,7 @@ DAT.Globe = function(container) {
 
   function onMouseWheel(event) {
     //console.log("mouse wheel event detected");
-    //event.preventDefault();
+    event.preventDefault();
     if (vrModeIsOn === true && isMobile === true) return;
     if (overRenderer) {
       zoom(event.wheelDeltaY * 0.3);
@@ -637,10 +636,10 @@ DAT.Globe = function(container) {
     //device_persp_controls.update();
     if (isMobile === true && vrModeIsOn === true){
       device_persp_controls.enable = true;
-      orbit_persp_controls.enable = false;
+      //orbit_persp_controls.enable = false;
     } else {
       device_persp_controls.enable = false;
-      orbit_persp_controls.enable = true;
+      //orbit_persp_controls.enable = true;
     }
     renderGlobe();
   }
@@ -730,13 +729,16 @@ function click_Timer(){
   }
 
   //camera.translateZ( -velocityCounter * speedFactor );
-  distanceTarget  -= velocityCounter * speedFactor * 0.01;
-  if ( camera.position.x * camera.position.x + camera.position.y * camera.position.y + camera.position.z * camera.position.z > speedFactor * speedFactor * 1000000 )
-     distanceTarget  += velocityCounter * speedFactor * 0.01;
+  distanceTarget  -= velocityCounter * speedFactor ;
+  console.log(distanceTarget);
+  if ( distanceTarget >=  1000 || distanceTarget <= 350) {
+     distanceTarget  += velocityCounter * speedFactor;
+     velocityCounter = 0;
+  }
 
 }
 
-//while moving, single click to stop
+//while moving, press to stop
 //while stopped, 
 
 function do_single_click(){
