@@ -214,6 +214,9 @@ function visChange(){
     hideColumnOptions();
     createFindNthLarge();
   }
+  if (visualSelected == 'basketball'){
+    hideColumnOptions();
+  }
 
 
 
