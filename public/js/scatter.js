@@ -52,7 +52,7 @@
 	// document.addEventListener("volumeupbutton", onVolumeUpKeyDown, false);
  //  }
 
- voice_recognition();
+// voice_recognition();
  add_Click_EventListener(0.05);
  vrModeIsOn = false;
 
