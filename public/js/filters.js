@@ -270,7 +270,7 @@ function createColsGlobe(visualSelected ,tableSelected){
 
 function createFindNthLarge(){
   $("#globeFindNth.off-canvas-submenu").html("");
-  $("#globeFindNth.off-canvas-submenu").append("<p> Find Nth </p>");
+  $("#globeFindNth.off-canvas-submenu").append("<p> Find Nth Largest </p>");
   $("#globeFindNth.off-canvas-submenu").append('<form action="/find" method="post"><input type="text" name="nth" id="nth"><input type="button" value="Find" onclick="findNthLargest()"></form>');
   document.getElementById("nth").defaultValue = 1;
 }
