@@ -5,7 +5,7 @@ function initbars() {
   orbit_ortho_camera = new THREE.OrthographicCamera(window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, 1, 100000);
   orbit_persp_camera = new THREE.PerspectiveCamera(85, window.innerWidth / window.innerHeight, 1, 10000);
   device_persp_camera = new THREE.PerspectiveCamera(85, window.innerWidth / window.innerHeight, 1, 10000);
-  
+
   camera = orbit_ortho_camera
 
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -30,7 +30,7 @@ function initbars() {
   orbit_ortho_controls = new THREE.OrbitControls( orbit_ortho_camera, renderer.domElement );
   orbit_persp_controls = new THREE.OrbitControls( orbit_persp_camera, renderer.domElement);
   device_persp_controls = new THREE.DeviceOrientationControls(device_persp_camera);
-  
+
   controls = orbit_ortho_controls
 
   if (!INITIAL) {
@@ -57,12 +57,12 @@ function renderBars() {
   RENDERID = requestAnimationFrame(renderBars);
   if (vrModeIsOn) {
     if (isMobile) {
-      effect.render(scene, device_persp_camera); 
+      effect.render(scene, device_persp_camera);
     }
-    else { 
+    else {
       effect.render(scene, orbit_persp_camera);
     }
-  } 
+  }
   else {
     renderer.render(scene, orbit_ortho_camera);
   }
@@ -71,7 +71,7 @@ function renderBars() {
 }
 
 
-function addBar(x, y, z, size, xoffset, zoffset, c, truex, truez) {
+function addBar(x, y, z, size, xoffset, zoffset, c, truex, truez, truey) {
   var geometry = new THREE.BoxGeometry(size * 0.8, y, size * 0.8);
   //geometry.computeFaceNormals();
   //geometry.computeVertexNormals();
@@ -80,7 +80,7 @@ function addBar(x, y, z, size, xoffset, zoffset, c, truex, truez) {
   });
   geometry.colorsNeedUpdate = true;
   var mesh = new THREE.Mesh(geometry, material);
-  mesh.position.y = 1 + y / 2;;
+  mesh.position.y = 1 + y / 2;
   mesh.position.x = x - xoffset;
   mesh.position.z = z - zoffset;
   scene.add(mesh);
@@ -105,7 +105,7 @@ function addBar(x, y, z, size, xoffset, zoffset, c, truex, truez) {
       var z_ = truez.toFixed(2);
   }
 
-  var data = [x_ , y.toFixed(2) , z_];
+  var data = [x_ , truey , z_];
 
   mesh.data = data;
 
@@ -176,7 +176,7 @@ function renderData(data) {
   var zoffset = u_z.length / 2 * size;
   for (var i = 0; i < data.length; i++) {
     d = data[i];
-    addBar(_.indexOf(u_x, d[keys[0]]) * size, scale(d[keys[1]]), _.indexOf(u_z, d[keys[2]]) * size, size, xoffset, zoffset, cscale(d[keys[1]]), d[keys[0]], d[keys[2]]);
+    addBar(_.indexOf(u_x, d[keys[0]]) * size, scale(d[keys[1]]), _.indexOf(u_z, d[keys[2]]) * size, size, xoffset, zoffset, cscale(d[keys[1]]), d[keys[0]], d[keys[2]], d[keys[1]]);
   }
   /*   For now we just use that top one. rest will be used when I can fix the cases.
   else if ($("#x option:selected").val() === 'text')
